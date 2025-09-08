@@ -80,7 +80,7 @@ if GROQ_API_KEY:
 
 # --- FastAPI App Initialization ---
 app = FastAPI(
-    title="SMSPROJ - Communication Platform",
+    title="CumApp - Communication Platform",
     description="Comprehensive SMS and voice communication platform with AI assistance",
     version="1.1.0"
 )
@@ -243,7 +243,7 @@ async def health_check():
     """Health check endpoint for monitoring."""
     return {
         "status": "healthy",
-        "app_name": "SMSPROJ",
+        "app_name": "CumApp",
         "version": "1.0.0",
         "services": {
             "twilio": twilio_client is not None,
@@ -257,7 +257,7 @@ async def health_check():
 async def get_app_info():
     """Get application information."""
     return {
-        "app_name": "SMSPROJ",
+        "app_name": "CumApp",
         "version": "1.0.0",
         "description": "Comprehensive communication platform",
         "features": [
@@ -592,5 +592,5 @@ async def verification_history(request: Request):
 
 if __name__ == "__main__":
     import uvicorn
-    logger.info("Starting SMSPROJ application...")
+    logger.info("Starting CumApp application...")
     uvicorn.run("main:app", host="0.0.0.0", port=int(os.getenv("PORT", 8000)), reload=True)
