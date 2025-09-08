@@ -59,7 +59,8 @@ class TestEnhancedSearch:
             for i in range(10)
         ]
     
-    def test_enhanced_message_search_basic(self, mock_db, mock_user, mock_messages):
+    @pytest.mark.asyncio
+    async def test_enhanced_message_search_basic(self, mock_db, mock_user, mock_messages):
         """Test basic message search functionality"""
         service = ConversationService(mock_db)
         

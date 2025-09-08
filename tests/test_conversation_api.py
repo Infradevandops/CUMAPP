@@ -99,9 +99,9 @@ class TestConversationEndpoints:
         data = response.json()
         assert data["title"] == "Test Conversation"
         assert data["is_group"] is False
-        assert data["participant_count"] == 2  # Creator + participant    
-   
- def test_get_conversations(self, client, test_users, auth_headers, db_session):
+        assert data["participant_count"] == 2  # Creator + participant
+    
+    def test_get_conversations(self, client, test_users, auth_headers, db_session):
         """Test getting user conversations"""
         # Create a conversation first
         client.post(

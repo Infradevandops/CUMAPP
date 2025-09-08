@@ -601,3 +601,6 @@ class AuthenticatedWebSocketHandler:
 
 # Create global handler instance
 websocket_handler = AuthenticatedWebSocketHandler(connection_manager)
+
+# Backward compatibility alias
+ConnectionManager = AuthenticatedConnectionManager

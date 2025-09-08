@@ -48,3 +48,7 @@ def verify_password(plain_password: str, hashed_password: str) -> bool:
 def verify_jwt_token(token: str) -> Optional[Dict[str, Any]]:
     """Alias for verify_token for backward compatibility"""
     return verify_token(token)
+
+def create_jwt_token(data: Dict[str, Any], expires_delta: Optional[timedelta] = None) -> str:
+    """Alias for create_access_token for backward compatibility"""
+    return create_access_token(data, expires_delta)

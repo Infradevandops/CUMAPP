@@ -82,7 +82,8 @@ if GROQ_API_KEY:
 app = FastAPI(
     title="CumApp - Communication Platform",
     description="Comprehensive SMS and voice communication platform with AI assistance",
-    version="1.1.0"
+    version="1.1.0",
+    lifespan=lifespan
 )
 
 # Add JWT Authentication Middleware
@@ -114,16 +115,18 @@ except ImportError as e:
 except Exception as e:
     logger.warning(f"Error adding JWT middleware: {e}")
 
-# Initialize database on startup
-@app.on_event("startup")
-async def startup_event():
+# Initialize database using lifespan events
+from contextlib import asynccontextmanager
+
+@asynccontextmanager
+async def lifespan(app: FastAPI):
     """Initialize database and check connections on startup"""
     logger.info("Initializing database...")
     
     # Check database connection
     if not check_database_connection():
         logger.error("Database connection failed!")
-        return
+        raise RuntimeError("Database connection failed")
     
     # Create tables if they don't exist
     try:
@@ -132,6 +135,11 @@ async def startup_event():
     except Exception as e:
         logger.error(f"Database initialization failed: {e}")
         raise
+    
+    yield
+    
+    # Cleanup on shutdown
+    logger.info("Shutting down application...")
 
 # Include API routes
 try:

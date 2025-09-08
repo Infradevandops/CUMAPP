@@ -2,8 +2,12 @@
 """
 Models package initialization
 """
+# Import Base first to ensure single registry
+from models.user_models import Base
+
+# Import all models using the same Base
 from models.user_models import (
-    Base, User, Session as UserSession, APIKey, VerificationRequest, PhoneNumber,
+    User, Session as UserSession, APIKey, VerificationRequest, PhoneNumber,
     UserRole, SubscriptionPlan, UserCreate, UserResponse
 )
 from models.conversation_models import (
@@ -13,22 +17,6 @@ from models.conversation_models import (
     MessageCreate, MessageUpdate, MessageResponse,
     ConversationListResponse, MessageListResponse,
     ConversationFilters, MessageFilters
-)
-
-# Set up the many-to-many relationship after both models are imported
-from sqlalchemy.orm import relationship
-
-# Add conversation relationships to User model
-User.conversations = relationship(
-    "Conversation", 
-    secondary=conversation_participants, 
-    back_populates="participants"
-)
-
-User.sent_messages = relationship(
-    "Message", 
-    foreign_keys="Message.sender_id", 
-    back_populates="sender"
 )
 
 __all__ = [
