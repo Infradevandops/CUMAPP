@@ -15,7 +15,7 @@ logger = logging.getLogger(__name__)
 # Database URL configuration
 DATABASE_URL = os.getenv(
     "DATABASE_URL", 
-    "sqlite:///./smsproj.db"  # Default to SQLite for development
+    "sqlite:///./cumapp.db"  # Default to SQLite for development
 )
 
 # Handle PostgreSQL URL format for production
