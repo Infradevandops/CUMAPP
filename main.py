@@ -24,6 +24,15 @@ from textverified_client import TextVerifiedClient
 from groq_client import GroqAIClient
 from mock_twilio_client import create_twilio_client, MockTwilioClient
 
+# Import API routes
+from api.auth_api import router as auth_router
+from api.verification_api import router as verification_router
+from services.real_verification_service import real_verification_service
+from services.real_sms_service import real_sms_service
+from services.real_payment_service import real_payment_service
+from api.phone_number_api import router as phone_router
+from api.payment_api import router as payment_router
+
 # Load environment variables from .env file
 load_dotenv()
 
@@ -130,7 +139,9 @@ try:
         "/api/info",
         "/static",
         "/",
-        "/chat"
+        "/chat",
+        "/register",
+        "/login"
     ]
     app.add_middleware(JWTAuthMiddleware, exclude_paths=excluded_paths)
     
@@ -142,6 +153,12 @@ except Exception as e:
 
 # Mount static files (for CSS, JS, images, etc.)
 app.mount("/static", StaticFiles(directory="static"), name="static")
+
+# Include API routers
+app.include_router(auth_router, prefix="/api/auth", tags=["authentication"])
+app.include_router(verification_router, prefix="/api/verification", tags=["verification"])
+app.include_router(phone_router, prefix="/api/numbers", tags=["phone_numbers"])
+app.include_router(payment_router, prefix="/api/payments", tags=["payments"])
 
 # Set up Jinja2 templates
 templates = Jinja2Templates(directory="templates")
@@ -211,40 +228,76 @@ async def get_app_info():
 # --- SMS API Endpoints ---
 @app.post("/api/sms/send")
 async def send_sms(request: SMSRequest):
-    """Send SMS using Twilio."""
-    if not twilio_client:
-        raise HTTPException(status_code=503, detail="Twilio SMS service is not configured")
-    
+    """Send SMS using real or mock service."""
     try:
-        from_number = request.from_number or TWILIO_PHONE_NUMBER
-        message = twilio_client.messages.create(
-            body=request.message,
-            from_=from_number,
-            to=request.to_number
+        result = await real_sms_service.send_sms(
+            to_number=request.to_number,
+            message=request.message,
+            from_number=request.from_number
         )
         
-        logger.info(f"SMS sent to {request.to_number}. Message SID: {message.sid}")
-        return {
-            "status": "sent",
-            "message_sid": message.sid,
-            "to": request.to_number,
-            "from": from_number,
-            "message": "SMS sent successfully"
-        }
-    except TwilioRestException as e:
+        logger.info(f"SMS sent to {request.to_number} via {result['provider']}")
+        return result
+        
+    except Exception as e:
         logger.error(f"Failed to send SMS: {e}")
         raise HTTPException(status_code=500, detail=f"Failed to send SMS: {str(e)}")
+
+@app.get("/api/sms/balance")
+async def get_sms_balance():
+    """Get SMS service balance."""
+    try:
+        balance = await real_sms_service.get_account_balance()
+        return balance
+    except Exception as e:
+        logger.error(f"Failed to get balance: {e}")
+        return {"balance": "0.00", "currency": "USD", "provider": "error"}
 
 # --- Main Application Routes ---
 @app.get("/", response_class=HTMLResponse)
 async def home(request: Request):
-    """Serves the platform dashboard."""
-    return templates.TemplateResponse("dashboard.html", {"request": request})
+    """Redirects to login page."""
+    return templates.TemplateResponse("login.html", {"request": request})
 
 @app.get("/chat", response_class=HTMLResponse)
 async def chat_interface(request: Request):
     """Serves the chat interface."""
     return templates.TemplateResponse("chat.html", {"request": request})
+
+@app.get("/register", response_class=HTMLResponse)
+async def register_page(request: Request):
+    """Serves the registration page."""
+    return templates.TemplateResponse("register.html", {"request": request})
+
+@app.get("/login", response_class=HTMLResponse)
+async def login_page(request: Request):
+    """Serves the login page."""
+    return templates.TemplateResponse("login.html", {"request": request})
+
+@app.get("/dashboard", response_class=HTMLResponse)
+async def dashboard_page(request: Request):
+    """Serves the user dashboard."""
+    return templates.TemplateResponse("user_dashboard.html", {"request": request})
+
+@app.get("/services", response_class=HTMLResponse)
+async def services_page(request: Request):
+    """Serves the service selection page."""
+    return templates.TemplateResponse("services.html", {"request": request})
+
+@app.get("/verifications", response_class=HTMLResponse)
+async def verifications_page(request: Request):
+    """Serves the verification history page."""
+    return templates.TemplateResponse("verifications.html", {"request": request})
+
+@app.get("/numbers", response_class=HTMLResponse)
+async def numbers_page(request: Request):
+    """Serves the phone numbers marketplace."""
+    return templates.TemplateResponse("numbers.html", {"request": request})
+
+@app.get("/billing", response_class=HTMLResponse)
+async def billing_page(request: Request):
+    """Serves the billing and credits page."""
+    return templates.TemplateResponse("billing.html", {"request": request})
 
 if __name__ == "__main__":
     import uvicorn

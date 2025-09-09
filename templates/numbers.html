@@ -1,0 +1,389 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Phone Numbers - CumApp</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+</head>
+<body class="bg-light">
+    <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
+        <div class="container">
+            <a class="navbar-brand fw-bold" href="/dashboard">
+                <i class="fas fa-sms me-2"></i>CumApp
+            </a>
+            <div class="navbar-nav ms-auto">
+                <a class="nav-link" href="/dashboard">Dashboard</a>
+                <a class="nav-link" href="/services">Services</a>
+                <a class="nav-link" href="#" onclick="logout()">Logout</a>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container mt-4">
+        <div class="row">
+            <div class="col-12">
+                <h2><i class="fas fa-phone me-2"></i>Phone Numbers</h2>
+                <p class="text-muted">Purchase temporary phone numbers for verification</p>
+            </div>
+        </div>
+
+        <!-- Filters -->
+        <div class="row mb-4">
+            <div class="col-md-3">
+                <select class="form-select" id="countryFilter">
+                    <option value="">All Countries</option>
+                    <option value="US">🇺🇸 United States</option>
+                    <option value="UK">🇬🇧 United Kingdom</option>
+                    <option value="CA">🇨🇦 Canada</option>
+                    <option value="DE">🇩🇪 Germany</option>
+                    <option value="FR">🇫🇷 France</option>
+                    <option value="AU">🇦🇺 Australia</option>
+                    <option value="IN">🇮🇳 India</option>
+                    <option value="BR">🇧🇷 Brazil</option>
+                </select>
+            </div>
+            <div class="col-md-3">
+                <select class="form-select" id="serviceFilter">
+                    <option value="">All Services</option>
+                    <option value="whatsapp">WhatsApp</option>
+                    <option value="google">Google</option>
+                    <option value="facebook">Facebook</option>
+                    <option value="telegram">Telegram</option>
+                </select>
+            </div>
+            <div class="col-md-3">
+                <select class="form-select" id="priceFilter">
+                    <option value="">All Prices</option>
+                    <option value="low">$0.10 - $0.50</option>
+                    <option value="mid">$0.50 - $1.00</option>
+                    <option value="high">$1.00+</option>
+                </select>
+            </div>
+            <div class="col-md-3">
+                <button class="btn btn-outline-primary w-100" onclick="refreshNumbers()">
+                    <i class="fas fa-sync me-2"></i>Refresh
+                </button>
+            </div>
+        </div>
+
+        <!-- Available Numbers -->
+        <div class="row mb-4">
+            <div class="col-12">
+                <div class="card">
+                    <div class="card-header d-flex justify-content-between">
+                        <h5 class="mb-0">Available Numbers</h5>
+                        <span class="badge bg-success" id="availableCount">Loading...</span>
+                    </div>
+                    <div class="card-body">
+                        <div id="availableNumbers">
+                            <div class="text-center py-4">
+                                <div class="spinner-border text-primary" role="status"></div>
+                                <p class="mt-2">Loading available numbers...</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- My Numbers -->
+        <div class="row">
+            <div class="col-12">
+                <div class="card">
+                    <div class="card-header">
+                        <h5 class="mb-0">My Numbers</h5>
+                    </div>
+                    <div class="card-body">
+                        <div id="myNumbers">
+                            <div class="text-center text-muted py-4">
+                                <i class="fas fa-phone-slash fa-3x mb-3"></i>
+                                <p>No numbers purchased yet</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Purchase Modal -->
+    <div class="modal fade" id="purchaseModal" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Purchase Number</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="text-center mb-3">
+                        <h4 id="purchaseNumber"></h4>
+                        <p class="text-muted" id="purchaseCountry"></p>
+                    </div>
+                    <div class="row">
+                        <div class="col-6">
+                            <strong>Duration:</strong> <span id="purchaseDuration">30 minutes</span>
+                        </div>
+                        <div class="col-6">
+                            <strong>Cost:</strong> <span id="purchaseCost">$0.50</span>
+                        </div>
+                    </div>
+                    <div class="mt-3">
+                        <strong>Supported Services:</strong>
+                        <div id="supportedServices" class="mt-2"></div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="button" class="btn btn-primary" onclick="confirmPurchase()">
+                        <i class="fas fa-shopping-cart me-2"></i>Purchase
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        const mockNumbers = [
+            {id: 1, number: '+1234567890', country: 'US', cost: 0.50, services: ['whatsapp', 'google', 'facebook']},
+            {id: 2, number: '+1234567891', country: 'US', cost: 0.45, services: ['telegram', 'google']},
+            {id: 3, number: '+4412345678', country: 'UK', cost: 0.60, services: ['whatsapp', 'facebook']},
+            {id: 4, number: '+4912345678', country: 'DE', cost: 0.55, services: ['google', 'telegram']},
+            {id: 5, number: '+33123456789', country: 'FR', cost: 0.65, services: ['whatsapp', 'google']},
+            {id: 6, number: '+61123456789', country: 'AU', cost: 0.70, services: ['facebook', 'telegram']}
+        ];
+
+        const myNumbers = [];
+        let selectedNumber = null;
+
+        function renderAvailableNumbers(numbers = mockNumbers) {
+            const container = document.getElementById('availableNumbers');
+            document.getElementById('availableCount').textContent = numbers.length;
+
+            if (numbers.length === 0) {
+                container.innerHTML = `
+                    <div class="text-center text-muted py-4">
+                        <i class="fas fa-search fa-3x mb-3"></i>
+                        <p>No numbers available with current filters</p>
+                    </div>
+                `;
+                return;
+            }
+
+            container.innerHTML = numbers.map(num => `
+                <div class="row border-bottom py-3">
+                    <div class="col-md-3">
+                        <strong>${num.number}</strong>
+                        <br><small class="text-muted">${getCountryName(num.country)}</small>
+                    </div>
+                    <div class="col-md-3">
+                        <span class="badge bg-success">$${num.cost}</span>
+                    </div>
+                    <div class="col-md-4">
+                        ${num.services.map(s => `<span class="badge bg-primary me-1">${s}</span>`).join('')}
+                    </div>
+                    <div class="col-md-2">
+                        <button class="btn btn-sm btn-primary" onclick="showPurchaseModal(${num.id})">
+                            Buy
+                        </button>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function renderMyNumbers() {
+            const container = document.getElementById('myNumbers');
+            
+            if (myNumbers.length === 0) {
+                container.innerHTML = `
+                    <div class="text-center text-muted py-4">
+                        <i class="fas fa-phone-slash fa-3x mb-3"></i>
+                        <p>No numbers purchased yet</p>
+                    </div>
+                `;
+                return;
+            }
+
+            container.innerHTML = myNumbers.map(num => `
+                <div class="row border-bottom py-3">
+                    <div class="col-md-3">
+                        <strong>${num.number}</strong>
+                        <br><small class="text-muted">${getCountryName(num.country)}</small>
+                    </div>
+                    <div class="col-md-3">
+                        <span class="badge bg-${num.status === 'active' ? 'success' : 'warning'}">${num.status}</span>
+                    </div>
+                    <div class="col-md-3">
+                        <small>Expires: ${num.expires}</small>
+                    </div>
+                    <div class="col-md-3">
+                        <button class="btn btn-sm btn-outline-primary" onclick="extendNumber(${num.id})">
+                            Extend
+                        </button>
+                        <button class="btn btn-sm btn-outline-danger ms-1" onclick="releaseNumber(${num.id})">
+                            Release
+                        </button>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function showPurchaseModal(numberId) {
+            const number = mockNumbers.find(n => n.id === numberId);
+            if (!number) return;
+
+            selectedNumber = number;
+            document.getElementById('purchaseNumber').textContent = number.number;
+            document.getElementById('purchaseCountry').textContent = getCountryName(number.country);
+            document.getElementById('purchaseCost').textContent = `$${number.cost}`;
+            
+            const servicesHtml = number.services.map(s => 
+                `<span class="badge bg-primary me-1">${s}</span>`
+            ).join('');
+            document.getElementById('supportedServices').innerHTML = servicesHtml;
+
+            new bootstrap.Modal(document.getElementById('purchaseModal')).show();
+        }
+
+        async function confirmPurchase() {
+            if (!selectedNumber) return;
+
+            try {
+                const response = await fetch('/api/numbers/purchase', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${localStorage.getItem('token')}`
+                    },
+                    body: JSON.stringify({
+                        number_id: selectedNumber.id,
+                        duration: 30
+                    })
+                });
+
+                if (response.ok) {
+                    const data = await response.json();
+                    
+                    // Add to my numbers
+                    myNumbers.push({
+                        id: selectedNumber.id,
+                        number: selectedNumber.number,
+                        country: selectedNumber.country,
+                        status: 'active',
+                        expires: new Date(Date.now() + 30*60*1000).toLocaleString()
+                    });
+
+                    // Remove from available
+                    const index = mockNumbers.findIndex(n => n.id === selectedNumber.id);
+                    if (index > -1) mockNumbers.splice(index, 1);
+
+                    renderAvailableNumbers();
+                    renderMyNumbers();
+                    
+                    bootstrap.Modal.getInstance(document.getElementById('purchaseModal')).hide();
+                    alert('Number purchased successfully!');
+                } else {
+                    alert('Purchase failed. Please try again.');
+                }
+            } catch (error) {
+                alert('Network error. Please try again.');
+            }
+        }
+
+        function extendNumber(numberId) {
+            const number = myNumbers.find(n => n.id === numberId);
+            if (number) {
+                number.expires = new Date(Date.now() + 30*60*1000).toLocaleString();
+                renderMyNumbers();
+                alert('Number extended for 30 minutes');
+            }
+        }
+
+        function releaseNumber(numberId) {
+            const index = myNumbers.findIndex(n => n.id === numberId);
+            if (index > -1) {
+                const number = myNumbers[index];
+                myNumbers.splice(index, 1);
+                
+                // Add back to available
+                mockNumbers.push({
+                    id: number.id,
+                    number: number.number,
+                    country: number.country,
+                    cost: 0.50,
+                    services: ['whatsapp', 'google']
+                });
+                
+                renderAvailableNumbers();
+                renderMyNumbers();
+                alert('Number released');
+            }
+        }
+
+        function getCountryName(code) {
+            const countries = {
+                'US': '🇺🇸 United States',
+                'UK': '🇬🇧 United Kingdom',
+                'CA': '🇨🇦 Canada',
+                'DE': '🇩🇪 Germany',
+                'FR': '🇫🇷 France',
+                'AU': '🇦🇺 Australia',
+                'IN': '🇮🇳 India',
+                'BR': '🇧🇷 Brazil'
+            };
+            return countries[code] || code;
+        }
+
+        function refreshNumbers() {
+            document.getElementById('availableNumbers').innerHTML = `
+                <div class="text-center py-4">
+                    <div class="spinner-border text-primary" role="status"></div>
+                    <p class="mt-2">Refreshing numbers...</p>
+                </div>
+            `;
+            
+            setTimeout(() => {
+                renderAvailableNumbers();
+            }, 1000);
+        }
+
+        function logout() {
+            localStorage.removeItem('token');
+            window.location.href = '/login';
+        }
+
+        // Filters
+        document.getElementById('countryFilter').addEventListener('change', applyFilters);
+        document.getElementById('serviceFilter').addEventListener('change', applyFilters);
+        document.getElementById('priceFilter').addEventListener('change', applyFilters);
+
+        function applyFilters() {
+            let filtered = [...mockNumbers];
+            
+            const country = document.getElementById('countryFilter').value;
+            const service = document.getElementById('serviceFilter').value;
+            const price = document.getElementById('priceFilter').value;
+
+            if (country) filtered = filtered.filter(n => n.country === country);
+            if (service) filtered = filtered.filter(n => n.services.includes(service));
+            if (price) {
+                if (price === 'low') filtered = filtered.filter(n => n.cost <= 0.50);
+                else if (price === 'mid') filtered = filtered.filter(n => n.cost > 0.50 && n.cost <= 1.00);
+                else if (price === 'high') filtered = filtered.filter(n => n.cost > 1.00);
+            }
+
+            renderAvailableNumbers(filtered);
+        }
+
+        // Check auth and load data
+        if (!localStorage.getItem('token')) {
+            window.location.href = '/login';
+        }
+
+        renderAvailableNumbers();
+        renderMyNumbers();
+    </script>
+</body>
+</html>

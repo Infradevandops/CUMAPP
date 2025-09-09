@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sign In - CumApp</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+</head>
+<body class="bg-light">
+    <div class="container-fluid vh-100">
+        <div class="row h-100">
+            <div class="col-md-6 d-flex align-items-center justify-content-center">
+                <div class="card shadow-lg border-0" style="width: 100%; max-width: 400px;">
+                    <div class="card-body p-5">
+                        <div class="text-center mb-4">
+                            <h2 class="fw-bold text-primary">CumApp</h2>
+                            <p class="text-muted">Sign in to your account</p>
+                        </div>
+                        
+                        <form id="loginForm">
+                            <div class="mb-3">
+                                <label for="email" class="form-label">Email</label>
+                                <input type="email" class="form-control" id="email" value="demo@cumapp.com" required>
+                            </div>
+                            
+                            <div class="mb-3">
+                                <label for="password" class="form-label">Password</label>
+                                <input type="password" class="form-control" id="password" value="demo123" required>
+                            </div>
+                            
+                            <button type="submit" class="btn btn-primary w-100 mb-3">
+                                <i class="fas fa-sign-in-alt me-2"></i>Sign In
+                            </button>
+                            
+                            <button type="button" class="btn btn-success w-100 mb-3" onclick="demoLogin()">
+                                <i class="fas fa-rocket me-2"></i>Demo Login (Skip)
+                            </button>
+                        </form>
+                        
+                        <div class="text-center">
+                            <div class="alert alert-info mb-3">
+                                <strong>Demo Account:</strong><br>
+                                Email: demo@cumapp.com<br>
+                                Password: demo123
+                            </div>
+                            <p class="mb-0">Don't have an account? <a href="/register" class="text-primary">Sign up</a></p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="col-md-6 bg-primary d-none d-md-flex align-items-center justify-content-center text-white">
+                <div class="text-center">
+                    <i class="fas fa-mobile-alt fa-5x mb-4"></i>
+                    <h3>Welcome Back</h3>
+                    <p class="lead">Access your SMS verification dashboard</p>
+                    <ul class="list-unstyled">
+                        <li><i class="fas fa-check me-2"></i>Manage Verifications</li>
+                        <li><i class="fas fa-check me-2"></i>Purchase Numbers</li>
+                        <li><i class="fas fa-check me-2"></i>Track Usage</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        function demoLogin() {
+            // Set demo token and redirect
+            localStorage.setItem('token', 'demo_token_12345');
+            localStorage.setItem('user', JSON.stringify({
+                id: 1,
+                email: 'demo@cumapp.com',
+                username: 'demo',
+                credits: 25.50
+            }));
+            window.location.href = '/dashboard';
+        }
+
+        document.getElementById('loginForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const email = document.getElementById('email').value;
+            const password = document.getElementById('password').value;
+            
+            // Demo credentials bypass
+            if (email === 'demo@cumapp.com' && password === 'demo123') {
+                demoLogin();
+                return;
+            }
+            
+            try {
+                const response = await fetch('/api/auth/login', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ email, password })
+                });
+                
+                if (response.ok) {
+                    const data = await response.json();
+                    localStorage.setItem('token', data.access_token);
+                    window.location.href = '/dashboard';
+                } else {
+                    const error = await response.json();
+                    alert(error.detail || 'Login failed');
+                }
+            } catch (error) {
+                alert('Network error. Please try again.');
+            }
+        });
+    </script>
+</body>
+</html>
