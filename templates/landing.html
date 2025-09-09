@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CumApp - SMS Verification Platform</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="bg-blue-600 text-white fixed top-0 w-full z-50 shadow-lg">
+        <div class="container mx-auto px-4 py-3 flex justify-between items-center">
+            <a href="/" class="text-xl font-bold">
+                <i class="fas fa-sms mr-2"></i>CumApp
+            </a>
+            <div class="flex items-center space-x-6">
+                <a href="#features" class="hover:text-blue-200 transition">Features</a>
+                <a href="#pricing" class="hover:text-blue-200 transition">Pricing</a>
+                <a href="/login" class="bg-white text-blue-600 px-4 py-2 rounded-lg font-medium hover:bg-gray-100 transition">Login</a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section class="bg-gradient-to-r from-blue-600 to-purple-600 text-white pt-20 pb-16">
+        <div class="container mx-auto px-4 py-16">
+            <div class="grid lg:grid-cols-2 gap-12 items-center">
+                <div>
+                    <h1 class="text-5xl font-bold mb-6 leading-tight">SMS Verification Made Simple</h1>
+                    <p class="text-xl mb-8 text-blue-100">Get temporary phone numbers for verification with 100+ services. Fast, reliable, and secure.</p>
+                    <div class="flex flex-col sm:flex-row gap-4 mb-6">
+                        <a href="/register" class="bg-white text-blue-600 px-8 py-4 rounded-lg font-semibold hover:bg-gray-100 transition inline-flex items-center justify-center">
+                            <i class="fas fa-rocket mr-2"></i>Get Started Free
+                        </a>
+                        <a href="/login" class="border-2 border-white text-white px-8 py-4 rounded-lg font-semibold hover:bg-white hover:text-blue-600 transition inline-flex items-center justify-center">
+                            <i class="fas fa-play mr-2"></i>Try Demo
+                        </a>
+                    </div>
+                    <div class="flex items-center text-blue-100">
+                        <i class="fas fa-check-circle mr-2"></i>
+                        <span>No credit card required • Instant setup</span>
+                    </div>
+                </div>
+                <div class="text-center">
+                    <i class="fas fa-mobile-alt text-9xl opacity-75"></i>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Features Section -->
+    <section id="features" class="py-16 bg-gray-50">
+        <div class="container mx-auto px-4">
+            <div class="text-center mb-12">
+                <h2 class="text-4xl font-bold text-gray-800 mb-4">Why Choose CumApp?</h2>
+                <p class="text-xl text-gray-600">Everything you need for SMS verification</p>
+            </div>
+            <div class="grid md:grid-cols-3 gap-8">
+                <div class="bg-white rounded-xl shadow-lg p-8 text-center hover:shadow-xl transition">
+                    <i class="fas fa-globe text-5xl text-blue-600 mb-6"></i>
+                    <h3 class="text-xl font-semibold mb-4">100+ Services</h3>
+                    <p class="text-gray-600">WhatsApp, Google, Facebook, Telegram, and more</p>
+                </div>
+                <div class="bg-white rounded-xl shadow-lg p-8 text-center hover:shadow-xl transition">
+                    <i class="fas fa-bolt text-5xl text-green-600 mb-6"></i>
+                    <h3 class="text-xl font-semibold mb-4">Instant Delivery</h3>
+                    <p class="text-gray-600">Receive SMS codes in seconds, not minutes</p>
+                </div>
+                <div class="bg-white rounded-xl shadow-lg p-8 text-center hover:shadow-xl transition">
+                    <i class="fas fa-shield-alt text-5xl text-yellow-600 mb-6"></i>
+                    <h3 class="text-xl font-semibold mb-4">Secure & Private</h3>
+                    <p class="text-gray-600">Your data is protected with enterprise-grade security</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Pricing Section -->
+    <section id="pricing" class="py-16">
+        <div class="container mx-auto px-4">
+            <div class="text-center mb-12">
+                <h2 class="text-4xl font-bold text-gray-800 mb-4">Simple Pricing</h2>
+                <p class="text-xl text-gray-600">Pay only for what you use</p>
+            </div>
+            <div class="grid md:grid-cols-2 gap-8 max-w-4xl mx-auto">
+                <div class="bg-white rounded-xl shadow-lg p-8 border border-gray-200">
+                    <h3 class="text-2xl font-bold text-center mb-6">Starter</h3>
+                    <div class="text-center mb-6">
+                        <span class="text-4xl font-bold text-gray-800">$5</span>
+                        <span class="text-gray-600">/10 verifications</span>
+                    </div>
+                    <ul class="space-y-3 mb-8">
+                        <li class="flex items-center"><i class="fas fa-check text-green-500 mr-3"></i>Basic services</li>
+                        <li class="flex items-center"><i class="fas fa-check text-green-500 mr-3"></i>Email support</li>
+                        <li class="flex items-center"><i class="fas fa-check text-green-500 mr-3"></i>30-day history</li>
+                    </ul>
+                    <a href="/register" class="w-full bg-gray-100 text-gray-800 py-3 rounded-lg font-semibold hover:bg-gray-200 transition text-center block">Get Started</a>
+                </div>
+                <div class="bg-white rounded-xl shadow-xl p-8 border-2 border-blue-500 relative">
+                    <div class="absolute -top-4 left-1/2 transform -translate-x-1/2">
+                        <span class="bg-yellow-400 text-yellow-900 px-4 py-1 rounded-full text-sm font-semibold">Popular</span>
+                    </div>
+                    <h3 class="text-2xl font-bold text-center mb-6">Pro</h3>
+                    <div class="text-center mb-6">
+                        <span class="text-4xl font-bold text-gray-800">$25</span>
+                        <span class="text-gray-600">/50 verifications</span>
+                    </div>
+                    <ul class="space-y-3 mb-8">
+                        <li class="flex items-center"><i class="fas fa-check text-green-500 mr-3"></i>All services</li>
+                        <li class="flex items-center"><i class="fas fa-check text-green-500 mr-3"></i>Priority support</li>
+                        <li class="flex items-center"><i class="fas fa-check text-green-500 mr-3"></i>90-day history</li>
+                        <li class="flex items-center"><i class="fas fa-check text-green-500 mr-3"></i>API access</li>
+                    </ul>
+                    <a href="/register" class="w-full bg-blue-600 text-white py-3 rounded-lg font-semibold hover:bg-blue-700 transition text-center block">Get Started</a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- CTA Section -->
+    <section class="py-16 bg-gradient-to-r from-blue-600 to-purple-600 text-white">
+        <div class="container mx-auto px-4 text-center">
+            <h2 class="text-4xl font-bold mb-4">Ready to Get Started?</h2>
+            <p class="text-xl mb-8 text-blue-100">Join thousands of users who trust CumApp for SMS verification</p>
+            <a href="/register" class="bg-white text-blue-600 px-8 py-4 rounded-lg font-semibold hover:bg-gray-100 transition inline-flex items-center">
+                <i class="fas fa-rocket mr-2"></i>Start Free Trial
+            </a>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="bg-gray-900 text-white py-8">
+        <div class="container mx-auto px-4">
+            <div class="grid md:grid-cols-2 gap-8">
+                <div>
+                    <h3 class="text-xl font-bold mb-4"><i class="fas fa-sms mr-2"></i>CumApp</h3>
+                    <p class="text-gray-400">Professional SMS verification platform</p>
+                </div>
+                <div class="md:text-right">
+                    <a href="/docs" class="text-gray-300 hover:text-white mr-6 transition">API Docs</a>
+                    <a href="/support" class="text-gray-300 hover:text-white mr-6 transition">Support</a>
+                    <a href="/privacy" class="text-gray-300 hover:text-white transition">Privacy</a>
+                </div>
+            </div>
+        </div>
+    </footer>
+</body>
+</html>

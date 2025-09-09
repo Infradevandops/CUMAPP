@@ -1,11 +1,12 @@
-# 🚀 CumApp - Enterprise Communication Platform
+# 🚀 CumApp - Enterprise SMS Verification Platform
 
 [![Python 3.11+](https://img.shields.io/badge/python-3.11+-blue.svg)](https://www.python.org/downloads/)
 [![FastAPI](https://img.shields.io/badge/FastAPI-0.104+-green.svg)](https://fastapi.tiangolo.com/)
+[![Tailwind CSS](https://img.shields.io/badge/Tailwind-CSS-38B2AC.svg)](https://tailwindcss.com/)
 [![Security](https://img.shields.io/badge/security-hardened-brightgreen.svg)](#security)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
-**Production-ready SMS verification and communication platform** with enterprise security, AI-powered features, and comprehensive API coverage.
+**Production-ready SMS verification platform** with modern Tailwind UI, real API integration, and React Native mobile app planned.
 
 ---
 
@@ -44,10 +45,16 @@ open http://localhost:8000
 
 ### Core Components
 - **FastAPI Backend**: High-performance async API
+- **Tailwind CSS Frontend**: Modern, responsive UI
 - **JWT Authentication**: Secure token-based auth
 - **WebSocket**: Real-time communication
 - **Mock Services**: Zero-cost development
 - **Docker Ready**: Production deployment
+
+### Frontend Technology
+- **Current**: Tailwind CSS + Vanilla JS
+- **Planned**: React Native mobile app
+- **Features**: Responsive design, modern UI/UX
 
 ---
 
@@ -525,18 +532,25 @@ MIT License - see [LICENSE](LICENSE) file
 - Docker deployment ready
 
 ### 🔄 **Next (v1.2)**
-- Voice calling capabilities
-- Mobile app (React Native)
+- React Native mobile app (iOS/Android)
+- Push notifications for SMS codes
+- Offline verification history
 - Advanced analytics dashboard
 - Multi-tenant architecture
-- Kubernetes deployment
 
 ### 🚀 **Future (v2.0)**
-- Video calling
+- Voice calling capabilities
 - Team collaboration features
 - Advanced AI features
 - Global CDN deployment
 - Enterprise SSO integration
+
+### 📱 **Mobile App Features (Planned)**
+- Native iOS/Android apps
+- Real-time SMS notifications
+- Biometric authentication
+- Offline mode support
+- Cross-platform sync
 
 ---
 

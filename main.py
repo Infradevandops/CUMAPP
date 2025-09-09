@@ -32,6 +32,7 @@ from services.real_sms_service import real_sms_service
 from services.real_payment_service import real_payment_service
 from api.phone_number_api import router as phone_router
 from api.payment_api import router as payment_router
+from api.admin_api import router as admin_router
 
 # Load environment variables from .env file
 load_dotenv()
@@ -159,6 +160,7 @@ app.include_router(auth_router, prefix="/api/auth", tags=["authentication"])
 app.include_router(verification_router, prefix="/api/verification", tags=["verification"])
 app.include_router(phone_router, prefix="/api/numbers", tags=["phone_numbers"])
 app.include_router(payment_router, prefix="/api/payments", tags=["payments"])
+app.include_router(admin_router, prefix="/api/admin", tags=["admin"])
 
 # Set up Jinja2 templates
 templates = Jinja2Templates(directory="templates")
@@ -256,8 +258,8 @@ async def get_sms_balance():
 # --- Main Application Routes ---
 @app.get("/", response_class=HTMLResponse)
 async def home(request: Request):
-    """Redirects to login page."""
-    return templates.TemplateResponse("login.html", {"request": request})
+    """Serves the landing page."""
+    return templates.TemplateResponse("landing.html", {"request": request})
 
 @app.get("/chat", response_class=HTMLResponse)
 async def chat_interface(request: Request):
@@ -298,6 +300,11 @@ async def numbers_page(request: Request):
 async def billing_page(request: Request):
     """Serves the billing and credits page."""
     return templates.TemplateResponse("billing.html", {"request": request})
+
+@app.get("/admin", response_class=HTMLResponse)
+async def admin_page(request: Request):
+    """Serves the admin dashboard."""
+    return templates.TemplateResponse("admin.html", {"request": request})
 
 if __name__ == "__main__":
     import uvicorn

@@ -1,0 +1,265 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard - CumApp</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+</head>
+<body class="bg-light">
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+        <div class="container-fluid">
+            <a class="navbar-brand fw-bold" href="/admin">
+                <i class="fas fa-cog me-2"></i>CumApp Admin
+            </a>
+            <div class="navbar-nav ms-auto">
+                <a class="nav-link" href="/dashboard">User View</a>
+                <a class="nav-link" href="#" onclick="logout()">Logout</a>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container-fluid mt-4">
+        <div class="row">
+            <!-- Sidebar -->
+            <div class="col-md-2">
+                <div class="list-group">
+                    <a href="#overview" class="list-group-item list-group-item-action active" onclick="showSection('overview')">
+                        <i class="fas fa-chart-line me-2"></i>Overview
+                    </a>
+                    <a href="#users" class="list-group-item list-group-item-action" onclick="showSection('users')">
+                        <i class="fas fa-users me-2"></i>Users
+                    </a>
+                    <a href="#verifications" class="list-group-item list-group-item-action" onclick="showSection('verifications')">
+                        <i class="fas fa-mobile-alt me-2"></i>Verifications
+                    </a>
+                    <a href="#revenue" class="list-group-item list-group-item-action" onclick="showSection('revenue')">
+                        <i class="fas fa-dollar-sign me-2"></i>Revenue
+                    </a>
+                    <a href="#system" class="list-group-item list-group-item-action" onclick="showSection('system')">
+                        <i class="fas fa-server me-2"></i>System
+                    </a>
+                </div>
+            </div>
+
+            <!-- Main Content -->
+            <div class="col-md-10">
+                <!-- Overview Section -->
+                <div id="overview" class="admin-section">
+                    <h2>Platform Overview</h2>
+                    <div class="row mb-4">
+                        <div class="col-md-3">
+                            <div class="card bg-primary text-white">
+                                <div class="card-body">
+                                    <h4>1,247</h4>
+                                    <p class="mb-0">Total Users</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="card bg-success text-white">
+                                <div class="card-body">
+                                    <h4>8,932</h4>
+                                    <p class="mb-0">Verifications</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="card bg-info text-white">
+                                <div class="card-body">
+                                    <h4>$4,567</h4>
+                                    <p class="mb-0">Revenue</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="card bg-warning text-white">
+                                <div class="card-body">
+                                    <h4>98.5%</h4>
+                                    <p class="mb-0">Success Rate</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Users Section -->
+                <div id="users" class="admin-section" style="display:none;">
+                    <h2>User Management</h2>
+                    <div class="card">
+                        <div class="card-body">
+                            <table class="table">
+                                <thead>
+                                    <tr>
+                                        <th>ID</th>
+                                        <th>Email</th>
+                                        <th>Credits</th>
+                                        <th>Status</th>
+                                        <th>Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td>1</td>
+                                        <td>demo@cumapp.com</td>
+                                        <td>$25.50</td>
+                                        <td><span class="badge bg-success">Active</span></td>
+                                        <td>
+                                            <button class="btn btn-sm btn-primary">Edit</button>
+                                            <button class="btn btn-sm btn-danger">Suspend</button>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Verifications Section -->
+                <div id="verifications" class="admin-section" style="display:none;">
+                    <h2>Verification Monitoring</h2>
+                    <div class="card">
+                        <div class="card-body">
+                            <div class="row mb-3">
+                                <div class="col-md-3">
+                                    <div class="card bg-light">
+                                        <div class="card-body text-center">
+                                            <h5>Active</h5>
+                                            <h3 class="text-primary">23</h3>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-3">
+                                    <div class="card bg-light">
+                                        <div class="card-body text-center">
+                                            <h5>Completed</h5>
+                                            <h3 class="text-success">156</h3>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-3">
+                                    <div class="card bg-light">
+                                        <div class="card-body text-center">
+                                            <h5>Failed</h5>
+                                            <h3 class="text-danger">3</h3>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-3">
+                                    <div class="card bg-light">
+                                        <div class="card-body text-center">
+                                            <h5>Today</h5>
+                                            <h3 class="text-info">47</h3>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Revenue Section -->
+                <div id="revenue" class="admin-section" style="display:none;">
+                    <h2>Revenue Analytics</h2>
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="card">
+                                <div class="card-header">
+                                    <h5>Monthly Revenue</h5>
+                                </div>
+                                <div class="card-body">
+                                    <h3 class="text-success">$4,567.89</h3>
+                                    <p class="text-muted">+23% from last month</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="card">
+                                <div class="card-header">
+                                    <h5>Average Order Value</h5>
+                                </div>
+                                <div class="card-body">
+                                    <h3 class="text-primary">$12.45</h3>
+                                    <p class="text-muted">Per transaction</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- System Section -->
+                <div id="system" class="admin-section" style="display:none;">
+                    <h2>System Health</h2>
+                    <div class="row">
+                        <div class="col-md-4">
+                            <div class="card">
+                                <div class="card-body">
+                                    <h6>API Status</h6>
+                                    <div class="d-flex align-items-center">
+                                        <i class="fas fa-circle text-success me-2"></i>
+                                        <span>All systems operational</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="card">
+                                <div class="card-body">
+                                    <h6>Database</h6>
+                                    <div class="d-flex align-items-center">
+                                        <i class="fas fa-circle text-success me-2"></i>
+                                        <span>Connected</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="card">
+                                <div class="card-body">
+                                    <h6>SMS Service</h6>
+                                    <div class="d-flex align-items-center">
+                                        <i class="fas fa-circle text-warning me-2"></i>
+                                        <span>Mock mode</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        function showSection(sectionId) {
+            // Hide all sections
+            document.querySelectorAll('.admin-section').forEach(section => {
+                section.style.display = 'none';
+            });
+            
+            // Remove active class from all nav items
+            document.querySelectorAll('.list-group-item').forEach(item => {
+                item.classList.remove('active');
+            });
+            
+            // Show selected section
+            document.getElementById(sectionId).style.display = 'block';
+            
+            // Add active class to clicked nav item
+            event.target.classList.add('active');
+        }
+
+        function logout() {
+            localStorage.removeItem('token');
+            window.location.href = '/login';
+        }
+
+        // Check admin access
+        if (!localStorage.getItem('token')) {
+            window.location.href = '/login';
+        }
+    </script>
+</body>
+</html>
