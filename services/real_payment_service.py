@@ -4,7 +4,7 @@ Real payment service with Stripe integration
 """
 import os
 import logging
-from typing import Dict, Optional
+from typing import Dict, Optional, List
 from datetime import datetime
 import uuid
 
