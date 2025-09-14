@@ -1,17 +1,17 @@
 services:
-- type: web
-  name: cumapp-platform
-  env: python
-  buildCommand: "pip install -r requirements.txt"
-  startCommand: "uvicorn main:app --host=0.0.0.0 --port=10000"
-  envVars:
-    - key: JWT_SECRET_KEY
-      fromSecret: true
-    - key: TEXTVERIFIED_API_KEY
-      fromSecret: true
-    - key: TWILIO_ACCOUNT_SID
-      fromSecret: true
-    - key: TWILIO_AUTH_TOKEN
-      fromSecret: true
-    - key: GROQ_API_KEY
-      fromSecret: true
+  - type: web
+    name: cumapp-platform
+    env: python
+    buildCommand: "pip install -r requirements.txt"
+    startCommand: "uvicorn main:app --host=0.0.0.0 --port=10000"
+    envVars:
+      - key: JWT_SECRET_KEY
+        fromSecret: true
+      - key: TEXTVERIFIED_API_KEY
+        fromSecret: true
+      - key: TWILIO_ACCOUNT_SID
+        fromSecret: true
+      - key: TWILIO_AUTH_TOKEN
+        fromSecret: true
+      - key: GROQ_API_KEY
+        fromSecret: true
