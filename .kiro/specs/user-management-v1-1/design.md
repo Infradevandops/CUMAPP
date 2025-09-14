@@ -462,7 +462,7 @@ class ErrorResponse(BaseModel):
     request_id: str
 
 @app.exception_handler(CumAppException)
-async def smsproj_exception_handler(request: Request, exc: CumAppException):
+async def cumapp_exception_handler(request: Request, exc: CumAppException):
     return JSONResponse(
         status_code=400,
         content=ErrorResponse(
