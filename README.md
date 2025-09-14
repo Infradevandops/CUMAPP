@@ -14,7 +14,7 @@
 
 ```bash
 # Clone and setup
-git clone <repository-url> && cd smsproj
+git clone <repository-url> && cd cumapp
 python -m venv .venv && source .venv/bin/activate
 pip install -r requirements.txt
 
@@ -121,7 +121,7 @@ token = csrf_protection.generate_token(session_id)
 ```bash
 # 1. Clone repository
 git clone <repository-url>
-cd smsproj
+cd cumapp
 
 # 2. Create virtual environment
 python -m venv .venv
@@ -435,15 +435,16 @@ cp .env.example .env.production
 
 # Update with production values
 JWT_SECRET_KEY=$(openssl rand -base64 32)
-DATABASE_URL=postgresql://user:pass@prod-db:5432/smsproj
+DATABASE_URL=postgresql://user:pass@prod-db:5432/cumapp
 REDIS_URL=redis://prod-redis:6379
 DEBUG=false
 ```
 
 #### **2. Docker Production**
+
 ```bash
 # Build production image
-docker build -t smsproj:latest .
+docker build -t cumapp:latest .
 
 # Run with production compose
 docker-compose -f docker-compose.yml up -d
@@ -453,6 +454,7 @@ docker-compose up -d --scale app=3
 ```
 
 #### **3. Database Migration**
+
 ```bash
 # Run migrations
 docker-compose exec app alembic upgrade head
@@ -477,7 +479,7 @@ create_admin_user('admin@company.com', 'secure_password')
 ### 🔧 **Development Workflow**
 ```bash
 # 1. Fork and clone
-git clone https://github.com/yourusername/smsproj.git
+git clone https://github.com/yourusername/cumapp.git
 
 # 2. Create feature branch
 git checkout -b feature/amazing-feature
@@ -509,7 +511,7 @@ MIT License - see [LICENSE](LICENSE) file
 
 ### 🆘 **Support**
 - **Documentation**: `/docs` endpoint when running
-- **Issues**: [GitHub Issues](https://github.com/yourusername/smsproj/issues)
+- **Issues**: [GitHub Issues](https://github.com/yourusername/cumapp/issues)
 - **Security**: security@yourdomain.com
 - **Commercial**: enterprise@yourdomain.com
 

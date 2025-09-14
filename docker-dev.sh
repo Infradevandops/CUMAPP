@@ -1,6 +1,6 @@
 #!/bin/bash
 
-# SMSPROJ Docker Development Helper Script
+# CUMAPP Docker Development Helper Script
 
 set -e
 
@@ -52,7 +52,7 @@ build() {
 
 # Start services
 start() {
-    print_status "Starting SMSPROJ services..."
+    print_status "Starting CUMAPP services..."
     docker-compose up -d
     print_success "Services started successfully"
     
@@ -65,14 +65,14 @@ start() {
 
 # Stop services
 stop() {
-    print_status "Stopping SMSPROJ services..."
+    print_status "Stopping CUMAPP services..."
     docker-compose down
     print_success "Services stopped successfully"
 }
 
 # Restart services
 restart() {
-    print_status "Restarting SMSPROJ services..."
+    print_status "Restarting CUMAPP services..."
     docker-compose restart
     print_success "Services restarted successfully"
 }
@@ -100,7 +100,7 @@ health_check() {
     fi
     
     # Check database
-    if docker-compose exec -T db pg_isready -U postgres -d smsproj_db > /dev/null 2>&1; then
+    if docker-compose exec -T db pg_isready -U postgres -d cumapp_db > /dev/null 2>&1; then
         print_success "✓ Database is ready"
     else
         print_error "✗ Database is not ready"
@@ -166,19 +166,19 @@ exec_app() {
 # Database operations
 db_shell() {
     print_status "Opening database shell..."
-    docker-compose exec db psql -U postgres -d smsproj_db
+    docker-compose exec db psql -U postgres -d cumapp_db
 }
 
 db_backup() {
     backup_file="backup_$(date +%Y%m%d_%H%M%S).sql"
     print_status "Creating database backup: $backup_file"
-    docker-compose exec -T db pg_dump -U postgres smsproj_db > "$backup_file"
+    docker-compose exec -T db pg_dump -U postgres cumapp_db > "$backup_file"
     print_success "Database backup created: $backup_file"
 }
 
 # Show help
 show_help() {
-    echo "SMSPROJ Docker Development Helper"
+    echo "CUMAPP Docker Development Helper"
     echo ""
     echo "Usage: $0 [COMMAND]"
     echo ""

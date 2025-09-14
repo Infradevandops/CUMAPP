@@ -13,7 +13,7 @@ This guide explains how to run CumApp using Docker containers.
 ### 1. Clone and Setup
 ```bash
 git clone <repository-url>
-cd smsproj
+cd cumapp
 cp .env.example .env
 ```
 

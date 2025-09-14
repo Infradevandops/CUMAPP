@@ -1,6 +1,6 @@
 #!/bin/bash
 
-# Git setup script for SMSPROJ
+# Git setup script for CUMAPP
 # This script initializes the git repository and prepares it for pushing to GitHub
 
 set -e
@@ -35,9 +35,9 @@ if ! command -v git &> /dev/null; then
 fi
 
 # Repository URL
-REPO_URL="https://github.com/Infradevandops/SMSPROJ.git"
+REPO_URL="https://github.com/Infradevandops/CUMAPP.git"
 
-print_status "Setting up Git repository for SMSPROJ..."
+print_status "Setting up Git repository for CUMAPP..."
 
 # Initialize git repository if not already initialized
 if [ ! -d ".git" ]; then
@@ -83,7 +83,7 @@ else
     
     # Check if this is the first commit
     if ! git rev-parse --verify HEAD &> /dev/null; then
-        commit_message="Initial commit: SMSPROJ communication platform
+        commit_message="Initial commit: CUMAPP communication platform
 
 - FastAPI application with Twilio, TextVerified, and Groq integration
 - Docker containerization with multi-service setup
@@ -93,7 +93,7 @@ else
 - Complete CI/CD pipeline with GitHub Actions
 - Documentation and development tools"
     else
-        commit_message="Update: Latest changes to SMSPROJ
+        commit_message="Update: Latest changes to CUMAPP
 
 - Updated application code and configuration
 - Enhanced documentation and setup scripts

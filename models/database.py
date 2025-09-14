@@ -204,7 +204,7 @@ class Usage(Base):
     provider = Column(String(50))
 
 # Database setup functions
-def create_database_engine(database_url: str = "sqlite:///smsproj.db"):
+def create_database_engine(database_url: str = "sqlite:///cumapp.db"):
     """Create database engine"""
     engine = create_engine(database_url, echo=True)
     return engine

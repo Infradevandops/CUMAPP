@@ -1,4 +1,4 @@
--- Initialize SMSPROJ database
+-- Initialize CUMAPP database
 -- This script runs when the PostgreSQL container starts for the first time
 
 -- Create extensions
@@ -50,11 +50,11 @@ CREATE INDEX IF NOT EXISTS idx_messages_created_at ON messages(created_at);
 
 -- Insert a default admin user (optional)
 INSERT INTO users (email, name) 
-VALUES ('admin@smsproj.com', 'Admin User') 
+VALUES ('admin@cumapp.com', 'Admin User') 
 ON CONFLICT (email) DO NOTHING;
 
 -- Log initialization
 DO $$
 BEGIN
-    RAISE NOTICE 'SMSPROJ database initialized successfully';
+    RAISE NOTICE 'CUMAPP database initialized successfully';
 END $$;

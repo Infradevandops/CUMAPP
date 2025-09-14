@@ -1,9 +1,9 @@
 #!/bin/bash
-# SMSPROJ Deployment Script
+# CUMAPP Deployment Script
 
 set -e
 
-echo "🚀 Starting SMSPROJ deployment..."
+echo "🚀 Starting CUMAPP deployment..."
 
 # Check if running in production
 if [ "$NODE_ENV" = "production" ] || [ "$ENVIRONMENT" = "production" ]; then
