@@ -23,6 +23,7 @@ from twilio.rest import Client
 from textverified_client import TextVerifiedClient
 from groq_client import GroqAIClient
 from mock_twilio_client import create_twilio_client, MockTwilioClient
+from enhanced_twilio_client import EnhancedTwilioClient, create_enhanced_twilio_client
 
 # Import API routes
 from api.auth_api import router as auth_router
@@ -33,6 +34,8 @@ from services.real_payment_service import real_payment_service
 from api.phone_number_api import router as phone_router
 from api.payment_api import router as payment_router
 from api.admin_api import router as admin_router
+from api.api_key_api import router as api_key_router
+from api.enhanced_communication_api import router as enhanced_comm_router
 
 # Load environment variables from .env file
 load_dotenv()
@@ -67,6 +70,7 @@ if not GROQ_API_KEY:
 
 # Initialize clients
 twilio_client = None
+enhanced_twilio_client = None
 textverified_client = None
 groq_client = None
 
@@ -75,11 +79,13 @@ USE_MOCK_TWILIO = os.getenv("USE_MOCK_TWILIO", "true").lower() == "true"
 
 if USE_MOCK_TWILIO or not all([TWILIO_ACCOUNT_SID, TWILIO_AUTH_TOKEN, TWILIO_PHONE_NUMBER]):
     twilio_client = create_twilio_client(use_mock=True)
+    enhanced_twilio_client = None
     TWILIO_PHONE_NUMBER = TWILIO_PHONE_NUMBER or "+1555000001"  # Default mock number
     logger.info("Mock Twilio client initialized successfully")
 else:
     twilio_client = Client(TWILIO_ACCOUNT_SID, TWILIO_AUTH_TOKEN)
-    logger.info("Real Twilio client initialized successfully")
+    enhanced_twilio_client = EnhancedTwilioClient(TWILIO_ACCOUNT_SID, TWILIO_AUTH_TOKEN)
+    logger.info("Real Twilio client and Enhanced Twilio client initialized successfully")
 
 if all([TEXTVERIFIED_API_KEY, TEXTVERIFIED_EMAIL]):
     textverified_client = TextVerifiedClient(TEXTVERIFIED_API_KEY, TEXTVERIFIED_EMAIL)
@@ -161,6 +167,8 @@ app.include_router(verification_router, prefix="/api/verification", tags=["verif
 app.include_router(phone_router, prefix="/api/numbers", tags=["phone_numbers"])
 app.include_router(payment_router, prefix="/api/payments", tags=["payments"])
 app.include_router(admin_router, prefix="/api/admin", tags=["admin"])
+app.include_router(api_key_router, prefix="/api/api-keys", tags=["api_keys"])
+app.include_router(enhanced_comm_router, tags=["enhanced_communication"])
 
 # Set up Jinja2 templates
 templates = Jinja2Templates(directory="templates")

@@ -364,3 +364,24 @@ class VerificationResponse(BaseModel):
     
     class Config:
         from_attributes = True
+
+class APIKeyCreate(BaseModel):
+    name: str
+    scopes: Optional[str] = None
+    expires_in_days: Optional[int] = 365 # Default to 1 year
+
+class APIKeyResponse(BaseModel):
+    id: str
+    name: str
+    key_prefix: str # First 8 chars of the key
+    scopes: Optional[str]
+    is_active: bool
+    created_at: datetime
+    expires_at: Optional[datetime]
+    last_used: Optional[datetime]
+    
+    class Config:
+        from_attributes = True
+
+class APIKeyRevoke(BaseModel):
+    id: str

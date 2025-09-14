@@ -133,14 +133,14 @@
     - Add proper error handling and logging
     - _Requirements: 1.1, 1.2, 5.1_
 
-  - [ ] 2.2 Integrate TextVerified client into main app
+  - [x] 2.2 Integrate TextVerified client into main app
     - Import and configure TextVerified client in main.py
     - Add environment variable loading for TextVerified credentials
     - Create basic verification endpoints
     - _Requirements: 1.1, 1.2, 5.1_
 
 - [ ] 3. Enhance Twilio integration
-  - [ ] 3.1 Extend Twilio client for number management and voice capabilities
+  - [x] 3.1 Extend Twilio client for number management and voice capabilities
     - Add methods for purchasing and releasing numbers
     - Implement number search by country code
     - Create webhook handlers for incoming SMS and voice calls
