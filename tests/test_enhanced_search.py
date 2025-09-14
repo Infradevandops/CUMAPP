@@ -80,7 +80,8 @@ class TestEnhancedSearch:
         assert len(result_messages) == len(mock_messages)
         assert total_count == len(mock_messages)
     
-    def test_enhanced_message_search_with_filters(self, mock_db, mock_user, mock_messages):
+    @pytest.mark.asyncio
+    async def test_enhanced_message_search_with_filters(self, mock_db, mock_user, mock_messages):
         """Test message search with filters"""
         service = ConversationService(mock_db)
         
@@ -107,7 +108,8 @@ class TestEnhancedSearch:
         assert len(result_messages) == 5
         assert total_count == 5
     
-    def test_conversation_search(self, mock_db, mock_user):
+    @pytest.mark.asyncio
+    async def test_conversation_search(self, mock_db, mock_user):
         """Test conversation search functionality"""
         service = ConversationService(mock_db)
         
@@ -136,7 +138,8 @@ class TestEnhancedSearch:
         assert len(result_conversations) == len(mock_conversations)
         assert total_count == len(mock_conversations)
     
-    def test_user_mentions_search(self, mock_db, mock_user):
+    @pytest.mark.asyncio
+    async def test_user_mentions_search(self, mock_db, mock_user):
         """Test user mentions/autocomplete functionality"""
         service = ConversationService(mock_db)
         
@@ -166,7 +169,8 @@ class TestEnhancedSearch:
         assert all("username" in user for user in result_users)
         assert all("display_name" in user for user in result_users)
     
-    def test_user_mentions_with_conversation_context(self, mock_db, mock_user, mock_conversation):
+    @pytest.mark.asyncio
+    async def test_user_mentions_with_conversation_context(self, mock_db, mock_user, mock_conversation):
         """Test user mentions with conversation context (prioritize participants)"""
         service = ConversationService(mock_db)
         
@@ -220,7 +224,8 @@ class TestInfiniteScroll:
             is_active=True
         )
     
-    def test_get_conversation_messages_with_pagination(self, mock_db, mock_user):
+    @pytest.mark.asyncio
+    async def test_get_conversation_messages_with_pagination(self, mock_db, mock_user):
         """Test getting conversation messages with pagination"""
         service = ConversationService(mock_db)
         
@@ -259,7 +264,8 @@ class TestInfiniteScroll:
             assert len(result_messages) == 25
             assert total_count == len(mock_messages)
     
-    def test_get_conversation_messages_with_cursor(self, mock_db, mock_user):
+    @pytest.mark.asyncio
+    async def test_get_conversation_messages_with_cursor(self, mock_db, mock_user):
         """Test getting conversation messages with cursor-based pagination"""
         service = ConversationService(mock_db)
         

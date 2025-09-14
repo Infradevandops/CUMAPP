@@ -2,9 +2,10 @@ import os
 import hashlib
 from datetime import datetime, timedelta
 from typing import List, Optional
-
+from fastapi import Depends
 from sqlalchemy.orm import Session
 from models.user_models import APIKey, User
+from database import get_db
 
 class APIKeyService:
     def __init__(self, db: Session):
@@ -78,9 +79,6 @@ class APIKeyService:
 
     def _hash_api_key(self, api_key: str) -> str:
         return hashlib.sha256(api_key.encode()).hexdigest()
-
-# Dependency to get DB session
-from database import get_db
 
 def get_api_key_service(db: Session = Depends(get_db)) -> APIKeyService:
     return APIKeyService(db)

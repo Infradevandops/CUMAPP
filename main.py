@@ -36,6 +36,12 @@ from api.payment_api import router as payment_router
 from api.admin_api import router as admin_router
 from api.api_key_api import router as api_key_router
 from api.enhanced_communication_api import router as enhanced_comm_router
+from api.smart_routing_api import router as smart_routing_router
+from api.integrated_verification_api import router as integrated_verification_router
+from api.communication_api import router as communication_router
+from api.subscription_api import router as subscription_router
+from api.ai_assistant_api import router as ai_assistant_router
+from api.enhanced_verification_api import router as enhanced_verification_router
 
 # Load environment variables from .env file
 load_dotenv()
@@ -169,6 +175,12 @@ app.include_router(payment_router, prefix="/api/payments", tags=["payments"])
 app.include_router(admin_router, prefix="/api/admin", tags=["admin"])
 app.include_router(api_key_router, prefix="/api/api-keys", tags=["api_keys"])
 app.include_router(enhanced_comm_router, tags=["enhanced_communication"])
+app.include_router(smart_routing_router, tags=["smart_routing"])
+app.include_router(integrated_verification_router, tags=["integrated_verification"])
+app.include_router(communication_router, tags=["communication"])
+app.include_router(subscription_router, tags=["subscription"])
+app.include_router(ai_assistant_router, tags=["ai_assistant"])
+app.include_router(enhanced_verification_router, tags=["enhanced_verification"])
 
 # Set up Jinja2 templates
 templates = Jinja2Templates(directory="templates")

@@ -4,7 +4,7 @@ from typing import List
 
 from models.user_models import APIKeyCreate, APIKeyResponse, APIKeyRevoke, User
 from services.api_key_service import APIKeyService, get_api_key_service
-from auth.jwt_handler import get_current_user
+from services.auth_service import get_current_user
 from database import get_db
 
 router = APIRouter()
