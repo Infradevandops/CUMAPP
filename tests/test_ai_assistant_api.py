@@ -31,9 +31,18 @@ class TestAIAssistantAPI:
     
     @pytest.fixture
     def mock_ai_service(self):
-        """Create mock AI Assistant service"""
+        """Create robust mock AI Assistant service with AsyncMock for async methods"""
         service = Mock(spec=AIAssistantService)
         service.conversation_contexts = {}
+        # Use AsyncMock for async methods
+        service.create_conversation_context = AsyncMock()
+        service.add_message_to_context = AsyncMock()
+        service.analyze_message_intent = AsyncMock()
+        service.generate_response_suggestions = AsyncMock()
+        service.provide_contextual_help = AsyncMock()
+        service.enhance_conversation = AsyncMock()
+        # Add other attributes as needed for health check and listing
+        service.local_model = Mock()
         return service
     
     @pytest.fixture

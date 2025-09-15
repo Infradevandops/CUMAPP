@@ -8,8 +8,8 @@ from datetime import datetime, timedelta
 from fastapi import APIRouter, Depends, HTTPException, Query
 from pydantic import BaseModel, Field
 
-from auth.auth_middleware import get_current_user
-from models.user import User
+from middleware.auth_middleware import get_current_user_from_middleware as get_current_user
+from models.user_models import User
 
 logger = logging.getLogger(__name__)
 
