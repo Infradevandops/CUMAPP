@@ -1,3 +1,4 @@
+
 #!/usr/bin/env python3
 """
 Retry Handler with Exponential Backoff for CumApp Communication Platform
@@ -324,75 +325,4 @@ class ServiceRetryConfigs:
             max_attempts=4,
             base_delay=1.0,
             max_delay=60.0,
-            strategy=RetryStrategy.EXPONENTIAL_BACKOFF,
-            retryable_exceptions=[ConnectionError, TimeoutError, BaseServiceException],
-        )
-
-    @staticmethod
-    def database() -> RetryConfig:
-        """Retry configuration for database operations"""
-        return RetryConfig(
-            max_attempts=5,
-            base_delay=0.5,
-            max_delay=30.0,
-            strategy=RetryStrategy.EXPONENTIAL_BACKOFF,
-            jitter_range=0.2,
-        )
-
-    @staticmethod
-    def ai_service() -> RetryConfig:
-        """Retry configuration for AI service calls"""
-        return RetryConfig(
-            max_attempts=3,
-            base_delay=5.0,
-            max_delay=300.0,
-            strategy=RetryStrategy.EXPONENTIAL_BACKOFF,
-        )
-
-
-# Global retry handlers for different services
-textverified_retry = RetryHandler(ServiceRetryConfigs.textverified())
-twilio_retry = RetryHandler(ServiceRetryConfigs.twilio())
-database_retry = RetryHandler(ServiceRetryConfigs.database())
-ai_service_retry = RetryHandler(ServiceRetryConfigs.ai_service())
-
-
-# Convenience decorators for specific services
-def textverified_retry_decorator(func):
-    """Decorator for TextVerified API calls"""
-
-    @wraps(func)
-    async def wrapper(*args, **kwargs):
-        return await textverified_retry.execute_with_retry(func, *args, **kwargs)
-
-    return wrapper
-
-
-def twilio_retry_decorator(func):
-    """Decorator for Twilio API calls"""
-
-    @wraps(func)
-    async def wrapper(*args, **kwargs):
-        return await twilio_retry.execute_with_retry(func, *args, **kwargs)
-
-    return wrapper
-
-
-def database_retry_decorator(func):
-    """Decorator for database operations"""
-
-    @wraps(func)
-    async def wrapper(*args, **kwargs):
-        return await database_retry.execute_with_retry(func, *args, **kwargs)
-
-    return wrapper
-
-
-def ai_service_retry_decorator(func):
-    """Decorator for AI service calls"""
-
-    @wraps(func)
-    async def wrapper(*args, **kwargs):
-        return await ai_service_retry.execute_with_retry(func, *args, **kwargs)
-
-    return wrapper
+            strategy=
