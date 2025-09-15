@@ -92,6 +92,12 @@ class User(Base):
     api_keys = relationship("APIKey", back_populates="user", cascade="all, delete-orphan")
     verification_requests = relationship("VerificationRequest", back_populates="user")
     
+    # Enhanced relationships for TextVerified migration
+    user_numbers = relationship("UserNumber", back_populates="user", cascade="all, delete-orphan")
+    enhanced_messages = relationship("EnhancedMessage", back_populates="user", cascade="all, delete-orphan")
+    inbox_folders = relationship("InboxFolder", back_populates="user", cascade="all, delete-orphan")
+    sent_messages = relationship("Message", foreign_keys="Message.sender_id", back_populates="sender")
+    
     # Note: Conversation relationships are defined in conversation_models.py to avoid circular imports
 
     __table_args__ = (

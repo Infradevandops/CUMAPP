@@ -1,0 +1,703 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Communication Dashboard - CumApp</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        .inbox-badge {
+            position: absolute;
+            top: -5px;
+            right: -5px;
+            font-size: 0.7rem;
+        }
+        .conversation-item {
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+        .conversation-item:hover {
+            background-color: #f8f9fa;
+            transform: translateX(3px);
+        }
+        .conversation-active {
+            background-color: #e3f2fd;
+            border-left: 4px solid #2196f3;
+        }
+        .message-bubble {
+            max-width: 70%;
+            word-wrap: break-word;
+        }
+        .message-sent {
+            background-color: #007bff;
+            color: white;
+            margin-left: auto;
+        }
+        .message-received {
+            background-color: #f8f9fa;
+            color: #333;
+        }
+        .ai-suggestion {
+            background-color: #fff3cd;
+            border: 1px solid #ffeaa7;
+            border-radius: 8px;
+            padding: 10px;
+            margin: 5px 0;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+        .ai-suggestion:hover {
+            background-color: #fff8e1;
+            transform: scale(1.02);
+        }
+        .chat-container {
+            height: 500px;
+            overflow-y: auto;
+            border: 1px solid #dee2e6;
+            border-radius: 8px;
+            padding: 15px;
+            background-color: #fafafa;
+        }
+        .nav-link.active {
+            background-color: rgba(255,255,255,0.1) !important;
+            border-radius: 5px;
+        }
+    </style>
+</head>
+<body class="bg-light">
+    <!-- Enhanced Navigation -->
+    <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
+        <div class="container">
+            <a class="navbar-brand fw-bold" href="/dashboard">
+                <i class="fas fa-sms me-2"></i>CumApp
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav me-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" href="/dashboard">
+                            <i class="fas fa-home me-1"></i>Dashboard
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/services">
+                            <i class="fas fa-list me-1"></i>Services
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/verifications">
+                            <i class="fas fa-check-circle me-1"></i>Verifications
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/numbers">
+                            <i class="fas fa-phone me-1"></i>Numbers
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link active" href="/communication">
+                            <i class="fas fa-comments me-1"></i>Communication
+                        </a>
+                    </li>
+                    <!-- Inbox Button -->
+                    <li class="nav-item position-relative">
+                        <a class="nav-link" href="/inbox">
+                            <i class="fas fa-inbox me-1"></i>Inbox
+                            <span class="badge bg-danger inbox-badge" id="inboxBadge" style="display: none;">0</span>
+                        </a>
+                    </li>
+                </ul>
+                <ul class="navbar-nav">
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown">
+                            <i class="fas fa-user me-1"></i><span id="userEmail">User</span>
+                        </a>
+                        <ul class="dropdown-menu">
+                            <li><a class="dropdown-item" href="#" onclick="logout()">
+                                <i class="fas fa-sign-out-alt me-2"></i>Logout
+                            </a></li>
+                        </ul>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container-fluid mt-4">
+        <!-- Page Header -->
+        <div class="row mb-4">
+            <div class="col-12">
+                <div class="d-flex justify-content-between align-items-center">
+                    <div>
+                        <h2><i class="fas fa-comments me-2"></i>Communication Dashboard</h2>
+                        <p class="text-muted">Send SMS, manage conversations, and get AI assistance</p>
+                    </div>
+                    <div>
+                        <button class="btn btn-success me-2" onclick="startNewConversation()">
+                            <i class="fas fa-plus me-1"></i>New Conversation
+                        </button>
+                        <button class="btn btn-outline-primary" onclick="refreshDashboard()">
+                            <i class="fas fa-sync-alt me-1"></i>Refresh
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="row">
+            <!-- Conversations List -->
+            <div class="col-lg-3">
+                <div class="card">
+                    <div class="card-header d-flex justify-content-between align-items-center">
+                        <h5 class="mb-0">
+                            <i class="fas fa-list me-2"></i>Conversations
+                        </h5>
+                        <span class="badge bg-primary" id="conversationCount">0</span>
+                    </div>
+                    <div class="card-body p-0" style="max-height: 600px; overflow-y: auto;">
+                        <div id="conversationsList">
+                            <div class="text-center text-muted py-4">
+                                <i class="fas fa-comments fa-3x mb-3"></i>
+                                <p>No conversations yet</p>
+                                <button class="btn btn-primary btn-sm" onclick="startNewConversation()">
+                                    Start Chatting
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Chat Interface -->
+            <div class="col-lg-6">
+                <div class="card">
+                    <div class="card-header">
+                        <div class="d-flex justify-content-between align-items-center">
+                            <div>
+                                <h5 class="mb-0" id="chatTitle">
+                                    <i class="fas fa-comment me-2"></i>Select a conversation
+                                </h5>
+                                <small class="text-muted" id="chatSubtitle">Choose a conversation to start messaging</small>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card-body p-0">
+                        <!-- Chat Messages -->
+                        <div class="chat-container" id="chatMessages">
+                            <div class="text-center text-muted py-5">
+                                <i class="fas fa-mouse-pointer fa-3x mb-3"></i>
+                                <p>Select a conversation to view messages</p>
+                            </div>
+                        </div>
+                        
+                        <!-- Message Input -->
+                        <div class="border-top p-3" id="messageInputArea" style="display: none;">
+                            <div class="row mb-2">
+                                <div class="col-md-6">
+                                    <select class="form-select form-select-sm" id="fromNumberSelect">
+                                        <option value="">Select sending number...</option>
+                                    </select>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="d-flex align-items-center">
+                                        <div class="form-check form-switch me-3">
+                                            <input class="form-check-input" type="checkbox" id="aiAssistToggle" checked>
+                                            <label class="form-check-label" for="aiAssistToggle">
+                                                <i class="fas fa-robot me-1"></i>AI Assist
+                                            </label>
+                                        </div>
+                                        <small class="text-muted">Cost: $0.01/SMS</small>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="input-group">
+                                <textarea class="form-control" id="messageInput" placeholder="Type your message..." rows="2"></textarea>
+                                <button class="btn btn-primary" type="button" onclick="sendMessage()">
+                                    <i class="fas fa-paper-plane me-1"></i>Send
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- AI Assistant & Number Management -->
+            <div class="col-lg-3">
+                <!-- AI Suggestions -->
+                <div class="card mb-3">
+                    <div class="card-header">
+                        <h6 class="mb-0">
+                            <i class="fas fa-robot me-2"></i>AI Suggestions
+                        </h6>
+                    </div>
+                    <div class="card-body">
+                        <div id="aiSuggestions">
+                            <div class="text-center text-muted py-3">
+                                <i class="fas fa-lightbulb fa-2x mb-2"></i>
+                                <p class="small">AI suggestions will appear here</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Number Management -->
+                <div class="card mb-3">
+                    <div class="card-header">
+                        <h6 class="mb-0">
+                            <i class="fas fa-phone me-2"></i>My Numbers
+                        </h6>
+                    </div>
+                    <div class="card-body">
+                        <div id="userNumbers">
+                            <div class="text-center text-muted py-3">
+                                <i class="fas fa-phone-slash fa-2x mb-2"></i>
+                                <p class="small">No numbers available</p>
+                                <a href="/numbers" class="btn btn-sm btn-primary">
+                                    <i class="fas fa-plus me-1"></i>Buy Numbers
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Quick Stats -->
+                <div class="card">
+                    <div class="card-header">
+                        <h6 class="mb-0">
+                            <i class="fas fa-chart-bar me-2"></i>Quick Stats
+                        </h6>
+                    </div>
+                    <div class="card-body">
+                        <div class="row text-center">
+                            <div class="col-6">
+                                <div class="border-end">
+                                    <h4 class="text-primary mb-0" id="messagesSent">0</h4>
+                                    <small class="text-muted">Sent Today</small>
+                                </div>
+                            </div>
+                            <div class="col-6">
+                                <h4 class="text-success mb-0" id="messagesReceived">0</h4>
+                                <small class="text-muted">Received</small>
+                            </div>
+                        </div>
+                        <hr>
+                        <div class="text-center">
+                            <h5 class="text-info mb-0" id="totalCost">$0.00</h5>
+                            <small class="text-muted">Total Cost Today</small>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        // Global variables
+        let currentConversations = [];
+        let currentConversationId = null;
+        let currentMessages = [];
+        let userNumbers = [];
+
+        // Initialize dashboard
+        document.addEventListener('DOMContentLoaded', function() {
+            checkAuth();
+            loadUserData();
+            loadUserNumbers();
+            loadConversations();
+            loadInboxBadge();
+        });
+
+        // Authentication check
+        function checkAuth() {
+            const token = localStorage.getItem('token');
+            if (!token) {
+                window.location.href = '/login';
+                return false;
+            }
+            return true;
+        }
+
+        // Load user data
+        async function loadUserData() {
+            try {
+                const demoUser = localStorage.getItem('user');
+                if (demoUser) {
+                    const user = JSON.parse(demoUser);
+                    document.getElementById('userEmail').textContent = user.email;
+                }
+            } catch (error) {
+                console.error('Error loading user data:', error);
+            }
+        }
+
+        // Load user numbers
+        async function loadUserNumbers() {
+            try {
+                const mockNumbers = [
+                    { id: 'n1', number: '+1234567890', country: 'US', status: 'active' },
+                    { id: 'n2', number: '+1234567891', country: 'US', status: 'active' }
+                ];
+
+                userNumbers = mockNumbers;
+                displayUserNumbers();
+                populateNumberSelectors();
+            } catch (error) {
+                console.error('Error loading user numbers:', error);
+            }
+        }
+
+        // Display user numbers
+        function displayUserNumbers() {
+            const container = document.getElementById('userNumbers');
+            
+            if (userNumbers.length === 0) {
+                container.innerHTML = `
+                    <div class="text-center text-muted py-3">
+                        <i class="fas fa-phone-slash fa-2x mb-2"></i>
+                        <p class="small">No numbers available</p>
+                        <a href="/numbers" class="btn btn-sm btn-primary">Buy Numbers</a>
+                    </div>
+                `;
+                return;
+            }
+
+            container.innerHTML = userNumbers.map(num => `
+                <div class="d-flex justify-content-between align-items-center mb-2 p-2 border rounded">
+                    <div>
+                        <strong>${num.number}</strong>
+                        <br><small class="text-muted">${num.country}</small>
+                    </div>
+                    <span class="badge bg-success">${num.status}</span>
+                </div>
+            `).join('');
+        }
+
+        // Populate number selectors
+        function populateNumberSelectors() {
+            const selector = document.getElementById('fromNumberSelect');
+            selector.innerHTML = '<option value="">Select number...</option>';
+            
+            userNumbers.forEach(num => {
+                selector.innerHTML += `<option value="${num.id}">${num.number}</option>`;
+            });
+        }
+
+        // Load conversations
+        async function loadConversations() {
+            try {
+                const token = localStorage.getItem('token');
+                const response = await fetch('/api/communication/conversations', {
+                    headers: token ? { 'Authorization': `Bearer ${token}` } : {}
+                });
+                
+                if (response.ok) {
+                    const conversations = await response.json();
+                    currentConversations = conversations.map(conv => ({
+                        id: conv.id,
+                        recipient: conv.recipient,
+                        lastMessage: conv.last_message,
+                        timestamp: conv.timestamp,
+                        unreadCount: conv.unread_count,
+                        fromNumber: conv.from_number
+                    }));
+                    displayConversations();
+                } else {
+                    // Fallback to mock data
+                    loadMockConversations();
+                }
+            } catch (error) {
+                console.error('Error loading conversations:', error);
+                loadMockConversations();
+            }
+        }
+
+        // Fallback mock conversations
+        function loadMockConversations() {
+            const mockConversations = [
+                {
+                    id: 'conv1',
+                    recipient: '+1234567892',
+                    lastMessage: 'Hello, how are you?',
+                    timestamp: new Date().toISOString(),
+                    unreadCount: 2,
+                    fromNumber: '+1234567890'
+                }
+            ];
+
+            currentConversations = mockConversations;
+            displayConversations();
+        }
+
+        // Display conversations
+        function displayConversations() {
+            const container = document.getElementById('conversationsList');
+            
+            if (currentConversations.length === 0) {
+                container.innerHTML = `
+                    <div class="text-center text-muted py-4">
+                        <i class="fas fa-comments fa-3x mb-3"></i>
+                        <p>No conversations yet</p>
+                        <button class="btn btn-primary btn-sm" onclick="startNewConversation()">Start Chatting</button>
+                    </div>
+                `;
+                return;
+            }
+
+            container.innerHTML = currentConversations.map(conv => `
+                <div class="conversation-item p-3 border-bottom" onclick="selectConversation('${conv.id}')">
+                    <div class="d-flex justify-content-between">
+                        <div>
+                            <strong>${conv.recipient}</strong>
+                            <p class="mb-1 text-truncate small">${conv.lastMessage}</p>
+                        </div>
+                        ${conv.unreadCount > 0 ? `<span class="badge bg-primary">${conv.unreadCount}</span>` : ''}
+                    </div>
+                </div>
+            `).join('');
+
+            document.getElementById('conversationCount').textContent = currentConversations.length;
+        }
+
+        // Select conversation
+        function selectConversation(conversationId) {
+            currentConversationId = conversationId;
+            const conversation = currentConversations.find(c => c.id === conversationId);
+            
+            if (!conversation) return;
+
+            document.getElementById('chatTitle').innerHTML = `<i class="fas fa-comment me-2"></i>${conversation.recipient}`;
+            document.getElementById('messageInputArea').style.display = 'block';
+            
+            loadConversationMessages(conversationId);
+            
+            // Get AI suggestions if enabled
+            const aiToggle = document.getElementById('aiAssistToggle');
+            if (aiToggle && aiToggle.checked) {
+                getAISuggestions(conversationId);
+            }
+        }
+
+        // Get AI suggestions
+        async function getAISuggestions(conversationId) {
+            try {
+                const token = localStorage.getItem('token');
+                const response = await fetch('/api/communication/ai-suggestions', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        ...(token ? { 'Authorization': `Bearer ${token}` } : {})
+                    },
+                    body: JSON.stringify({
+                        conversation_id: conversationId,
+                        last_messages: currentMessages.slice(-3).map(m => m.content)
+                    })
+                });
+                
+                if (response.ok) {
+                    const result = await response.json();
+                    displayAISuggestions(result.suggestions);
+                } else {
+                    displayMockAISuggestions();
+                }
+            } catch (error) {
+                console.error('Error getting AI suggestions:', error);
+                displayMockAISuggestions();
+            }
+        }
+
+        // Display AI suggestions
+        function displayAISuggestions(suggestions) {
+            const container = document.getElementById('aiSuggestions');
+            
+            if (!suggestions || suggestions.length === 0) {
+                container.innerHTML = `
+                    <div class="text-center text-muted py-3">
+                        <i class="fas fa-lightbulb fa-2x mb-2"></i>
+                        <p class="small">No suggestions available</p>
+                    </div>
+                `;
+                return;
+            }
+
+            container.innerHTML = suggestions.map(suggestion => `
+                <div class="ai-suggestion" onclick="useSuggestion('${suggestion.replace(/'/g, "\\'")}')">
+                    <i class="fas fa-magic me-2 text-warning"></i>
+                    <span class="small">${suggestion}</span>
+                </div>
+            `).join('');
+        }
+
+        // Display mock AI suggestions
+        function displayMockAISuggestions() {
+            const mockSuggestions = [
+                "That sounds great! When would be a good time?",
+                "I'd be happy to help with that.",
+                "Let me check and get back to you.",
+                "Thanks for letting me know!"
+            ];
+            displayAISuggestions(mockSuggestions);
+        }
+
+        // Use AI suggestion
+        function useSuggestion(suggestion) {
+            document.getElementById('messageInput').value = suggestion;
+        }
+
+        // Load conversation messages
+        async function loadConversationMessages(conversationId) {
+            try {
+                const token = localStorage.getItem('token');
+                const response = await fetch(`/api/communication/conversations/${conversationId}/messages`, {
+                    headers: token ? { 'Authorization': `Bearer ${token}` } : {}
+                });
+                
+                if (response.ok) {
+                    const messages = await response.json();
+                    currentMessages = messages.map(msg => ({
+                        id: msg.id,
+                        content: msg.content,
+                        timestamp: msg.timestamp,
+                        sent: msg.sent,
+                        from: msg.from_number,
+                        to: msg.to_number
+                    }));
+                    displayMessages();
+                } else {
+                    loadMockMessages();
+                }
+            } catch (error) {
+                console.error('Error loading messages:', error);
+                loadMockMessages();
+            }
+        }
+
+        // Fallback mock messages
+        function loadMockMessages() {
+            const mockMessages = [
+                {
+                    id: 'm1',
+                    content: 'Hello, how are you?',
+                    timestamp: new Date().toISOString(),
+                    sent: false
+                },
+                {
+                    id: 'm2',
+                    content: 'Hi! How can I help you?',
+                    timestamp: new Date().toISOString(),
+                    sent: true
+                }
+            ];
+
+            currentMessages = mockMessages;
+            displayMessages();
+        }
+
+        // Display messages
+        function displayMessages() {
+            const container = document.getElementById('chatMessages');
+            
+            container.innerHTML = currentMessages.map(msg => `
+                <div class="d-flex mb-3 ${msg.sent ? 'justify-content-end' : 'justify-content-start'}">
+                    <div class="message-bubble p-3 rounded ${msg.sent ? 'message-sent' : 'message-received'}">
+                        <p class="mb-0">${msg.content}</p>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        // Send message
+        async function sendMessage() {
+            const messageInput = document.getElementById('messageInput');
+            const fromNumberSelect = document.getElementById('fromNumberSelect');
+            const message = messageInput.value.trim();
+            
+            if (!message || !currentConversationId) return;
+            
+            const fromNumber = fromNumberSelect.value;
+            if (!fromNumber) {
+                alert('Please select a sending number');
+                return;
+            }
+
+            try {
+                // Add message to UI immediately
+                const newMessage = {
+                    id: 'temp_' + Date.now(),
+                    content: message,
+                    timestamp: new Date().toISOString(),
+                    sent: true
+                };
+                
+                currentMessages.push(newMessage);
+                displayMessages();
+                messageInput.value = '';
+                
+                // Send via API
+                const token = localStorage.getItem('token');
+                const conversation = currentConversations.find(c => c.id === currentConversationId);
+                
+                const response = await fetch('/api/communication/send-message', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        ...(token ? { 'Authorization': `Bearer ${token}` } : {})
+                    },
+                    body: JSON.stringify({
+                        to_number: conversation.recipient,
+                        from_number: fromNumber,
+                        content: message,
+                        conversation_id: currentConversationId
+                    })
+                });
+                
+                if (response.ok) {
+                    const result = await response.json();
+                    console.log('Message sent successfully:', result);
+                    
+                    // Update conversation last message
+                    conversation.lastMessage = message;
+                    conversation.timestamp = new Date().toISOString();
+                    displayConversations();
+                } else {
+                    console.error('Failed to send message');
+                }
+                
+            } catch (error) {
+                console.error('Error sending message:', error);
+            }
+        }
+
+        // Load inbox badge
+        async function loadInboxBadge() {
+            try {
+                const badge = document.getElementById('inboxBadge');
+                badge.textContent = '3';
+                badge.style.display = 'inline';
+            } catch (error) {
+                console.error('Error loading inbox badge:', error);
+            }
+        }
+
+        // Start new conversation
+        function startNewConversation() {
+            alert('New conversation feature coming soon!');
+        }
+
+        // Refresh dashboard
+        function refreshDashboard() {
+            loadConversations();
+            loadUserNumbers();
+            loadInboxBadge();
+        }
+
+        function logout() {
+            localStorage.removeItem('token');
+            window.location.href = '/login';
+        }
+    </script>
+</body>
+</html>

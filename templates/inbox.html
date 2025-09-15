@@ -1,0 +1,636 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Inbox - CumApp</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="styl
+    <li
+    tyle>
+        .inbox-badge {
+            position: absolute;
+            top: -5px;
+            right: -5px;
+
+       }
+        .message-item {
+            transition: al;
+            cursor: pointer;
+        }
+        .message-item:hover {
+            background-color: #f8f9fa;
+            transform: translx);
+        }
+
+bff;
+            backgro
+        }
+        .code-display {
+            font-family: 'Courier New',ace;
+            font-size: 1.2rem;
+     d;
+            color: #28a745;
+            back;
+            padding: 10px;
+            border-radius: 5px;
+            border: 2px dashed #a745;
+        }
+        .nav-link.active {
+            background-color: rgba(255,255,255,0.1) !impnt;
+            border-radius: 5px;
+        }
+    </style>
+</head>
+<body class="bg-light">
+    <!-- Enhanced Navigation with Inbox Button -->
+    <nav class="navbar navbar-expand-l
+        <div class="container">
+            <a class="n>
+
+            <
+            <button class="navbar-toggler" type="rNav">
+                <span class="navbar-toggler-icon"><
+            </button>
+            <div class="collapse navbar-collapse" id="navbar">
+                <ul class="navbar-nav me-auto">
+
+                        <a class="nav-link" hr">
+                            <i class="fas fa-home me-1"></i>Dashboard
+                        </a>
+                    </li>
+                    <li 
+                        <a class="nav-link" href="/sces">
+                            <i class="fas fces
+
+      i>
+      m">
+                        <a class="nav-link" href=">
+                            <i class="fas fa-check-
+                        </a>
+                /li>
+                    <li class="navtem">
+ers">
+                        
+      </a>
+                    </li>
+                    <!-- Inbox Button - Active -->
+                    <li class="nav-item position-re>
+                        <a class="n>
+                            <i class=">Inbox
+                 
+            </a>
+  </li>
+                </u
+                <ul class="navbar-nav">
+                    <li class="nav-item dropdown">
+               
+                            <i class="fas fa-us
+                    a>
+                        <ul class="dropd
+                            <li><a class="dropdown-item" href="#" onclick="logout()">
+                                <i class="fas fa-sign-out-alt me-2"></i>Logout
+                            </a></li>
+
+       
+                </ul>
+            </div>
+        </div>
+
+
+    <div class="container mt-4">
+        <!-- Page Header -->
+        <div class="row mb-4">
+            <div class=>
+                <div class=>
+                    <div>
+        2>
+                        <p class="text-muted">Manags</p>
+                    </div>
+                    <div>
+                        <button class=()">
+              
+utton>
+     es()">
+                            <i class="fas fa-sync-alt me-1"></i>Refresh
+                     </button>
+                    </div>
+                </div>
+</div>
+        </div
+
+        <!-- Message St
+        <div class="row mb-4">
+            <div class="col-md-3">
+                <div class="card bg-primarite">
+                    <div class="card-body text-center">
+                  "></i>
+
+       l>
+                    </div>
+                </div>
+            </div>
+
+         >
+                    <div class="card-body text-center">
+                        <i class="fas fa-key fa-2x mb
+                        <h4 id="ve>
+
+    
+              </div>
+            </div>
+            <div class="col-m
+                <div class="card bg-info text-white">
+                    <div class="card-body text-center">
+i>
+                        <
+                        <small>Conversations</small>
+                    </div>
+                </div>
+iv>
+  >
+                <ite">
+                    <div class="card-body text-center">
+                        <i class="f"></i>
+                        <h4 id="unreadMessages">0</h4>
+                        <small>Unread Messages</small>
+
+                </div>
+            </div>
+        </div>
+
+        <!-- Main Content -->
+        <div class="row">
+            <!-- Message List -->
+            <div class="col-lg-4">
+ard">
+   
+                       ter">
+                            <h5 class="mb-0>
+          ">
+                                <input type="radio" cked>
+                                <label class="btn bt>
+                                
+        
+                                <label class="btn btn-outline-s/label>
+                                
+                    "off">
+                                <label</label>
+
+   >
+                    </div>
+                    <div class="card-body p-0" style="max-height: 600px; overflow-y: auto;">
+                        <div id="messagesList">
+                            <div class="text-center text-muted py-4">
+
+                                <p>Loading messages...</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+ -->
+            <div class="col-lg-8">
+                <div class="card">
+                    <div clas">
+                       ">
+          ls
+ 
+                    </div>
+               ody">
+                        <div class="text-cen>
+                        </i>
+                            <p>Click on a message from p>
+                      iv>
+                    </div>
+                </div>
+            </div>
+  </div>
+   iv>
+
+    <script ipt>
+    <script>
+        // Global variables
+        let currentMessages = [];
+        let currentFilter = ';
+        let selectedMessageId = null;
+        let refreshInterval = null;
+
+        // Initialize page
+        document.addEventListener('DOMContentL{
+            checkAuth();
+            loadUserData();
+            loadMessages();
+            startAutoRefresh();
+        });
+
+        // Authentication check
+        function checkAuth() {
+            const token = localStorage.getItem('token');
+            if (!token) {
+                window.location.href = '/login';
+                return false;
+            }
+            return true;
+        }
+
+        // Load ua
+        async function loadUserData() {
+            try {
+                cons);
+                if (demoUs{
+                    c);
+                    document.getElementById('userEail;
+                    return;
+                }
+                
+                const token = localStorage.getItem('token');
+                const response = awaituth/me', {
+                    headers: { 'Authorization': `Bearer ${token}` }
+                });
+                
+                if (response.ok) {
+                    const user = await response.json();
+                    document.getElementById('userEmail').textContent = user.email;
+                } else {
+                    logout();
+                }
+            } catch (error) {
+                console.error('Error loading user data:', error
+            }
+        }
+
+        // Load messages
+        async function loadMessages() {
+            try {
+                // Mock messages for demotion
+                const mockMessages = [
+                    {
+                        id: 'm1',
+                        type: 'verification_code',
+                        service: 'WhatsApp',
+                        content: 'Your WhatsApp code is: 123456',
+                        timestamp: new Date().toISOString(),
+                        read: false,
+                        verificationId: '1',
+                        from: '+123'
+                    },
+                    {
+m2',
+                 ode',
+                        service: 'Google',
+                        content: 'Google verification code: 789012',
+                        timestamp: new ring(),
+         ,
+                        verificationId: 'v2',
+                        from: '+1234567891'
+                    },
+      {
+           
+                        type: 'conversation',
+                      
+                        conte',
+                        timestamp: ),
+                        read: false,
+                      67892'
+      }
+                ];
+
+                currentMessages = mockMessages
+                displayMessages();
+                updateStats();
+                updateInboxBadge();
+  
+     ror) {
+                console.error
+            }
+        }
+
+        // Display messag
+        function displayMessages() {
+            const container = document.getElementById('messagesList');
+            let filteredMessages = currentMessages;
+
+            // Apply filter
+            if (currentFilter === 'codes') {
+                filteredMessages = currentMessages.filter(m => m.type e');
+            } else if (currentFilter === 'conversations') {
+                filteredMessages = currentMessages.filter(m => m.type === 'con
+            }
+
+            if (filteredMessages.length === 0) {
+                container.innerHTML = `
+                    <div class="text-center tepy-4">
+                        <i class="fas fa-envelope-open fa-3x m></i>
+                        <p>No messages in this cap>
+                    </div>
+                `;
+     
+        }
+
+            container.inner`
+                <div class
+                    <div class="d-flex align-items-s">
+                        <div class="flex-grow-1">
+                            <div class="d-flex align-items--1">
+                                <i class="fas fa-${getMi>
+                                <strong class="mrong>
+' : ''}
+</div>
+                            <p class="mb-1 text-truncate">${m.content}</p>
+                            <div class="d-flex justify-center">
+                                <small class="text-muted">From: ${m.from}</small>
+                                <small class=">
+            >
+
+                    </div>
+                </div>
+            `).join('');
+        }
+
+ etail view
+        funcsageId) {
+            const message = currentMessages.find(m => m.id ===eId);
+            if (!message) return;
+
+           d;
+            
+            // Mark as read
+            if (!messa{
+                message.read = true;
+ssages();
+                updateStats();
+          ;
+            }
+
+            // Update detail view
+            const titleElement = document.getElementById('messageDe
+            const bodyElement = document.lBody');
+
+            titleElement.inner
+                <i class="fas fa-$)}"></i>
+              ()}
+            `;
+
+            bodyElement.innerHTML = `
+                <div class="row">
+                    <div class="col-md-6">
+                        <h6>Message Info6>
+                        <table class="table ">
+                            <tr><td><strong>>
+                 
+                  </tr>
+                            <tr><td><strong>Received:</s
+                            <tr><tdtd><td>
+                                <span class="badge bg-${message.read ? 'success' : 
+                                    ${message.read ? '
+                                </span>
+                            </td></tr>
+                            ${me
+                     
+                 v>
+                    <div class="col-md-6">
+                        <h6>Message 
+                        <div class="code-di mb-3">
+                            ${message.content}
+                        </div>
+                        <div class="d-f>
+                            ${message.type === 'verifi`
+                                <button ">
+           e
+                  tton>
+                            ` : ''}
+                            <button class="btn btn-pr">
+                                <issage
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        // Filter messages
+        function filterM
+            currentFilter = filter;
+           es();
+ }
+
+        // Update 
+        function updateStats() {
+            constngth;
+            const codes 
+            const conversations gth;
+            const unread = c
+
+            document.getElementById('totalMe= total;
+            document.getElementById('verificat
+            docu
+            dread;
+        }
+
+        // Update inbox badge
+        function  {
+            coth;
+            const badge = ');
+            
+            if (unreadCount > 0) {
+                badge.textC;
+                badge.style.display = 'inline';
+            }{
+                badge.style.display = 'none';
+            }
+      }
+
+        // Copy verificat
+        functio
+            const message = cur
+            if (!message) return;
+
+            const codeMatch = message.content.matchb/);
+            const code = codeMt;
+
+ {
+       ss');
+            });
+        }
+
+        // Copy full mess
+        function copyFullMessage() {
+            const message geId);
+            i
+
+            navigator.clipboard.> {
+                showToast('Message copie;
+            });
+        }
+
+        // Mark all  read
+        function markAllAsRead() {
+
+            di;
+            updateSt
+ );
+            showToast('All messs');
+        }
+
+        // Refresh messages
+        function refreshMessages() {
+            loadMessages();
+            showToast('Messages refreshed', 'success');
+        }
+
+        // Utility functions
+        function getMessageIcon(type) {
+            switch(type) {
+                case 'verification_code': return 'key';
+                case 'conversation'ment';
+                default: retvelope';
+            }
+        }
+
+        function getMessageColor(type
+            switch(type) {
+                case 'verification_code': return 'success';
+                case 'conversation
+';
+       
+        }
+
+        function f {
+            const date =
+            const now = newte();
+            const diffMs = now - date;
+            const diffMins = Math.floor(diffMs / 60000);
+            const diffHours = Math.floor(diffMs / 3600000);
+            const diffDays = Math.floor(diffMs / 86400000);
+
+            if (diffMins < 1) ret;
+            if (diffMins < 60) return `${diffMins}m ago`;
+            if (diffHours < 24) return `${diffHours}h ago`;
+            if (diffDays < 7) return `${di ago`;
+            return date.toLocaleDateStri);
+        }
+
+esh
+        funcresh() {
+            refreshInterval = setI> {
+              sages();
+            }, 30000);
+        }
+
+        // Show toast notification
+        function showToast(message, type = 'info') {
+            const toast = document.createElv');
+            toast.className = `alert alert-${type === 'error' ? 'danger' : type};
+            toast.style.cssText =300px;';
+            toast.innerHTML = utton>`;
+            document.body.appendChit);
+            
+            setTimeout(() => {
+                if (toast.pare {
+                    toast.remove();
+                }
+            }, 5000);
+        }
+
+        // Logout function
+        function logout() {
+            localStorage.removeItem('token');
+            localStorage.removeItem('user');
+            if (refreshInterval) {
+                clearInterval(refres
+            }
+            window.location.href = '/
+        }
+
+ unload
+        window.addEventLi=> {
+            if (r) {
+                clearInterval(referval);
+            }
+        });
+    </script>
+</body>
+</html>   
+     // Update stats from API response
+        function updateStatsFromAPI(stats) {
+            document.getElementById('totalMessages').textContent = stats.total_messages;
+            document.getElementById('verificationCodes').textContent = stats.verification_codes;
+            document.getElementById('conversations').textContent = stats.conversations;
+            document.getElementById('unreadMessages').textContent = stats.unread_messages;
+        }
+
+        // Enhanced mark all as read with API call
+        async function markAllAsReadAPI() {
+            try {
+                const token = localStorage.getItem('token');
+                const response = await fetch('/api/inbox/messages/mark-all-read', {
+                    method: 'POST',
+                    headers: token ? { 'Authorization': `Bearer ${token}` } : {}
+                });
+                
+                if (response.ok) {
+                    currentMessages.forEach(m => m.read = true);
+                    displayMessages();
+                    updateStats();
+                    updateInboxBadge();
+                    showToast('All messages marked as read', 'success');
+                } else {
+                    showToast('Failed to mark messages as read', 'error');
+                }
+            } catch (error) {
+                console.error('Error marking messages as read:', error);
+                // Fallback to local update
+                currentMessages.forEach(m => m.read = true);
+                displayMessages();
+                updateStats();
+                updateInboxBadge();
+                showToast('All messages marked as read (offline)', 'success');
+            }
+        }
+
+        // Enhanced load messages with API integration
+        async function loadMessagesFromAPI() {
+            try {
+                const token = localStorage.getItem('token');
+                const response = await fetch('/api/inbox/messages', {
+                    headers: token ? { 'Authorization': `Bearer ${token}` } : {}
+                });
+                
+                if (response.ok) {
+                    const data = await response.json();
+                    currentMessages = data.messages.map(m => ({
+                        id: m.id,
+                        type: m.type,
+                        service: m.service,
+                        content: m.content,
+                        timestamp: m.timestamp,
+                        read: m.read,
+                        verificationId: m.verification_id,
+                        from: m.from_number
+                    }));
+                    
+                    displayMessages();
+                    updateStatsFromAPI(data.stats);
+                    updateInboxBadge();
+                } else {
+                    console.warn('API failed, using existing loadMessages function');
+                    loadMessages();
+                }
+                
+            } catch (error) {
+                console.error('Error loading messages from API:', error);
+                loadMessages(); // Fallback to existing function
+            }
+        }
+
+        // Override the loadMessages function to use API
+        const originalLoadMessages = loadMessages;
+        loadMessages = loadMessagesFromAPI;
+
+        // Override markAllAsRead to use API
+        const originalMarkAllAsRead = markAllAsRead;
+        markAllAsRead = markAllAsReadAPI;
+    </script>
+</body>
+</html>

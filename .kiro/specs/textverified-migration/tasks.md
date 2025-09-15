@@ -207,33 +207,38 @@
     - Add cost calculation and optimization endpoints
     - _Requirements: 2.2, 3.2, 3.5, 6.3, 6.4_
 
-- [ ] 7. Update user interface and templates
-  - [ ] 7.1 Create verification interface
+- [x] 7. Update user interface and templates
+  - [x] 7.1 Create verification interface with inbox functionality
     - Build forms for service verification requests
     - Display temporary numbers and received SMS codes
     - Add verification status tracking and history
-    - _Requirements: 1.1, 1.2, 1.3, 1.4, 1.5_
+    - Create inbox interface for received SMS messages and codes
+    - Add inbox navigation button in main navigation
+    - Implement message filtering and search within inbox
+    - _Requirements: 1.1, 1.2, 1.3, 1.4, 1.5, 2.5_
 
-  - [ ] 7.2 Build communication dashboard
+  - [x] 7.2 Build communication dashboard with inbox integration
     - Create SMS sending interface with number selection
     - Implement conversation view with AI suggestions
     - Add number management and subscription interface
+    - Integrate inbox functionality with conversation history
+    - Add real-time message notifications and unread indicators
     - _Requirements: 2.1, 2.2, 2.5, 4.1, 6.5, 6.6_
 
-  - [ ] 7.3 Add international routing interface
+  - [x] 7.3 Add international routing interface
     - Create country selection and cost comparison views
     - Implement number recommendation display
     - Add purchase confirmation and management flows
     - _Requirements: 3.2, 3.5, 6.4_
 
 - [ ] 8. Implement database models and migrations
-  - [ ] 8.1 Create core data models
+  - [x] 8.1 Create core data models
     - Implement User, Verification, Message, and Subscription models
     - Add UserNumber model with country code tracking
     - Create database relationships and constraints
     - _Requirements: 5.1, 5.3_
 
-  - [ ] 8.2 Add database migrations and indexes
+  - [x] 8.2 Add database migrations and indexes
     - Create migration scripts for all models
     - Add performance indexes for frequently queried fields
     - Implement data retention and cleanup policies

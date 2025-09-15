@@ -42,6 +42,9 @@ from api.communication_api import router as communication_router
 from api.subscription_api import router as subscription_router
 from api.ai_assistant_api import router as ai_assistant_router
 from api.enhanced_verification_api import router as enhanced_verification_router
+from api.inbox_api import router as inbox_router
+from api.communication_dashboard_api import router as communication_dashboard_router
+from api.international_routing_api import router as international_routing_router
 
 # Load environment variables from .env file
 load_dotenv()
@@ -181,6 +184,9 @@ app.include_router(communication_router, tags=["communication"])
 app.include_router(subscription_router, tags=["subscription"])
 app.include_router(ai_assistant_router, tags=["ai_assistant"])
 app.include_router(enhanced_verification_router, tags=["enhanced_verification"])
+app.include_router(inbox_router, tags=["inbox"])
+app.include_router(communication_dashboard_router, tags=["communication_dashboard"])
+app.include_router(international_routing_router, tags=["international_routing"])
 
 # Set up Jinja2 templates
 templates = Jinja2Templates(directory="templates")
@@ -315,6 +321,16 @@ async def verifications_page(request: Request):
 async def numbers_page(request: Request):
     """Serves the phone numbers marketplace."""
     return templates.TemplateResponse("numbers.html", {"request": request})
+
+@app.get("/communication", response_class=HTMLResponse)
+async def communication_dashboard(request: Request):
+    """Serves the communication dashboard with SMS sending and AI assistance."""
+    return templates.TemplateResponse("communication_dashboard.html", {"request": request})
+
+@app.get("/routing", response_class=HTMLResponse)
+async def international_routing(request: Request):
+    """Serves the international routing interface for cost optimization."""
+    return templates.TemplateResponse("international_routing.html", {"request": request})
 
 @app.get("/billing", response_class=HTMLResponse)
 async def billing_page(request: Request):

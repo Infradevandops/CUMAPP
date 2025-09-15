@@ -1,0 +1,770 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Verifications & Inbox - CumApp</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        .inbox-badge {
+            position: absolute;
+            top: -5px;
+            right: -5px;
+            font-size: 0.7rem;
+        }
+        .message-item {
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+        .message-item:hover {
+            background-color: #f8f9fa;
+            transform: translateX(5px);
+        }
+        .message-unread {
+            border-left: 4px solid #007bff;
+            background-color: #f8f9ff;
+        }
+        .verification-card {
+            transition: transform 0.2s ease;
+        }
+        .verification-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+        }
+        .code-display {
+            font-family: 'Courier New', monospace;
+            font-size: 1.2rem;
+            font-weight: bold;
+            color: #28a745;
+            background: #f8f9fa;
+            padding: 10px;
+            border-radius: 5px;
+            border: 2px dashed #28a745;
+        }
+        .nav-link.active {
+            background-color: rgba(255,255,255,0.1) !important;
+            border-radius: 5px;
+        }
+    </style>
+</head>
+<body class="bg-light">
+    <!-- Enhanced Navigation with Inbox Button -->
+    <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
+        <div class="container">
+            <a class="navbar-brand fw-bold" href="/dashboard">
+                <i class="fas fa-sms me-2"></i>CumApp
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav me-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" href="/dashboard">
+                            <i class="fas fa-home me-1"></i>Dashboard
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/services">
+                            <i class="fas fa-list me-1"></i>Services
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link active" href="/verifications">
+                            <i class="fas fa-check-circle me-1"></i>Verifications
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/numbers">
+                            <i class="fas fa-phone me-1"></i>Numbers
+                        </a>
+                    </li>
+                    <!-- NEW: Inbox Button with Badge -->
+                    <li class="nav-item position-relative">
+                        <a class="nav-link" href="#" onclick="toggleInbox()" id="inboxButton">
+                            <i class="fas fa-inbox me-1"></i>Inbox
+                            <span class="badge bg-danger inbox-badge" id="inboxBadge" style="display: none;">0</span>
+                        </a>
+                    </li>
+                </ul>
+                <ul class="navbar-nav">
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown">
+                            <i class="fas fa-user me-1"></i><span id="userEmail">User</span>
+                        </a>
+                        <ul class="dropdown-menu">
+                            <li><a class="dropdown-item" href="#" onclick="logout()">
+                                <i class="fas fa-sign-out-alt me-2"></i>Logout
+                            </a></li>
+                        </ul>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container mt-4">
+        <!-- Page Header -->
+        <div class="row mb-4">
+            <div class="col-12">
+                <div class="d-flex justify-content-between align-items-center">
+                    <div>
+                        <h2><i class="fas fa-check-circle me-2"></i>Verifications & Messages</h2>
+                        <p class="text-muted">Manage your SMS verifications and view received messages</p>
+                    </div>
+                    <div>
+                        <button class="btn btn-primary" onclick="window.location.href='/services'">
+                            <i class="fas fa-plus me-2"></i>New Verification
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Main Content Area -->
+        <div class="row">
+            <!-- Verifications Panel -->
+            <div class="col-lg-8" id="verificationsPanel">
+                <!-- Active Verifications -->
+                <div class="card mb-4">
+                    <div class="card-header d-flex justify-content-between align-items-center">
+                        <h5 class="mb-0">
+                            <i class="fas fa-clock me-2"></i>Active Verifications
+                        </h5>
+                        <button class="btn btn-sm btn-outline-primary" onclick="refreshVerifications()">
+                            <i class="fas fa-sync-alt me-1"></i>Refresh
+                        </button>
+                    </div>
+                    <div class="card-body">
+                        <div id="activeVerifications">
+                            <div class="text-center text-muted py-4">
+                                <i class="fas fa-clock fa-3x mb-3"></i>
+                                <p>No active verifications</p>
+                                <a href="/services" class="btn btn-primary">Start New Verification</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Verification History -->
+                <div class="card">
+                    <div class="card-header">
+                        <h5 class="mb-0">
+                            <i class="fas fa-history me-2"></i>Verification History
+                        </h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="table-responsive">
+                            <table class="table table-hover">
+                                <thead>
+                                    <tr>
+                                        <th>Service</th>
+                                        <th>Number</th>
+                                        <th>Status</th>
+                                        <th>Date</th>
+                                        <th>Cost</th>
+                                        <th>Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="verificationHistory">
+                                    <tr>
+                                        <td colspan="6" class="text-center text-muted py-4">
+                                            Loading verification history...
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Inbox Panel -->
+            <div class="col-lg-4" id="inboxPanel" style="display: none;">
+                <div class="card sticky-top" style="top: 20px;">
+                    <div class="card-header d-flex justify-content-between align-items-center">
+                        <h5 class="mb-0">
+                            <i class="fas fa-inbox me-2"></i>Message Inbox
+                        </h5>
+                        <div>
+                            <button class="btn btn-sm btn-outline-secondary me-2" onclick="markAllAsRead()">
+                                <i class="fas fa-check-double me-1"></i>Mark All Read
+                            </button>
+                            <button class="btn btn-sm btn-outline-danger" onclick="toggleInbox()">
+                                <i class="fas fa-times"></i>
+                            </button>
+                        </div>
+                    </div>
+                    <div class="card-body p-0" style="max-height: 600px; overflow-y: auto;">
+                        <!-- Message Filter Tabs -->
+                        <div class="border-bottom">
+                            <ul class="nav nav-tabs nav-fill" id="messageFilter">
+                                <li class="nav-item">
+                                    <a class="nav-link active" href="#" onclick="filterMessages('all')">
+                                        All <span class="badge bg-secondary ms-1" id="allCount">0</span>
+                                    </a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link" href="#" onclick="filterMessages('codes')">
+                                        Codes <span class="badge bg-success ms-1" id="codesCount">0</span>
+                                    </a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link" href="#" onclick="filterMessages('conversations')">
+                                        Chats <span class="badge bg-info ms-1" id="chatsCount">0</span>
+                                    </a>
+                                </li>
+                            </ul>
+                        </div>
+                        
+                        <!-- Messages List -->
+                        <div id="messagesList" class="p-3">
+                            <div class="text-center text-muted py-4">
+                                <i class="fas fa-envelope-open fa-3x mb-3"></i>
+                                <p>No messages yet</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Message Detail Modal -->
+    <div class="modal fade" id="messageModal" tabindex="-1">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Message Details</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body" id="messageModalBody">
+                    <!-- Message details will be loaded here -->
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    <button type="button" class="btn btn-primary" onclick="copyMessageCode()">
+                        <i class="fas fa-copy me-1"></i>Copy Code
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Verification Detail Modal -->
+    <div class="modal fade" id="verificationModal" tabindex="-1">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Verification Details</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body" id="verificationModalBody">
+                    <!-- Verification details will be loaded here -->
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    <button type="button" class="btn btn-danger" onclick="cancelVerification()">
+                        <i class="fas fa-times me-1"></i>Cancel Verification
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        // Global variables
+        let currentMessages = [];
+        let currentFilter = 'all';
+        let currentVerificationId = null;
+        let currentMessageId = null;
+        let inboxVisible = false;
+        let refreshInterval = null;
+
+        // Initialize page
+        document.addEventListener('DOMContentLoaded', function() {
+            checkAuth();
+            loadUserData();
+            loadVerifications();
+            loadMessages();
+            startAutoRefresh();
+        });
+
+        // Authentication check
+        function checkAuth() {
+            const token = localStorage.getItem('token');
+            if (!token) {
+                window.location.href = '/login';
+                return false;
+            }
+            return true;
+        }
+
+        // Load user data
+        async function loadUserData() {
+            try {
+                const demoUser = localStorage.getItem('user');
+                if (demoUser) {
+                    const user = JSON.parse(demoUser);
+                    document.getElementById('userEmail').textContent = user.email;
+                    return;
+                }
+                
+                const token = localStorage.getItem('token');
+                const response = await fetch('/api/auth/me', {
+                    headers: { 'Authorization': `Bearer ${token}` }
+                });
+                
+                if (response.ok) {
+                    const user = await response.json();
+                    document.getElementById('userEmail').textContent = user.email;
+                } else {
+                    logout();
+                }
+            } catch (error) {
+                console.error('Error loading user data:', error);
+            }
+        }
+
+        // Toggle inbox panel
+        function toggleInbox() {
+            const panel = document.getElementById('inboxPanel');
+            const verificationsPanel = document.getElementById('verificationsPanel');
+            
+            if (inboxVisible) {
+                panel.style.display = 'none';
+                verificationsPanel.className = 'col-lg-12';
+                inboxVisible = false;
+            } else {
+                panel.style.display = 'block';
+                verificationsPanel.className = 'col-lg-8';
+                inboxVisible = true;
+                loadMessages(); // Refresh messages when opening
+            }
+        }
+
+        // Load verifications
+        async function loadVerifications() {
+            try {
+                // Mock data for demonstration
+                const mockVerifications = [
+                    {
+                        id: 'v1',
+                        service: 'WhatsApp',
+                        number: '+1234567890',
+                        status: 'active',
+                        date: new Date().toISOString(),
+                        cost: 0.50,
+                        messages: []
+                    },
+                    {
+                        id: 'v2',
+                        service: 'Google',
+                        number: '+1234567891',
+                        status: 'completed',
+                        date: '2024-01-14T10:30:00Z',
+                        cost: 0.30,
+                        messages: ['Google verification code: 789012']
+                    }
+                ];
+
+                displayActiveVerifications(mockVerifications.filter(v => v.status === 'active'));
+                displayVerificationHistory(mockVerifications);
+                
+            } catch (error) {
+                console.error('Error loading verifications:', error);
+            }
+        }
+
+        // Display active verifications
+        function displayActiveVerifications(verifications) {
+            const container = document.getElementById('activeVerifications');
+            
+            if (verifications.length === 0) {
+                container.innerHTML = `
+                    <div class="text-center text-muted py-4">
+                        <i class="fas fa-clock fa-3x mb-3"></i>
+                        <p>No active verifications</p>
+                        <a href="/services" class="btn btn-primary">Start New Verification</a>
+                    </div>
+                `;
+                return;
+            }
+
+            container.innerHTML = verifications.map(v => `
+                <div class="card verification-card mb-3">
+                    <div class="card-body">
+                        <div class="row align-items-center">
+                            <div class="col-md-3">
+                                <h6 class="mb-1">
+                                    <i class="fas fa-mobile-alt me-2"></i>${v.service}
+                                </h6>
+                                <small class="text-muted">Service</small>
+                            </div>
+                            <div class="col-md-3">
+                                <div class="code-display text-center">
+                                    ${v.number}
+                                </div>
+                                <small class="text-muted d-block text-center mt-1">Phone Number</small>
+                            </div>
+                            <div class="col-md-3">
+                                <span class="badge bg-warning fs-6">
+                                    <i class="fas fa-clock me-1"></i>Waiting for SMS
+                                </span>
+                            </div>
+                            <div class="col-md-3 text-end">
+                                <button class="btn btn-sm btn-primary me-2" onclick="viewVerification('${v.id}')">
+                                    <i class="fas fa-eye me-1"></i>Details
+                                </button>
+                                <button class="btn btn-sm btn-outline-danger" onclick="cancelVerification('${v.id}')">
+                                    <i class="fas fa-times me-1"></i>Cancel
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        // Display verification history
+        function displayVerificationHistory(verifications) {
+            const tbody = document.getElementById('verificationHistory');
+            
+            if (verifications.length === 0) {
+                tbody.innerHTML = `
+                    <tr>
+                        <td colspan="6" class="text-center text-muted py-4">
+                            No verifications yet. <a href="/services">Start your first verification</a>
+                        </td>
+                    </tr>
+                `;
+                return;
+            }
+
+            tbody.innerHTML = verifications.map(v => `
+                <tr>
+                    <td>
+                        <i class="fas fa-mobile-alt me-2"></i>${v.service}
+                    </td>
+                    <td><code>${v.number}</code></td>
+                    <td>
+                        <span class="badge bg-${getStatusColor(v.status)}">
+                            ${v.status}
+                        </span>
+                    </td>
+                    <td>${new Date(v.date).toLocaleDateString()}</td>
+                    <td>$${v.cost.toFixed(2)}</td>
+                    <td>
+                        <button class="btn btn-sm btn-outline-primary me-1" onclick="viewVerification('${v.id}')">
+                            <i class="fas fa-eye me-1"></i>Details
+                        </button>
+                        <button class="btn btn-sm btn-outline-success" onclick="viewMessages('${v.id}')">
+                            <i class="fas fa-envelope me-1"></i>Messages
+                        </button>
+                    </td>
+                </tr>
+            `).join('');
+        }
+
+        // Get status color for badges
+        function getStatusColor(status) {
+            switch(status) {
+                case 'completed': return 'success';
+                case 'active': return 'warning';
+                case 'failed': return 'danger';
+                case 'cancelled': return 'secondary';
+                default: return 'primary';
+            }
+        }
+
+        // Load messages for inbox
+        async function loadMessages() {
+            try {
+                // Mock messages for demonstration
+                const mockMessages = [
+                    {
+                        id: 'm1',
+                        type: 'verification_code',
+                        service: 'WhatsApp',
+                        content: 'Your WhatsApp code is: 123456',
+                        timestamp: new Date().toISOString(),
+                        read: false,
+                        verificationId: 'v1'
+                    },
+                    {
+                        id: 'm2',
+                        type: 'verification_code',
+                        service: 'Google',
+                        content: 'Google verification code: 789012',
+                        timestamp: '2024-01-14T10:35:00Z',
+                        read: true,
+                        verificationId: 'v2'
+                    },
+                    {
+                        id: 'm3',
+                        type: 'conversation',
+                        service: 'SMS',
+                        content: 'Hello, how are you?',
+                        timestamp: '2024-01-14T09:20:00Z',
+                        read: false,
+                        from: '+1234567892'
+                    }
+                ];
+
+                currentMessages = mockMessages;
+                displayMessages();
+                updateInboxBadge();
+                
+            } catch (error) {
+                console.error('Error loading messages:', error);
+            }
+        }
+
+        // Display messages in inbox
+        function displayMessages() {
+            const container = document.getElementById('messagesList');
+            let filteredMessages = currentMessages;
+
+            // Apply filter
+            if (currentFilter === 'codes') {
+                filteredMessages = currentMessages.filter(m => m.type === 'verification_code');
+            } else if (currentFilter === 'conversations') {
+                filteredMessages = currentMessages.filter(m => m.type === 'conversation');
+            }
+
+            // Update counts
+            document.getElementById('allCount').textContent = currentMessages.length;
+            document.getElementById('codesCount').textContent = currentMessages.filter(m => m.type === 'verification_code').length;
+            document.getElementById('chatsCount').textContent = currentMessages.filter(m => m.type === 'conversation').length;
+
+            if (filteredMessages.length === 0) {
+                container.innerHTML = `
+                    <div class="text-center text-muted py-4">
+                        <i class="fas fa-envelope-open fa-3x mb-3"></i>
+                        <p>No messages in this category</p>
+                    </div>
+                `;
+                return;
+            }
+
+            container.innerHTML = filteredMessages.map(m => `
+                <div class="message-item p-3 border-bottom ${m.read ? '' : 'message-unread'}" onclick="viewMessage('${m.id}')">
+                    <div class="d-flex justify-content-between align-items-start">
+                        <div class="flex-grow-1">
+                            <div class="d-flex align-items-center mb-1">
+                                <i class="fas fa-${getMessageIcon(m.type)} me-2 text-${getMessageColor(m.type)}"></i>
+                                <strong class="me-2">${m.service}</strong>
+                                ${!m.read ? '<span class="badge bg-primary">New</span>' : ''}
+                            </div>
+                            <p class="mb-1 text-truncate">${m.content}</p>
+                            <small class="text-muted">${formatTimestamp(m.timestamp)}</small>
+                        </div>
+                        <div class="ms-2">
+                            <button class="btn btn-sm btn-outline-primary" onclick="event.stopPropagation(); viewMessage('${m.id}')">
+                                <i class="fas fa-eye"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        // Get message icon based on type
+        function getMessageIcon(type) {
+            switch(type) {
+                case 'verification_code': return 'key';
+                case 'conversation': return 'comment';
+                default: return 'envelope';
+            }
+        }
+
+        // Get message color based on type
+        function getMessageColor(type) {
+            switch(type) {
+                case 'verification_code': return 'success';
+                case 'conversation': return 'info';
+                default: return 'primary';
+            }
+        }
+
+        // Format timestamp
+        function formatTimestamp(timestamp) {
+            const date = new Date(timestamp);
+            const now = new Date();
+            const diffMs = now - date;
+            const diffMins = Math.floor(diffMs / 60000);
+            const diffHours = Math.floor(diffMs / 3600000);
+            const diffDays = Math.floor(diffMs / 86400000);
+
+            if (diffMins < 1) return 'Just now';
+            if (diffMins < 60) return `${diffMins}m ago`;
+            if (diffHours < 24) return `${diffHours}h ago`;
+            if (diffDays < 7) return `${diffDays}d ago`;
+            return date.toLocaleDateString();
+        }
+
+        // Filter messages
+        function filterMessages(filter) {
+            currentFilter = filter;
+            
+            // Update active tab
+            document.querySelectorAll('#messageFilter .nav-link').forEach(link => {
+                link.classList.remove('active');
+            });
+            event.target.classList.add('active');
+            
+            displayMessages();
+        }
+
+        // View message details
+        function viewMessage(messageId) {
+            const message = currentMessages.find(m => m.id === messageId);
+            if (!message) return;
+
+            currentMessageId = messageId;
+            
+            // Mark as read
+            message.read = true;
+            displayMessages();
+            updateInboxBadge();
+
+            const modalBody = document.getElementById('messageModalBody');
+            modalBody.innerHTML = `
+                <div class="row">
+                    <div class="col-md-6">
+                        <h6>Message Details</h6>
+                        <table class="table table-sm">
+                            <tr><td><strong>Service:</strong></td><td>${message.service}</td></tr>
+                            <tr><td><strong>Type:</strong></td><td>${message.type.replace('_', ' ').toUpperCase()}</td></tr>
+                            <tr><td><strong>Received:</strong></td><td>${new Date(message.timestamp).toLocaleString()}</td></tr>
+                            ${message.from ? `<tr><td><strong>From:</strong></td><td>${message.from}</td></tr>` : ''}
+                            ${message.verificationId ? `<tr><td><strong>Verification:</strong></td><td>${message.verificationId}</td></tr>` : ''}
+                        </table>
+                    </div>
+                    <div class="col-md-6">
+                        <h6>Message Content</h6>
+                        <div class="code-display">
+                            ${message.content}
+                        </div>
+                        ${message.type === 'verification_code' ? `
+                            <div class="mt-3">
+                                <button class="btn btn-success btn-sm" onclick="copyMessageCode()">
+                                    <i class="fas fa-copy me-1"></i>Copy Code
+                                </button>
+                            </div>
+                        ` : ''}
+                    </div>
+                </div>
+            `;
+
+            new bootstrap.Modal(document.getElementById('messageModal')).show();
+        }
+
+        // Copy message code
+        function copyMessageCode() {
+            const message = currentMessages.find(m => m.id === currentMessageId);
+            if (!message) return;
+
+            // Extract code from message (simple regex for demo)
+            const codeMatch = message.content.match(/\b\d{4,8}\b/);
+            const code = codeMatch ? codeMatch[0] : message.content;
+
+            navigator.clipboard.writeText(code).then(() => {
+                showToast('Code copied to clipboard!', 'success');
+            }).catch(() => {
+                showToast('Failed to copy code', 'error');
+            });
+        }
+
+        // View verification details
+        function viewVerification(verificationId) {
+            currentVerificationId = verificationId;
+            // Implementation for viewing verification details
+            showToast('Verification details feature coming soon!', 'info');
+        }
+
+        // Cancel verification
+        function cancelVerification(verificationId) {
+            if (confirm('Are you sure you want to cancel this verification?')) {
+                // Implementation for canceling verification
+                showToast('Verification cancelled', 'success');
+                loadVerifications();
+            }
+        }
+
+        // Mark all messages as read
+        function markAllAsRead() {
+            currentMessages.forEach(m => m.read = true);
+            displayMessages();
+            updateInboxBadge();
+            showToast('All messages marked as read', 'success');
+        }
+
+        // Update inbox badge
+        function updateInboxBadge() {
+            const unreadCount = currentMessages.filter(m => !m.read).length;
+            const badge = document.getElementById('inboxBadge');
+            
+            if (unreadCount > 0) {
+                badge.textContent = unreadCount;
+                badge.style.display = 'inline';
+            } else {
+                badge.style.display = 'none';
+            }
+        }
+
+        // Refresh verifications
+        function refreshVerifications() {
+            loadVerifications();
+            loadMessages();
+            showToast('Data refreshed', 'success');
+        }
+
+        // Start auto-refresh
+        function startAutoRefresh() {
+            refreshInterval = setInterval(() => {
+                loadVerifications();
+                loadMessages();
+            }, 30000); // Refresh every 30 seconds
+        }
+
+        // Show toast notification
+        function showToast(message, type = 'info') {
+            // Simple toast implementation
+            const toast = document.createElement('div');
+            toast.className = `alert alert-${type === 'error' ? 'danger' : type} position-fixed`;
+            toast.style.cssText = 'top: 20px; right: 20px; z-index: 9999; min-width: 300px;';
+            toast.innerHTML = `
+                ${message}
+                <button type="button" class="btn-close" onclick="this.parentElement.remove()"></button>
+            `;
+            document.body.appendChild(toast);
+            
+            setTimeout(() => {
+                if (toast.parentElement) {
+                    toast.remove();
+                }
+            }, 5000);
+        }
+
+        // Logout function
+        function logout() {
+            localStorage.removeItem('token');
+            localStorage.removeItem('user');
+            if (refreshInterval) {
+                clearInterval(refreshInterval);
+            }
+            window.location.href = '/login';
+        }
+
+        // Cleanup on page unload
+        window.addEventListener('beforeunload', () => {
+            if (refreshInterval) {
+                clearInterval(refreshInterval);
+            }
+        });
+    </script>
+</body>
+</html>
