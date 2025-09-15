@@ -7,6 +7,10 @@
 - [x] Create `/login` page with authentication
 - [x] Add user dashboard after login
 - [x] Implement session management
+- [x] Switch dashboard and homepage to unified dark/grey theme
+- [x] Add sidebar navigation to dashboard (Bootstrap 5.3)
+- [x] Use red accent color for primary actions
+- [x] Update all UI for modern, accessible look
 
 ### **Task 2: Service Selection Interface** ✅
 - [x] Create `/services` page
@@ -43,7 +47,21 @@
 ## 📋 **CURRENT STATUS**
 - ✅ Backend APIs complete
 - ✅ Database models ready
-- ❌ Frontend UI missing
+- ✅ Unified dark/grey theme applied (dashboard & homepage)
+- ✅ Sidebar navigation and red accent color implemented
 - ❌ User workflows incomplete
 
-**Next: Build Task 1 - Registration/Login System**
+**Next: Continue building user workflows and dashboard features**
+
+## 🗂️ Upcoming Dashboard Features (2025)
+
+- [ ] User dashboard: history and usage
+	- Show history for used services/numbers, recent calls/verifications, and usage details.
+- [ ] User dashboard: recent calls/verifications
+	- View recent calls and verifications performed by the user.
+- [ ] User dashboard: number/service mapping
+	- Show which number was used for which service.
+- [ ] User dashboard: service/number mapping
+	- Show which service was used for which number.
+- [ ] User dashboard: export history
+	- Export user history and usage data (CSV/JSON).

@@ -1,6 +1,7 @@
 """
 Tests for main FastAPI application endpoints.
 """
+
 import pytest
 from fastapi.testclient import TestClient
 
@@ -9,7 +10,7 @@ def test_health_endpoint(client):
     """Test the health check endpoint."""
     response = client.get("/health")
     assert response.status_code == 200
-    
+
     data = response.json()
     assert data["status"] == "healthy"
     assert data["app_name"] == "CumApp"
@@ -21,7 +22,7 @@ def test_app_info_endpoint(client):
     """Test the application info endpoint."""
     response = client.get("/api/info")
     assert response.status_code == 200
-    
+
     data = response.json()
     assert data["app_name"] == "CumApp"
     assert data["version"] == "1.0.0"
@@ -49,9 +50,9 @@ def test_openapi_docs(client):
     """Test that OpenAPI documentation is accessible."""
     response = client.get("/docs")
     assert response.status_code == 200
-    
+
     response = client.get("/openapi.json")
     assert response.status_code == 200
-    
+
     data = response.json()
     assert data["info"]["title"] == "CumApp - Communication Platform"

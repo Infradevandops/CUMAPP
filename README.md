@@ -6,7 +6,7 @@
 [![Security](https://img.shields.io/badge/security-hardened-brightgreen.svg)](#security)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
-**Production-ready SMS verification platform** with modern Tailwind UI, real API integration, and React Native mobile app planned.
+**Production-ready SMS verification platform** with modern dark/grey Bootstrap 5.3 UI, real API integration, and React Native mobile app planned.
 
 ---
 
@@ -52,9 +52,9 @@ open http://localhost:8000
 - **Docker Ready**: Production deployment
 
 ### Frontend Technology
-- **Current**: Tailwind CSS + Vanilla JS
+- **Current**: Bootstrap 5.3 (dark/grey theme) + Tailwind CSS (landing) + Vanilla JS
 - **Planned**: React Native mobile app
-- **Features**: Responsive design, modern UI/UX
+- **Features**: Responsive design, modern UI/UX, sidebar navigation, red accent color
 
 ---
 
@@ -82,6 +82,13 @@ token = csrf_protection.generate_token(session_id)
 ---
 
 ## 🚀 Features
+
+### 🎨 **Modern UI Theme**
+- Unified dark/grey theme across dashboard and homepage
+- Sidebar navigation for user dashboard
+- Red accent color for primary actions and highlights
+- Bootstrap 5.3 for dashboard, Tailwind CSS for landing page
+- Responsive, accessible, and visually appealing design
 
 ### 📱 **SMS & Verification**
 - **TextVerified Integration**: 100+ services (WhatsApp, Google, etc.)

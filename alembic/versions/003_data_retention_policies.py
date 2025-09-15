@@ -5,54 +5,63 @@ Revises: 002_performance_indexes
 Create Date: 2024-01-15 12:00:00.000000
 
 """
+
 from alembic import op
 import sqlalchemy as sa
 
 # revision identifiers, used by Alembic.
-revision = '003_data_retention_policies'
-down_revision = '002_performance_indexes'
+revision = "003_data_retention_policies"
+down_revision = "002_performance_indexes"
 branch_labels = None
 depends_on = None
 
+
 def upgrade():
     """Add data retention and cleanup policies"""
-    
+
     # Create data retention configuration table
-    op.create_table('data_retention_policies',
-        sa.Column('id', sa.String(), nullable=False),
-        sa.Column('table_name', sa.String(100), nullable=False),
-        sa.Column('retention_days', sa.Integer(), nullable=False),
-        sa.Column('cleanup_field', sa.String(100), nullable=False),
-        sa.Column('conditions', sa.JSON(), nullable=True),
-        sa.Column('is_active', sa.Boolean(), nullable=True, default=True),
-        sa.Column('last_cleanup', sa.DateTime(), nullable=True),
-        sa.Column('records_cleaned', sa.Integer(), nullable=True, default=0),
-        sa.Column('created_at', sa.DateTime(), nullable=True),
-        sa.Column('updated_at', sa.DateTime(), nullable=True),
-        sa.PrimaryKeyConstraint('id'),
-        sa.UniqueConstraint('table_name')
+    op.create_table(
+        "data_retention_policies",
+        sa.Column("id", sa.String(), nullable=False),
+        sa.Column("table_name", sa.String(100), nullable=False),
+        sa.Column("retention_days", sa.Integer(), nullable=False),
+        sa.Column("cleanup_field", sa.String(100), nullable=False),
+        sa.Column("conditions", sa.JSON(), nullable=True),
+        sa.Column("is_active", sa.Boolean(), nullable=True, default=True),
+        sa.Column("last_cleanup", sa.DateTime(), nullable=True),
+        sa.Column("records_cleaned", sa.Integer(), nullable=True, default=0),
+        sa.Column("created_at", sa.DateTime(), nullable=True),
+        sa.Column("updated_at", sa.DateTime(), nullable=True),
+        sa.PrimaryKeyConstraint("id"),
+        sa.UniqueConstraint("table_name"),
     )
-    
+
     # Create cleanup log table
-    op.create_table('cleanup_logs',
-        sa.Column('id', sa.String(), nullable=False),
-        sa.Column('table_name', sa.String(100), nullable=False),
-        sa.Column('cleanup_date', sa.DateTime(), nullable=False),
-        sa.Column('records_deleted', sa.Integer(), nullable=False),
-        sa.Column('retention_days', sa.Integer(), nullable=False),
-        sa.Column('execution_time_ms', sa.Integer(), nullable=True),
-        sa.Column('status', sa.String(20), nullable=True, default='completed'),
-        sa.Column('error_message', sa.Text(), nullable=True),
-        sa.Column('created_at', sa.DateTime(), nullable=True),
-        sa.PrimaryKeyConstraint('id')
+    op.create_table(
+        "cleanup_logs",
+        sa.Column("id", sa.String(), nullable=False),
+        sa.Column("table_name", sa.String(100), nullable=False),
+        sa.Column("cleanup_date", sa.DateTime(), nullable=False),
+        sa.Column("records_deleted", sa.Integer(), nullable=False),
+        sa.Column("retention_days", sa.Integer(), nullable=False),
+        sa.Column("execution_time_ms", sa.Integer(), nullable=True),
+        sa.Column("status", sa.String(20), nullable=True, default="completed"),
+        sa.Column("error_message", sa.Text(), nullable=True),
+        sa.Column("created_at", sa.DateTime(), nullable=True),
+        sa.PrimaryKeyConstraint("id"),
     )
-    
+
     # Create indexes for cleanup operations
-    op.create_index('idx_cleanup_logs_table_date', 'cleanup_logs', ['table_name', 'cleanup_date'])
-    op.create_index('idx_retention_policies_active', 'data_retention_policies', ['is_active'])
-    
+    op.create_index(
+        "idx_cleanup_logs_table_date", "cleanup_logs", ["table_name", "cleanup_date"]
+    )
+    op.create_index(
+        "idx_retention_policies_active", "data_retention_policies", ["is_active"]
+    )
+
     # Insert default retention policies
-    op.execute("""
+    op.execute(
+        """
         INSERT INTO data_retention_policies (id, table_name, retention_days, cleanup_field, conditions, is_active, created_at, updated_at)
         VALUES 
         -- Enhanced messages retention (1 year for regular messages, 2 years for verification codes)
@@ -78,10 +87,12 @@ def upgrade():
         -- Cleanup logs retention (1 year)
         ('policy_cleanup_logs', 'cleanup_logs', 365, 'created_at', 
          '{}', true, NOW(), NOW())
-    """)
-    
+    """
+    )
+
     # Create stored procedure for automated cleanup
-    op.execute("""
+    op.execute(
+        """
         CREATE OR REPLACE FUNCTION execute_data_cleanup()
         RETURNS TABLE(
             table_name TEXT,
@@ -210,10 +221,12 @@ def upgrade():
             END LOOP;
         END;
         $$ LANGUAGE plpgsql;
-    """)
-    
+    """
+    )
+
     # Create function to get cleanup statistics
-    op.execute("""
+    op.execute(
+        """
         CREATE OR REPLACE FUNCTION get_cleanup_stats(days_back INTEGER DEFAULT 30)
         RETURNS TABLE(
             table_name TEXT,
@@ -238,15 +251,17 @@ def upgrade():
             ORDER BY cl.table_name;
         END;
         $$ LANGUAGE plpgsql;
-    """)
+    """
+    )
+
 
 def downgrade():
     """Remove data retention and cleanup policies"""
-    
+
     # Drop functions
     op.execute("DROP FUNCTION IF EXISTS execute_data_cleanup()")
     op.execute("DROP FUNCTION IF EXISTS get_cleanup_stats(INTEGER)")
-    
+
     # Drop tables
-    op.drop_table('cleanup_logs')
-    op.drop_table('data_retention_policies')
+    op.drop_table("cleanup_logs")
+    op.drop_table("data_retention_policies")

@@ -14,8 +14,7 @@ logger = logging.getLogger(__name__)
 
 # Database URL configuration
 DATABASE_URL = os.getenv(
-    "DATABASE_URL", 
-    "sqlite:///./cumapp.db"  # Default to SQLite for development
+    "DATABASE_URL", "sqlite:///./cumapp.db"  # Default to SQLite for development
 )
 
 # Handle PostgreSQL URL format for production
@@ -29,7 +28,7 @@ if DATABASE_URL.startswith("sqlite"):
         DATABASE_URL,
         connect_args={"check_same_thread": False},
         poolclass=StaticPool,
-        echo=os.getenv("SQL_DEBUG", "false").lower() == "true"
+        echo=os.getenv("SQL_DEBUG", "false").lower() == "true",
     )
 else:
     # PostgreSQL configuration for production
@@ -37,15 +36,15 @@ else:
         DATABASE_URL,
         pool_pre_ping=True,
         pool_recycle=300,
-        echo=os.getenv("SQL_DEBUG", "false").lower() == "true"
+        echo=os.getenv("SQL_DEBUG", "false").lower() == "true",
     )
 
 # Create session factory
 SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
 
-# Import all models to ensure they're registered with Base metadata
-from models.user_models import Base, User, Session as UserSession, APIKey, VerificationRequest, PhoneNumber
-from models.conversation_models import Conversation, Message, conversation_participants
+# Base for declarative models
+Base = declarative_base()
+
 
 def get_db() -> Generator[Session, None, None]:
     """
@@ -61,16 +60,29 @@ def get_db() -> Generator[Session, None, None]:
     finally:
         db.close()
 
+
 def create_tables():
     """
     Create all tables in the database
     """
     try:
+        # Import all models here to ensure they are registered with Base
+        from models import (
+            user_models,
+            conversation_models,
+            communication_models,
+            enhanced_models,
+            phone_number_models,
+            subscription_models,
+            verification_models,
+        )
+
         Base.metadata.create_all(bind=engine)
         logger.info("Database tables created successfully")
     except Exception as e:
         logger.error(f"Failed to create database tables: {e}")
         raise
+
 
 def check_database_connection() -> bool:
     """
@@ -78,6 +90,7 @@ def check_database_connection() -> bool:
     """
     try:
         from sqlalchemy import text
+
         with engine.connect() as connection:
             connection.execute(text("SELECT 1"))
         logger.info("Database connection successful")

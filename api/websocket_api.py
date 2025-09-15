@@ -2,7 +2,15 @@
 """
 WebSocket API endpoints for real-time communication
 """
-from fastapi import APIRouter, WebSocket, WebSocketDisconnect, Query, Depends, HTTPException, status
+from fastapi import (
+    APIRouter,
+    WebSocket,
+    WebSocketDisconnect,
+    Query,
+    Depends,
+    HTTPException,
+    status,
+)
 from fastapi.responses import HTMLResponse
 from typing import Optional
 import logging
@@ -15,14 +23,15 @@ logger = logging.getLogger(__name__)
 
 router = APIRouter(prefix="/ws", tags=["websocket"])
 
+
 @router.websocket("/chat")
 async def websocket_endpoint(
     websocket: WebSocket,
-    token: Optional[str] = Query(None, description="JWT token for authentication")
+    token: Optional[str] = Query(None, description="JWT token for authentication"),
 ):
     """
     WebSocket endpoint for real-time chat communication
-    
+
     Authentication:
     - Pass JWT token as query parameter: /ws/chat?token=your_jwt_token
     - Or send token in first message: {"type": "auth", "token": "your_jwt_token"}
@@ -32,23 +41,33 @@ async def websocket_endpoint(
         await websocket.accept()
         try:
             import json
+
             data = await websocket.receive_text()
             message = json.loads(data)
             if message.get("type") == "auth":
                 token = message.get("token")
             else:
-                await websocket.close(code=status.WS_1008_POLICY_VIOLATION, reason="Authentication required")
+                await websocket.close(
+                    code=status.WS_1008_POLICY_VIOLATION,
+                    reason="Authentication required",
+                )
                 return
         except Exception:
-            await websocket.close(code=status.WS_1008_POLICY_VIOLATION, reason="Invalid authentication message")
+            await websocket.close(
+                code=status.WS_1008_POLICY_VIOLATION,
+                reason="Invalid authentication message",
+            )
             return
-    
+
     if not token:
-        await websocket.close(code=status.WS_1008_POLICY_VIOLATION, reason="Token required")
+        await websocket.close(
+            code=status.WS_1008_POLICY_VIOLATION, reason="Token required"
+        )
         return
-    
+
     # Handle WebSocket connection with authentication
     await websocket_handler.handle_websocket(websocket, token)
+
 
 @router.get("/status")
 async def websocket_status(current_user: User = Depends(get_current_active_user)):
@@ -58,71 +77,74 @@ async def websocket_status(current_user: User = Depends(get_current_active_user)
     try:
         online_users = connection_manager.get_online_users()
         is_online = connection_manager.is_user_online(current_user.id)
-        
+
         return {
             "user_id": current_user.id,
             "is_connected": is_online,
             "online_users_count": len(online_users),
             "online_users": online_users[:10],  # Limit for privacy
-            "websocket_url": "/ws/chat"
+            "websocket_url": "/ws/chat",
         }
-        
+
     except Exception as e:
         logger.error(f"Error getting WebSocket status: {e}")
         raise HTTPException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-            detail="Failed to get WebSocket status"
+            detail="Failed to get WebSocket status",
         )
+
 
 @router.post("/broadcast/{conversation_id}")
 async def broadcast_to_conversation(
     conversation_id: str,
     message: dict,
-    current_user: User = Depends(get_current_active_user)
+    current_user: User = Depends(get_current_active_user),
 ):
     """
     Broadcast a message to all users in a conversation (admin/testing endpoint)
     """
     try:
         # Verify user has access to conversation
-        from database import get_db
+        from core.database import get_db
         from services.conversation_service import ConversationService
-        
+
         db = next(get_db())
         conversation_service = ConversationService(db)
-        
-        conversation = await conversation_service.get_conversation(conversation_id, current_user.id)
+
+        conversation = await conversation_service.get_conversation(
+            conversation_id, current_user.id
+        )
         if not conversation:
             raise HTTPException(
-                status_code=status.HTTP_404_NOT_FOUND,
-                detail="Conversation not found"
+                status_code=status.HTTP_404_NOT_FOUND, detail="Conversation not found"
             )
-        
+
         # Broadcast message
         sent_count = await connection_manager.send_to_conversation(
-            conversation_id, 
+            conversation_id,
             {
                 "type": "broadcast",
                 "message": message,
                 "from_user": current_user.id,
-                "timestamp": "now"
-            }
+                "timestamp": "now",
+            },
         )
-        
+
         return {
             "success": True,
             "sent_to": sent_count,
-            "conversation_id": conversation_id
+            "conversation_id": conversation_id,
         }
-        
+
     except HTTPException:
         raise
     except Exception as e:
         logger.error(f"Error broadcasting to conversation: {e}")
         raise HTTPException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-            detail="Failed to broadcast message"
+            detail="Failed to broadcast message",
         )
+
 
 @router.get("/health")
 async def websocket_health():
@@ -130,7 +152,7 @@ async def websocket_health():
     WebSocket service health check
     """
     online_count = len(connection_manager.get_online_users())
-    
+
     return {
         "status": "healthy",
         "service": "websocket",
@@ -139,12 +161,13 @@ async def websocket_health():
         "features": [
             "jwt_authentication",
             "real_time_messaging",
-            "typing_indicators", 
+            "typing_indicators",
             "presence_tracking",
             "message_delivery",
-            "conversation_broadcasting"
-        ]
+            "conversation_broadcasting",
+        ],
     }
+
 
 # WebSocket connection test page
 @router.get("/test", response_class=HTMLResponse)

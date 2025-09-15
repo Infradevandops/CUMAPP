@@ -7,142 +7,169 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
 </head>
-<body class="bg-light">
-    <!-- Navigation -->
-    <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
-        <div class="container">
-            <a class="navbar-brand fw-bold" href="/dashboard">
-                <i class="fas fa-sms me-2"></i>CumApp
-            </a>
-            
-            <div class="navbar-nav ms-auto">
-                <div class="nav-item dropdown">
-                    <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown">
+<body class="bg-dark text-light">
+    <div class="d-flex" style="min-height: 100vh;">
+        <!-- Sidebar -->
+        <nav class="sidebar bg-secondary text-light p-3" style="width: 250px; min-height: 100vh;">
+            <div class="mb-4 text-center">
+                <a class="navbar-brand fw-bold text-danger fs-4" href="/dashboard">
+                    <i class="fas fa-sms me-2"></i>CumApp
+                </a>
+            </div>
+            <ul class="nav flex-column mb-auto">
+                <li class="nav-item mb-2">
+                    <a href="/dashboard" class="nav-link text-light">
+                        <i class="fas fa-home me-2"></i>Dashboard
+                    </a>
+                </li>
+                <li class="nav-item mb-2">
+                    <a href="/services" class="nav-link text-light">
+                        <i class="fas fa-plus me-2"></i>New Verification
+                    </a>
+                </li>
+                <li class="nav-item mb-2">
+                    <a href="/numbers" class="nav-link text-light">
+                        <i class="fas fa-shopping-cart me-2"></i>Buy Numbers
+                    </a>
+                </li>
+                <li class="nav-item mb-2">
+                    <a href="/verifications" class="nav-link text-light">
+                        <i class="fas fa-list me-2"></i>History
+                    </a>
+                </li>
+                <li class="nav-item mb-2">
+                    <a href="/billing" class="nav-link text-light">
+                        <i class="fas fa-credit-card me-2"></i>Billing
+                    </a>
+                </li>
+            </ul>
+            <div class="mt-auto text-center">
+                <div class="dropdown">
+                    <a class="btn btn-outline-danger dropdown-toggle w-100" href="#" role="button" data-bs-toggle="dropdown">
                         <i class="fas fa-user me-1"></i><span id="userEmail">User</span>
                     </a>
                     <ul class="dropdown-menu">
-                        <li><a class="dropdown-item" href="#" onclick="logout()">
+                        <li><a class="dropdown-item text-danger" href="#" onclick="logout()">
                             <i class="fas fa-sign-out-alt me-2"></i>Logout
                         </a></li>
                     </ul>
                 </div>
             </div>
-        </div>
-    </nav>
+        </nav>
 
-    <div class="container mt-4">
-        <!-- Stats Cards -->
-        <div class="row mb-4">
-            <div class="col-md-3">
-                <div class="card bg-primary text-white">
-                    <div class="card-body">
-                        <div class="d-flex justify-content-between">
-                            <div>
-                                <h6 class="card-title">Credits</h6>
-                                <h3 id="creditsBalance">$0.00</h3>
+        <!-- Main Content -->
+        <div class="flex-grow-1 p-4">
+            <!-- Stats Cards -->
+            <div class="row mb-4">
+                <div class="col-md-3">
+                    <div class="card bg-danger text-white shadow">
+                        <div class="card-body">
+                            <div class="d-flex justify-content-between">
+                                <div>
+                                    <h6 class="card-title">Credits</h6>
+                                    <h3 id="creditsBalance">$0.00</h3>
+                                </div>
+                                <i class="fas fa-wallet fa-2x opacity-75"></i>
                             </div>
-                            <i class="fas fa-wallet fa-2x opacity-75"></i>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="card bg-secondary text-white shadow">
+                        <div class="card-body">
+                            <div class="d-flex justify-content-between">
+                                <div>
+                                    <h6 class="card-title">Active Numbers</h6>
+                                    <h3 id="activeNumbers">0</h3>
+                                </div>
+                                <i class="fas fa-phone fa-2x opacity-75"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="card bg-dark text-danger shadow">
+                        <div class="card-body">
+                            <div class="d-flex justify-content-between">
+                                <div>
+                                    <h6 class="card-title">Verifications</h6>
+                                    <h3 id="totalVerifications">0</h3>
+                                </div>
+                                <i class="fas fa-check-circle fa-2x opacity-75"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="card bg-dark text-danger shadow">
+                        <div class="card-body">
+                            <div class="d-flex justify-content-between">
+                                <div>
+                                    <h6 class="card-title">Success Rate</h6>
+                                    <h3 id="successRate">100%</h3>
+                                </div>
+                                <i class="fas fa-chart-line fa-2x opacity-75"></i>
+                            </div>
                         </div>
                     </div>
                 </div>
             </div>
-            
-            <div class="col-md-3">
-                <div class="card bg-success text-white">
-                    <div class="card-body">
-                        <div class="d-flex justify-content-between">
-                            <div>
-                                <h6 class="card-title">Active Numbers</h6>
-                                <h3 id="activeNumbers">0</h3>
-                            </div>
-                            <i class="fas fa-phone fa-2x opacity-75"></i>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            
-            <div class="col-md-3">
-                <div class="card bg-info text-white">
-                    <div class="card-body">
-                        <div class="d-flex justify-content-between">
-                            <div>
-                                <h6 class="card-title">Verifications</h6>
-                                <h3 id="totalVerifications">0</h3>
-                            </div>
-                            <i class="fas fa-check-circle fa-2x opacity-75"></i>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            
-            <div class="col-md-3">
-                <div class="card bg-warning text-white">
-                    <div class="card-body">
-                        <div class="d-flex justify-content-between">
-                            <div>
-                                <h6 class="card-title">Success Rate</h6>
-                                <h3 id="successRate">100%</h3>
-                            </div>
-                            <i class="fas fa-chart-line fa-2x opacity-75"></i>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
 
-        <!-- Quick Actions -->
-        <div class="row mb-4">
-            <div class="col-12">
-                <div class="card">
-                    <div class="card-header">
-                        <h5 class="mb-0">Quick Actions</h5>
-                    </div>
-                    <div class="card-body">
-                        <div class="row">
-                            <div class="col-md-3 mb-3">
-                                <a href="/services" class="btn btn-primary w-100">
-                                    <i class="fas fa-plus me-2"></i>New Verification
-                                </a>
-                            </div>
-                            <div class="col-md-3 mb-3">
-                                <a href="/numbers" class="btn btn-success w-100">
-                                    <i class="fas fa-shopping-cart me-2"></i>Buy Numbers
-                                </a>
-                            </div>
-                            <div class="col-md-3 mb-3">
-                                <a href="/verifications" class="btn btn-info w-100">
-                                    <i class="fas fa-list me-2"></i>View History
-                                </a>
-                            </div>
-                            <div class="col-md-3 mb-3">
-                                <a href="/billing" class="btn btn-warning w-100">
-                                    <i class="fas fa-credit-card me-2"></i>Add Credits
-                                </a>
+            <!-- Quick Actions -->
+            <div class="row mb-4">
+                <div class="col-12">
+                    <div class="card bg-secondary text-light shadow">
+                        <div class="card-header border-bottom border-danger">
+                            <h5 class="mb-0 text-danger">Quick Actions</h5>
+                        </div>
+                        <div class="card-body">
+                            <div class="row">
+                                <div class="col-md-3 mb-3">
+                                    <a href="/services" class="btn btn-danger w-100">
+                                        <i class="fas fa-plus me-2"></i>New Verification
+                                    </a>
+                                </div>
+                                <div class="col-md-3 mb-3">
+                                    <a href="/numbers" class="btn btn-outline-danger w-100">
+                                        <i class="fas fa-shopping-cart me-2"></i>Buy Numbers
+                                    </a>
+                                </div>
+                                <div class="col-md-3 mb-3">
+                                    <a href="/verifications" class="btn btn-dark text-danger w-100">
+                                        <i class="fas fa-list me-2"></i>View History
+                                    </a>
+                                </div>
+                                <div class="col-md-3 mb-3">
+                                    <a href="/billing" class="btn btn-outline-danger w-100">
+                                        <i class="fas fa-credit-card me-2"></i>Add Credits
+                                    </a>
+                                </div>
                             </div>
                         </div>
                     </div>
                 </div>
             </div>
-        </div>
 
-        <!-- Recent Activity -->
-        <div class="row">
-            <div class="col-12">
-                <div class="card">
-                    <div class="card-header">
-                        <h5 class="mb-0">Recent Activity</h5>
-                    </div>
-                    <div class="card-body">
-                        <div id="recentActivity">
-                            <div class="text-center text-muted py-4">
-                                <i class="fas fa-inbox fa-3x mb-3"></i>
-                                <p>No recent activity. Start your first verification!</p>
+            <!-- Recent Activity -->
+            <div class="row">
+                <div class="col-12">
+                    <div class="card bg-dark text-light shadow">
+                        <div class="card-header border-bottom border-danger">
+                            <h5 class="mb-0 text-danger">Recent Activity</h5>
+                        </div>
+                        <div class="card-body">
+                            <div id="recentActivity">
+                                <div class="text-center text-muted py-4">
+                                    <i class="fas fa-inbox fa-3x mb-3 text-danger"></i>
+                                    <p>No recent activity. Start your first verification!</p>
+                                </div>
                             </div>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
+    </div>
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
@@ -164,11 +191,9 @@
                     document.getElementById('creditsBalance').textContent = `$${user.credits}`;
                     return;
                 }
-                
                 const response = await fetch('/api/auth/me', {
                     headers: { 'Authorization': `Bearer ${token}` }
                 });
-                
                 if (response.ok) {
                     const user = await response.json();
                     document.getElementById('userEmail').textContent = user.email;
