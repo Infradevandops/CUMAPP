@@ -25,7 +25,7 @@ from sqlalchemy import (
 from sqlalchemy.orm import relationship
 from pydantic import BaseModel, Field, validator
 
-from database import Base
+from core.database import Base
 
 
 # Enhanced Enums
