@@ -1210,7 +1210,7 @@ class SubscriptionService:
 
         return recommendations
 
-    def generate_invoice(self, user_id: str, invoice_date: datetime = None, payment_id: str = None) -> str:
+    async def generate_invoice(self, user_id: str, invoice_date: datetime = None, payment_id: str = None) -> str:
         """Generate PDF invoice for a user"""
         from reportlab.lib.pagesizes import letter
         from reportlab.lib import colors
