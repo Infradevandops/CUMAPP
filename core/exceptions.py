@@ -3,8 +3,8 @@
 Custom Exception Classes for CumApp Communication Platform
 Provides service-specific error handling for TextVerified, Twilio, and other integrations
 """
-from typing import Optional, Dict, Any
 from enum import Enum
+from typing import Any, Dict, Optional
 
 
 class ErrorSeverity(Enum):

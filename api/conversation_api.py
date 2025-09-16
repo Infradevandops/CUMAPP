@@ -2,31 +2,20 @@
 """
 Conversation API endpoints for CumApp Platform
 """
-from fastapi import APIRouter, Depends, HTTPException, status, Query, Request
-from sqlalchemy.orm import Session
-from typing import Optional, List
 import logging
+from typing import List, Optional
+
+from fastapi import APIRouter, Depends, HTTPException, Query, Request, status
+from sqlalchemy.orm import Session
 
 from core.database import get_db
-from models import (
-    User,
-    Conversation,
-    Message,
-    ConversationCreate,
-    ConversationUpdate,
-    ConversationResponse,
-    ConversationListResponse,
-    MessageCreate,
-    MessageUpdate,
-    MessageResponse,
-    MessageListResponse,
-    ConversationFilters,
-    MessageFilters,
-    ConversationStatus,
-    MessageType,
-)
-from services.conversation_service import ConversationService
+from models import (Conversation, ConversationCreate, ConversationFilters,
+                    ConversationListResponse, ConversationResponse,
+                    ConversationStatus, ConversationUpdate, Message,
+                    MessageCreate, MessageFilters, MessageListResponse,
+                    MessageResponse, MessageType, MessageUpdate, User)
 from services.auth_service import get_current_active_user
+from services.conversation_service import ConversationService
 
 logger = logging.getLogger(__name__)
 

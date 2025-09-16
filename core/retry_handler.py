@@ -1,4 +1,3 @@
-
 #!/usr/bin/env python3
 """
 Retry Handler with Exponential Backoff for CumApp Communication Platform
@@ -8,12 +7,13 @@ import asyncio
 import logging
 import random
 import time
-from typing import Callable, Any, Optional, Type, Union, List, Dict
-from functools import wraps
 from dataclasses import dataclass
 from enum import Enum
+from functools import wraps
+from typing import Any, Callable, Dict, List, Optional, Type, Union
 
-from core.exceptions import BaseServiceException, is_retryable_error, get_retry_delay
+from core.exceptions import (BaseServiceException, get_retry_delay,
+                             is_retryable_error)
 
 logger = logging.getLogger(__name__)
 
@@ -361,9 +361,14 @@ def get_textverified_retry_config():
 
 
 def textverified_retry_decorator(
-    _func=None, *, max_attempts: int = 3, base_delay: float = 2.0, max_delay: float = 120.0
+    _func=None,
+    *,
+    max_attempts: int = 3,
+    base_delay: float = 2.0,
+    max_delay: float = 120.0,
 ):
     """Applies a standard retry policy for TextVerified operations"""
+
     def decorator(func):
         config = get_textverified_retry_config()
         config.max_attempts = max_attempts
@@ -389,9 +394,14 @@ def get_twilio_retry_config():
 
 
 def twilio_retry_decorator(
-    _func=None, *, max_attempts: int = 4, base_delay: float = 1.0, max_delay: float = 60.0
+    _func=None,
+    *,
+    max_attempts: int = 4,
+    base_delay: float = 1.0,
+    max_delay: float = 60.0,
 ):
     """Applies a standard retry policy for Twilio operations"""
+
     def decorator(func):
         config = get_twilio_retry_config()
         config.max_attempts = max_attempts

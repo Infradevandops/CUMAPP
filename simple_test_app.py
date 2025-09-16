@@ -2,10 +2,11 @@
 """
 Simple test app to verify authentication API
 """
+import os
+import sys
+
 from fastapi import FastAPI
 from fastapi.responses import JSONResponse
-import sys
-import os
 
 # Add current directory to path
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
@@ -21,9 +22,9 @@ async def root():
 @app.get("/test-imports")
 async def test_imports():
     try:
-        from core.database import get_db, check_database_connection
-        from services.auth_service import AuthenticationService
         from api.auth_api import router
+        from core.database import check_database_connection, get_db
+        from services.auth_service import AuthenticationService
 
         db_status = check_database_connection()
 

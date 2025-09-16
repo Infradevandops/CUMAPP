@@ -3,18 +3,19 @@
 Verification Management API Endpoints
 Provides REST API for verification request management with user association
 """
-from fastapi import APIRouter, Depends, HTTPException, Query, Path
-from fastapi.security import HTTPBearer
-from sqlalchemy.orm import Session
-from typing import List, Dict, Any, Optional
 from datetime import datetime
-from pydantic import BaseModel, Field
+from typing import Any, Dict, List, Optional
 
-from core.database import get_db
+from fastapi import APIRouter, Depends, HTTPException, Path, Query
+from fastapi.security import HTTPBearer
+from pydantic import BaseModel, Field
+from sqlalchemy.orm import Session
+
 from auth.jwt_handler import verify_jwt_token
+from core.database import get_db
+from models.user_models import User
 from services.verification_service import VerificationService
 from textverified_client import TextVerifiedClient
-from models.user_models import User
 
 # Initialize router and security
 router = APIRouter(prefix="/api/verifications", tags=["verifications"])

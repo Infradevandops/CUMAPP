@@ -4,20 +4,18 @@ Unit tests for AI Assistant Service
 Tests local language model integration, conversation context management,
 and response suggestion algorithms
 """
-import pytest
 import asyncio
 from datetime import datetime, timedelta
-from unittest.mock import Mock, patch, AsyncMock
-from typing import Dict, List, Any
+from typing import Any, Dict, List
+from unittest.mock import AsyncMock, Mock, patch
 
-from services.ai_assistant_service import (
-    AIAssistantService,
-    ConversationRole,
-    IntentType,
-    ConversationMessage,
-    ConversationContext,
-    ResponseSuggestion,
-)
+import pytest
+
+from services.ai_assistant_service import (AIAssistantService,
+                                           ConversationContext,
+                                           ConversationMessage,
+                                           ConversationRole, IntentType,
+                                           ResponseSuggestion)
 
 
 class TestAIAssistantService:

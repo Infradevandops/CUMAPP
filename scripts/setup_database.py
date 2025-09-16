@@ -3,9 +3,9 @@
 Complete Database Setup Script
 Sets up the entire database with migrations, indexes, and initial data
 """
-import sys
 import os
 import subprocess
+import sys
 from datetime import datetime
 
 # Add the project root to the Python path

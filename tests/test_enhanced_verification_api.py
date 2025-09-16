@@ -3,17 +3,19 @@
 Unit tests for Enhanced Verification API endpoints
 Tests comprehensive verification management with integrated services
 """
-import pytest
 import json
 from datetime import datetime, timedelta
-from unittest.mock import Mock, patch, AsyncMock
-from fastapi.testclient import TestClient
-from fastapi import FastAPI
+from unittest.mock import AsyncMock, Mock, patch
 
-from api.enhanced_verification_api import router, get_current_user
+import pytest
+from fastapi import FastAPI
+from fastapi.testclient import TestClient
+
+from api.enhanced_verification_api import get_current_user, router
 from main import app
-from services.integrated_verification_service import IntegratedVerificationService
 from models.user_models import User
+from services.integrated_verification_service import \
+    IntegratedVerificationService
 
 
 # Global dependency override for authentication
@@ -31,17 +33,19 @@ app.dependency_overrides[get_current_user] = async_mock_get_current_user
 Unit tests for Enhanced Verification API endpoints
 Tests comprehensive verification management with integrated services
 """
-import pytest
 import json
 from datetime import datetime, timedelta
-from unittest.mock import Mock, patch, AsyncMock
-from fastapi.testclient import TestClient
-from fastapi import FastAPI
+from unittest.mock import AsyncMock, Mock, patch
 
-from api.enhanced_verification_api import router, get_current_user
+import pytest
+from fastapi import FastAPI
+from fastapi.testclient import TestClient
+
+from api.enhanced_verification_api import get_current_user, router
 from main import app
-from services.integrated_verification_service import IntegratedVerificationService
 from models.user_models import User
+from services.integrated_verification_service import \
+    IntegratedVerificationService
 
 # Create test app
 

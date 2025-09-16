@@ -3,9 +3,10 @@
 JWT Handler for CumApp Platform
 Handles JWT token creation and validation
 """
-from datetime import datetime, timedelta
-from typing import Optional, Dict, Any
 import os
+from datetime import datetime, timedelta
+from typing import Any, Dict, Optional
+
 from jose import JWTError, jwt
 from passlib.context import CryptContext
 

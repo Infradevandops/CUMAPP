@@ -2,9 +2,10 @@
 """
 Groq AI Client for SMS conversation assistance
 """
-import os
-from typing import List, Dict, Any, Optional
 import logging
+import os
+from typing import Any, Dict, List, Optional
+
 from groq import Groq
 
 logger = logging.getLogger(__name__)

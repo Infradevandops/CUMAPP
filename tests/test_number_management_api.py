@@ -3,17 +3,18 @@
 Unit tests for Number Management API endpoints
 Tests comprehensive phone number search, purchase, management, and cost optimization
 """
-import pytest
 import json
 from datetime import datetime, timedelta
-from unittest.mock import Mock, patch, AsyncMock
-from fastapi.testclient import TestClient
+from unittest.mock import AsyncMock, Mock, patch
+
+import pytest
 from fastapi import FastAPI
+from fastapi.testclient import TestClient
 
 from api.number_management_api import router
 from enhanced_twilio_client import EnhancedTwilioClient
-from services.smart_routing_engine import SmartRoutingEngine
 from models.user_models import User
+from services.smart_routing_engine import SmartRoutingEngine
 
 # Create test app
 app = FastAPI()

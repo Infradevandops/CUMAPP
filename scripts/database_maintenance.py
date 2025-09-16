@@ -3,19 +3,20 @@
 Database Maintenance Script
 Handles routine maintenance tasks including cleanup, optimization, and health checks
 """
-import sys
-import os
 import asyncio
-from datetime import datetime, timedelta
-from typing import Dict, List, Any
 import logging
+import os
+import sys
+from datetime import datetime, timedelta
+from typing import Any, Dict, List
 
 # Add the project root to the Python path
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
-from core.database import get_db, engine
-from sqlalchemy import text, inspect
+from sqlalchemy import inspect, text
 from sqlalchemy.exc import SQLAlchemyError
+
+from core.database import engine, get_db
 
 # Configure logging
 logging.basicConfig(

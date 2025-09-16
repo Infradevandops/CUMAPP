@@ -2,16 +2,19 @@
 """
 Session Management API endpoints
 """
-from fastapi import APIRouter, Depends, HTTPException, status, Request
-from sqlalchemy.orm import Session
-from pydantic import BaseModel
-from typing import List, Optional
-from datetime import datetime
 import logging
+from datetime import datetime
+from typing import List, Optional
+
+from fastapi import APIRouter, Depends, HTTPException, Request, status
+from pydantic import BaseModel
+from sqlalchemy.orm import Session
 
 from core.database import get_db
-from models.user_models import User, Session as UserSession
-from middleware.auth_middleware import SessionManager, get_current_user_from_middleware
+from middleware.auth_middleware import (SessionManager,
+                                        get_current_user_from_middleware)
+from models.user_models import Session as UserSession
+from models.user_models import User
 
 logger = logging.getLogger(__name__)
 

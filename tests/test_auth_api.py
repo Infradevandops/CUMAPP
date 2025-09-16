@@ -3,8 +3,9 @@
 Test script for authentication API endpoints
 """
 import asyncio
-import httpx
 import json
+
+import httpx
 
 BASE_URL = "http://localhost:8001"
 

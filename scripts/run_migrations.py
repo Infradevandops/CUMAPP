@@ -3,9 +3,9 @@
 Run Database Migrations
 Executes all Alembic migrations for the TextVerified migration
 """
-import sys
 import os
 import subprocess
+import sys
 from datetime import datetime
 
 # Add the project root to the Python path
@@ -89,8 +89,9 @@ def main():
         # Verify database structure
         print("\n🔍 Verifying Database Structure:")
         try:
-            from core.database import engine
             from sqlalchemy import inspect
+
+            from core.database import engine
 
             inspector = inspect(engine)
             tables = inspector.get_table_names()

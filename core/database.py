@@ -2,13 +2,14 @@
 """
 Database configuration and session management for CumApp
 """
+import logging
 import os
+from typing import Generator
+
 from sqlalchemy import create_engine
 from sqlalchemy.ext.declarative import declarative_base
-from sqlalchemy.orm import sessionmaker, Session
+from sqlalchemy.orm import Session, sessionmaker
 from sqlalchemy.pool import StaticPool
-from typing import Generator
-import logging
 
 logger = logging.getLogger(__name__)
 
@@ -67,15 +68,10 @@ def create_tables():
     """
     try:
         # Import all models here to ensure they are registered with Base
-        from models import (
-            user_models,
-            conversation_models,
-            communication_models,
-            enhanced_models,
-            phone_number_models,
-            subscription_models,
-            verification_models,
-        )
+        from models import (communication_models, conversation_models,
+                            enhanced_models, phone_number_models,
+                            subscription_models, user_models,
+                            verification_models)
 
         Base.metadata.create_all(bind=engine)
         logger.info("Database tables created successfully")

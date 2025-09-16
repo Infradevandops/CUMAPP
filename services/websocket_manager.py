@@ -2,18 +2,19 @@
 """
 Enhanced WebSocket Manager for Real-time Communication with Authentication
 """
-import json
 import asyncio
-from typing import Dict, List, Set, Optional, Tuple
-from fastapi import WebSocket, WebSocketDisconnect, HTTPException, status
-from sqlalchemy.orm import Session
-from datetime import datetime, timedelta
+import json
 import logging
-import jwt
+from datetime import datetime, timedelta
+from typing import Dict, List, Optional, Set, Tuple
 
-from core.database import SessionLocal
-from models import User, Conversation, Message, conversation_participants
+import jwt
+from fastapi import HTTPException, WebSocket, WebSocketDisconnect, status
+from sqlalchemy.orm import Session
+
 from auth.security import verify_token
+from core.database import SessionLocal
+from models import Conversation, Message, User, conversation_participants
 from services.conversation_service import ConversationService
 
 logger = logging.getLogger(__name__)

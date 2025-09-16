@@ -1,27 +1,25 @@
+import asyncio
+import logging
 import os
 import random
-import asyncio
-from typing import Dict, Optional, List
-import logging
 from datetime import datetime
+from typing import Dict, List, Optional
 
+# Import database components
+from database import check_database_connection, create_tables
 from dotenv import load_dotenv
-from fastapi import FastAPI, Request, HTTPException
+from fastapi import FastAPI, HTTPException, Request
 from fastapi.responses import HTMLResponse, JSONResponse
 from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
 from pydantic import BaseModel
-
-# Import database components
-from database import check_database_connection, create_tables
-
 from twilio.base.exceptions import TwilioRestException
 from twilio.rest import Client
 
+from groq_client import GroqAIClient
+from mock_twilio_client import MockTwilioClient, create_twilio_client
 # Import our custom clients
 from textverified_client import TextVerifiedClient
-from groq_client import GroqAIClient
-from mock_twilio_client import create_twilio_client, MockTwilioClient
 
 # Load environment variables from .env file
 load_dotenv()
@@ -91,7 +89,8 @@ app = FastAPI(
 
 # Add JWT Authentication Middleware
 try:
-    from middleware.auth_middleware import JWTAuthMiddleware, RateLimitMiddleware
+    from middleware.auth_middleware import (JWTAuthMiddleware,
+                                            RateLimitMiddleware)
 
     # Add rate limiting middleware
     app.add_middleware(RateLimitMiddleware, requests_per_minute=100)

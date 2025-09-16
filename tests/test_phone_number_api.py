@@ -2,15 +2,16 @@
 """
 Integration tests for Phone Number API endpoints
 """
-import pytest
 import json
 from datetime import datetime, timedelta
-from unittest.mock import Mock, patch, AsyncMock
+from unittest.mock import AsyncMock, Mock, patch
+
+import pytest
 from fastapi.testclient import TestClient
 
 from main import app
-from models.user_models import User
 from models.phone_number_models import PhoneNumber
+from models.user_models import User
 
 
 class TestPhoneNumberAPI:

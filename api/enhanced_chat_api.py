@@ -2,11 +2,12 @@
 """
 Enhanced Chat Interface API endpoints
 """
-from fastapi import APIRouter, Request, Depends, HTTPException, status
+import logging
+
+from fastapi import APIRouter, Depends, HTTPException, Request, status
 from fastapi.responses import HTMLResponse
 from fastapi.templating import Jinja2Templates
 from sqlalchemy.orm import Session
-import logging
 
 from core.database import get_db
 from models import User

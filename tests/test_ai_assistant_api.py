@@ -3,22 +3,20 @@
 Unit tests for AI Assistant API endpoints
 Tests API endpoints for AI assistance, contextual help, and intent analysis
 """
-import pytest
 import json
 from datetime import datetime
-from unittest.mock import Mock, patch, AsyncMock
-from fastapi.testclient import TestClient
+from unittest.mock import AsyncMock, Mock, patch
+
+import pytest
 from fastapi import FastAPI
+from fastapi.testclient import TestClient
 
 from api.ai_assistant_api import router
-from services.ai_assistant_service import (
-    AIAssistantService,
-    ConversationRole,
-    IntentType,
-    ResponseSuggestion,
-    ConversationContext,
-    ConversationMessage,
-)
+from services.ai_assistant_service import (AIAssistantService,
+                                           ConversationContext,
+                                           ConversationMessage,
+                                           ConversationRole, IntentType,
+                                           ResponseSuggestion)
 
 # Create test app
 app = FastAPI()

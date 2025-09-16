@@ -2,17 +2,19 @@
 """
 Integration tests for Conversation API endpoints
 """
-import pytest
 import asyncio
+
+import pytest
 from fastapi.testclient import TestClient
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 from sqlalchemy.pool import StaticPool
 
-from main import app
+from auth.security import create_access_token, hash_password
 from core.database import get_db
-from models import Base, User, Conversation, Message, ConversationStatus, MessageType
-from auth.security import hash_password, create_access_token
+from main import app
+from models import (Base, Conversation, ConversationStatus, Message,
+                    MessageType, User)
 
 # Test database setup
 SQLALCHEMY_DATABASE_URL = "sqlite:///./test_conversation_api.db"

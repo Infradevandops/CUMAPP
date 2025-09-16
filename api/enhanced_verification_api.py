@@ -4,24 +4,26 @@ Enhanced Verification API Endpoints for CumApp Communication Platform
 Provides comprehensive REST API for verification management with integrated services,
 smart routing, and advanced features
 """
+import asyncio
 import logging
-from typing import Dict, List, Optional, Any
-from datetime import datetime, timedelta
-from fastapi import APIRouter, HTTPException, Depends, BackgroundTasks, Query, Path
-from fastapi.security import HTTPBearer
-
 import os
+from datetime import datetime, timedelta
+from typing import Any, Dict, List, Optional
+
+from fastapi import (APIRouter, BackgroundTasks, Depends, HTTPException, Path,
+                     Query)
 from fastapi.responses import JSONResponse, Response
+from fastapi.security import HTTPBearer
 from pydantic import BaseModel, Field, validator
 from sqlalchemy.orm import Session
-import asyncio
 
-from core.database import get_db
 from auth.jwt_handler import verify_jwt_token
-from models.user_models import User
-from services.integrated_verification_service import IntegratedVerificationService
-from textverified_client import TextVerifiedClient
+from core.database import get_db
 from enhanced_twilio_client import create_enhanced_twilio_client
+from models.user_models import User
+from services.integrated_verification_service import \
+    IntegratedVerificationService
+from textverified_client import TextVerifiedClient
 
 logger = logging.getLogger(__name__)
 

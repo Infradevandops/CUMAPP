@@ -3,10 +3,11 @@
 Messaging API for CumApp Platform
 Handles SMS sending and receiving functionality
 """
+import logging
+from typing import Optional
+
 from fastapi import APIRouter, HTTPException
 from pydantic import BaseModel
-from typing import Optional
-import logging
 
 logger = logging.getLogger(__name__)
 
@@ -24,7 +25,7 @@ async def send_sms(request: SMSRequest):
     """Send SMS using configured provider"""
     try:
         # Import here to avoid circular imports
-        from main import twilio_client, TWILIO_PHONE_NUMBER
+        from main import TWILIO_PHONE_NUMBER, twilio_client
 
         if not twilio_client:
             raise HTTPException(status_code=503, detail="SMS service not configured")

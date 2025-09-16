@@ -10,9 +10,10 @@ import subprocess
 import sys
 from datetime import datetime
 from typing import Dict, List, Optional
-from sqlalchemy import create_engine, text, inspect
-from sqlalchemy.orm import sessionmaker
+
 from dotenv import load_dotenv
+from sqlalchemy import create_engine, inspect, text
+from sqlalchemy.orm import sessionmaker
 
 # Load environment variables
 load_dotenv()

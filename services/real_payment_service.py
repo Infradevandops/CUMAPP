@@ -2,11 +2,11 @@
 """
 Real payment service with Stripe integration
 """
-import os
 import logging
-from typing import Dict, Optional, List
-from datetime import datetime
+import os
 import uuid
+from datetime import datetime
+from typing import Dict, List, Optional
 
 logger = logging.getLogger(__name__)
 

@@ -6,11 +6,11 @@ Provides fault tolerance and prevents cascading failures in external API calls
 import asyncio
 import logging
 import time
-from typing import Callable, Any, Optional, Dict, List
-from functools import wraps
 from dataclasses import dataclass
 from enum import Enum
+from functools import wraps
 from threading import Lock
+from typing import Any, Callable, Dict, List, Optional
 
 from core.exceptions import BaseServiceException, is_retryable_error
 

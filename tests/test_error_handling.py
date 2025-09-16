@@ -3,44 +3,27 @@
 Unit tests for Error Handling System
 Tests exceptions, retry logic, circuit breakers, and comprehensive error handling
 """
-import pytest
 import asyncio
 import time
-from unittest.mock import Mock, AsyncMock, patch
 from typing import Any
+from unittest.mock import AsyncMock, Mock, patch
 
-from core.exceptions import (
-    BaseServiceException,
-    TextVerifiedException,
-    TwilioException,
-    TextVerifiedAuthenticationError,
-    TwilioRateLimitError,
-    ErrorSeverity,
-    ErrorCategory,
-    map_textverified_error,
-    map_twilio_error,
-)
-from core.retry_handler import (
-    RetryHandler,
-    RetryConfig,
-    RetryStrategy,
-    textverified_retry_decorator,
-    twilio_retry_decorator,
-)
-from core.circuit_breaker import (
-    CircuitBreaker,
-    CircuitBreakerConfig,
-    CircuitState,
-    CircuitBreakerError,
-    circuit_manager,
-)
-from core.error_handler import (
-    ServiceErrorHandler,
-    ErrorHandlerConfig,
-    ErrorReporter,
-    with_error_handling,
-    get_error_handling_health,
-)
+import pytest
+
+from core.circuit_breaker import (CircuitBreaker, CircuitBreakerConfig,
+                                  CircuitBreakerError, CircuitState,
+                                  circuit_manager)
+from core.error_handler import (ErrorHandlerConfig, ErrorReporter,
+                                ServiceErrorHandler, get_error_handling_health,
+                                with_error_handling)
+from core.exceptions import (BaseServiceException, ErrorCategory,
+                             ErrorSeverity, TextVerifiedAuthenticationError,
+                             TextVerifiedException, TwilioException,
+                             TwilioRateLimitError, map_textverified_error,
+                             map_twilio_error)
+from core.retry_handler import (RetryConfig, RetryHandler, RetryStrategy,
+                                textverified_retry_decorator,
+                                twilio_retry_decorator)
 
 
 class TestExceptions:

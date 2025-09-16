@@ -3,6 +3,7 @@
 Middleware configuration for the FastAPI application.
 """
 import logging
+
 from fastapi import FastAPI
 
 logger = logging.getLogger(__name__)
@@ -11,7 +12,8 @@ logger = logging.getLogger(__name__)
 def setup_middleware(app: FastAPI):
     """Configure and add middleware to the FastAPI app."""
     try:
-        from middleware.auth_middleware import JWTAuthMiddleware, RateLimitMiddleware
+        from middleware.auth_middleware import (JWTAuthMiddleware,
+                                                RateLimitMiddleware)
 
         # Add rate limiting middleware
         app.add_middleware(RateLimitMiddleware, requests_per_minute=100)

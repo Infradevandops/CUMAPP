@@ -1,23 +1,31 @@
 #!/usr/bin/env python3
 """
 Number Management API Endpoints for CumApp Communication Platform
-Provides comprehensive phone number search, purchase, management, and cost optimization
+Provides comprehensive phone number search, purchase, and management.
+This is the unified API for all phone number operations.
 """
+import asyncio
 import logging
-from typing import Dict, List, Optional, Any
 from datetime import datetime, timedelta
-from fastapi import APIRouter, HTTPException, Depends, BackgroundTasks, Query, Path
-from fastapi.security import HTTPBearer
+from decimal import Decimal
+from typing import Any, Dict, List, Optional
+
+from fastapi import (APIRouter, BackgroundTasks, Depends, HTTPException, Path,
+                     Query)
 from fastapi.responses import JSONResponse
+from fastapi.security import HTTPBearer
 from pydantic import BaseModel, Field, validator
 from sqlalchemy.orm import Session
-import asyncio
 
-from core.database import get_db
 from auth.jwt_handler import verify_jwt_token
+from core.database import get_db
+from enhanced_twilio_client import (EnhancedTwilioClient,
+                                    create_enhanced_twilio_client)
+from models.phone_number_models import PhoneNumber as PhoneNumberModel
 from models.user_models import User
+from services.auth_service import get_current_active_user
+from services.phone_number_service import PhoneNumberService
 from services.smart_routing_engine import SmartRoutingEngine
-from enhanced_twilio_client import EnhancedTwilioClient, create_enhanced_twilio_client
 
 logger = logging.getLogger(__name__)
 
@@ -76,13 +84,6 @@ class NumberPurchaseRequest(BaseModel):
 
     phone_number: str = Field(..., description="Phone number to purchase")
     friendly_name: Optional[str] = Field(
-        None, description="Friendly name for the number"
-    )
-    auto_renew: bool = Field(True, description="Enable automatic renewal")
-    usage_plan: str = Field(
-        "standard", description="Usage plan (basic, standard, premium)"
-    )
-    webhook_url: Optional[str] = Field(
         None, description="Webhook URL for incoming messages/calls"
     )
 
@@ -90,13 +91,6 @@ class NumberPurchaseRequest(BaseModel):
     def validate_phone_number(cls, v):
         if not v or not v.startswith("+"):
             raise ValueError("Phone number must be in E.164 format (+1234567890)")
-        return v
-
-    @validator("usage_plan")
-    def validate_usage_plan(cls, v):
-        valid_plans = ["basic", "standard", "premium"]
-        if v not in valid_plans:
-            raise ValueError(f"Usage plan must be one of: {valid_plans}")
         return v
 
 
@@ -182,15 +176,26 @@ class AvailableNumberResponse(BaseModel):
     phone_number: str
     friendly_name: str
     country_code: str
-    area_code: Optional[str]
-    number_type: str
+    area_code: Optional[str] = None
+    number_type: Optional[str] = "local"
     capabilities: List[str]
-    monthly_cost: float
-    setup_cost: float
-    locality: Optional[str]
-    region: Optional[str]
-    iso_country: str
-    beta: bool
+    monthly_cost: Decimal
+    setup_cost: Decimal = Decimal("0.0")
+    locality: Optional[str] = None
+    region: Optional[str] = None
+    iso_country: Optional[str] = None
+    beta: Optional[bool] = False
+    provider: str = "twilio"
+    sms_cost_per_message: Optional[Decimal] = None
+    voice_cost_per_minute: Optional[Decimal] = None
+
+
+class AvailableNumberListResponse(BaseModel):
+    success: bool
+    country_code: str
+    area_code: Optional[str]
+    total_count: int
+    numbers: List[AvailableNumberResponse]
 
 
 class PurchasedNumberResponse(BaseModel):
@@ -201,12 +206,13 @@ class PurchasedNumberResponse(BaseModel):
     country_code: str
     capabilities: List[str]
     status: str
-    monthly_cost: float
-    usage_plan: str
+    monthly_cost: Decimal
+    usage_plan: Optional[str] = "standard"
     auto_renew: bool
     purchased_at: datetime
     next_billing_date: datetime
     webhook_url: Optional[str]
+    id: str
 
 
 class NumberUsageResponse(BaseModel):
@@ -265,25 +271,17 @@ class NumberAnalyticsResponse(BaseModel):
 # Dependencies
 
 
-async def get_current_user(
-    token: str = Depends(security), db: Session = Depends(get_db)
-) -> User:
-    """Extract and validate user from JWT token"""
-    try:
-        payload = verify_jwt_token(token.credentials)
-        user_id = payload.get("user_id")
-
-        if not user_id:
-            raise HTTPException(status_code=401, detail="Invalid token")
-
-        user = db.query(User).filter(User.id == user_id, User.is_active == True).first()
-        if not user:
-            raise HTTPException(status_code=401, detail="User not found or inactive")
-
-        return user
-    except Exception as e:
-        logger.warning(f"Authentication failed: {e}")
-        raise HTTPException(status_code=401, detail="Invalid authentication")
+def get_phone_number_service(
+    db: Session = Depends(get_db),
+    twilio_client: EnhancedTwilioClient = Depends(create_enhanced_twilio_client),
+) -> PhoneNumberService:
+    """
+    Dependency to get phone number service instance.
+    This now uses the real Twilio client.
+    """
+    return PhoneNumberService(
+        db=db, twilio_client=twilio_client, textverified_client=None
+    )
 
 
 def get_twilio_client() -> EnhancedTwilioClient:
@@ -309,53 +307,61 @@ def get_routing_engine(
 # API Endpoints
 
 
-@router.post("/search", response_model=List[AvailableNumberResponse])
+@router.get("/available/{country_code}", response_model=AvailableNumberListResponse)
 async def search_available_numbers(
-    request: NumberSearchRequest,
-    current_user: User = Depends(get_current_user),
-    twilio_client: EnhancedTwilioClient = Depends(get_twilio_client),
+    country_code: str = Path(..., description="Country code (e.g., US, GB, CA)"),
+    area_code: Optional[str] = Query(None, description="Area code filter"),
+    capabilities: Optional[str] = Query(
+        "sms,voice", description="Comma-separated capabilities (sms,voice,mms)"
+    ),
+    limit: int = Query(20, ge=1, le=100, description="Number of results to return"),
+    current_user: User = Depends(get_current_active_user),
+    phone_service: PhoneNumberService = Depends(get_phone_number_service),
 ):
     """
     Search for available phone numbers with filtering options
-
-    Args:
-        request: Number search request
-        current_user: Authenticated user
-        twilio_client: Enhanced Twilio client
-
-    Returns:
-        List[AvailableNumberResponse]: Available numbers
     """
     try:
-        # Search for available numbers
-        available_numbers = await twilio_client.search_available_numbers(
-            country_code=request.country_code,
-            area_code=request.area_code,
-            number_type=request.number_type,
-            capabilities=request.capabilities,
-            limit=request.limit,
-            contains=request.contains,
-            exclude_patterns=request.exclude_patterns,
+        capability_list = (
+            [cap.strip() for cap in capabilities.split(",")] if capabilities else []
+        )
+
+        numbers, total_count = await phone_service.search_available_numbers(
+            country_code=country_code.upper(),
+            area_code=area_code,
+            capabilities=capability_list,
+            limit=limit,
         )
 
         # Convert to response format
-        return [
+        response_numbers = [
             AvailableNumberResponse(
                 phone_number=num["phone_number"],
                 friendly_name=num["friendly_name"],
                 country_code=num["country_code"],
                 area_code=num.get("area_code"),
-                number_type=num["number_type"],
+                number_type=num.get("number_type", "local"),
                 capabilities=num["capabilities"],
-                monthly_cost=num["monthly_cost"],
-                setup_cost=num.get("setup_cost", 0.0),
+                monthly_cost=Decimal(num["monthly_cost"]),
+                setup_cost=Decimal(num.get("setup_cost", "0.0")),
                 locality=num.get("locality"),
                 region=num.get("region"),
-                iso_country=num["iso_country"],
+                iso_country=num.get("iso_country"),
                 beta=num.get("beta", False),
+                provider=num.get("provider", "twilio"),
+                sms_cost_per_message=Decimal(num.get("sms_cost_per_message", "0.0")),
+                voice_cost_per_minute=Decimal(num.get("voice_cost_per_minute", "0.0")),
             )
-            for num in available_numbers
+            for num in numbers
         ]
+
+        return AvailableNumberListResponse(
+            success=True,
+            country_code=country_code.upper(),
+            area_code=area_code,
+            total_count=total_count,
+            numbers=response_numbers,
+        )
 
     except ValueError as e:
         logger.warning(f"Invalid search request: {e}")
@@ -367,72 +373,62 @@ async def search_available_numbers(
         )
 
 
-@router.post("/purchase", response_model=PurchasedNumberResponse)
+@router.post("/purchase")
 async def purchase_phone_number(
     request: NumberPurchaseRequest,
     background_tasks: BackgroundTasks,
-    current_user: User = Depends(get_current_user),
-    twilio_client: EnhancedTwilioClient = Depends(get_twilio_client),
+    current_user: User = Depends(get_current_active_user),
+    phone_service: PhoneNumberService = Depends(get_phone_number_service),
 ):
     """
     Purchase a phone number for the user
-
-    Args:
-        request: Number purchase request
-        background_tasks: Background tasks for async processing
-        current_user: Authenticated user
-        twilio_client: Enhanced Twilio client
-
-    Returns:
-        PurchasedNumberResponse: Purchased number details
     """
     try:
-        # Purchase the number
-        purchased_number = await twilio_client.purchase_phone_number(
+        result = await phone_service.purchase_phone_number(
             user_id=current_user.id,
             phone_number=request.phone_number,
-            friendly_name=request.friendly_name,
-            auto_renew=request.auto_renew,
-            usage_plan=request.usage_plan,
-            webhook_url=request.webhook_url,
+            auto_renew=True,  # Default to auto-renew
         )
 
-        # Add background task for setup
-        background_tasks.add_task(
-            setup_purchased_number,
-            purchased_number["phone_number"],
-            current_user.id,
-            request.webhook_url,
-        )
+        if not result.get("success"):
+            raise HTTPException(
+                status_code=400, detail=result.get("message", "Purchase failed")
+            )
 
-        return PurchasedNumberResponse(
-            phone_number=purchased_number["phone_number"],
-            friendly_name=purchased_number["friendly_name"],
-            country_code=purchased_number["country_code"],
-            capabilities=purchased_number["capabilities"],
-            status=purchased_number["status"],
-            monthly_cost=purchased_number["monthly_cost"],
-            usage_plan=purchased_number["usage_plan"],
-            auto_renew=purchased_number["auto_renew"],
-            purchased_at=purchased_number["purchased_at"],
-            next_billing_date=purchased_number["next_billing_date"],
-            webhook_url=purchased_number.get("webhook_url"),
-        )
+        purchased_number: PhoneNumberModel = result["phone_number"]
+
+        return {
+            "success": True,
+            "message": result["message"],
+            "transaction_id": result["transaction_id"],
+            "phone_number": {
+                "id": purchased_number.id,
+                "phone_number": purchased_number.phone_number,
+                "friendly_name": purchased_number.phone_number,
+                "country_code": purchased_number.country_code,
+                "capabilities": purchased_number.capabilities,
+                "status": purchased_number.status,
+                "monthly_cost": purchased_number.monthly_cost,
+                "auto_renew": purchased_number.auto_renew,
+                "purchased_at": purchased_number.purchased_at,
+                "next_billing_date": purchased_number.expires_at,
+            },
+        }
 
     except ValueError as e:
         logger.warning(f"Invalid purchase request: {e}")
         raise HTTPException(status_code=400, detail=str(e))
     except Exception as e:
         logger.error(f"Failed to purchase number: {e}")
-        raise HTTPException(status_code=500, detail="Failed to purchase phone number")
+        raise HTTPException(status_code=500, detail=str(e))
 
 
 @router.get("/owned", response_model=List[PurchasedNumberResponse])
 async def get_owned_numbers(
     status_filter: Optional[str] = Query(None, description="Filter by status"),
     country_filter: Optional[str] = Query(None, description="Filter by country"),
-    current_user: User = Depends(get_current_user),
-    twilio_client: EnhancedTwilioClient = Depends(get_twilio_client),
+    current_user: User = Depends(get_current_active_user),
+    phone_service: PhoneNumberService = Depends(get_phone_number_service),
 ):
     """
     Get list of user's owned phone numbers
@@ -440,18 +436,21 @@ async def get_owned_numbers(
     Args:
         status_filter: Filter by number status
         country_filter: Filter by country code
-        current_user: Authenticated user
-        twilio_client: Enhanced Twilio client
+        current_user: Authenticated user from dependency
+        phone_service: Phone number service from dependency
 
     Returns:
         List[PurchasedNumberResponse]: Owned numbers
     """
     try:
-        # Get user's numbers
-        owned_numbers = await twilio_client.get_user_numbers(
-            user_id=current_user.id,
-            status_filter=status_filter,
-            country_filter=country_filter,
+        owned_numbers, total_count = await phone_service.get_owned_numbers(
+            user_id=current_user.id, include_inactive=(status_filter == "inactive")
+        )
+
+        total_monthly_cost = sum(
+            Decimal(num.monthly_cost or "0.0")
+            for num in owned_numbers
+            if num.status == "active"
         )
 
         return [
@@ -461,12 +460,12 @@ async def get_owned_numbers(
                 country_code=num["country_code"],
                 capabilities=num["capabilities"],
                 status=num["status"],
-                monthly_cost=num["monthly_cost"],
-                usage_plan=num["usage_plan"],
+                monthly_cost=Decimal(num["monthly_cost"]),
+                usage_plan="standard",
                 auto_renew=num["auto_renew"],
                 purchased_at=num["purchased_at"],
-                next_billing_date=num["next_billing_date"],
-                webhook_url=num.get("webhook_url"),
+                next_billing_date=num["expires_at"],
+                id=num.id,
             )
             for num in owned_numbers
         ]
@@ -480,8 +479,8 @@ async def get_owned_numbers(
 async def update_phone_number(
     request: NumberUpdateRequest,
     phone_number: str = Path(..., description="Phone number to update"),
-    current_user: User = Depends(get_current_user),
-    twilio_client: EnhancedTwilioClient = Depends(get_twilio_client),
+    current_user: User = Depends(get_current_active_user),
+    phone_service: PhoneNumberService = Depends(get_phone_number_service),
 ):
     """
     Update phone number settings
@@ -513,12 +512,12 @@ async def update_phone_number(
             country_code=updated_number["country_code"],
             capabilities=updated_number["capabilities"],
             status=updated_number["status"],
-            monthly_cost=updated_number["monthly_cost"],
-            usage_plan=updated_number["usage_plan"],
+            monthly_cost=Decimal(updated_number["monthly_cost"]),
+            usage_plan="standard",
             auto_renew=updated_number["auto_renew"],
             purchased_at=updated_number["purchased_at"],
-            next_billing_date=updated_number["next_billing_date"],
-            webhook_url=updated_number.get("webhook_url"),
+            next_billing_date=updated_number["expires_at"],
+            id=updated_number.id,
         )
 
     except ValueError as e:
@@ -533,8 +532,8 @@ async def update_phone_number(
 async def release_phone_number(
     phone_number: str = Path(..., description="Phone number to release"),
     force: bool = Query(False, description="Force release even if active"),
-    current_user: User = Depends(get_current_user),
-    twilio_client: EnhancedTwilioClient = Depends(get_twilio_client),
+    current_user: User = Depends(get_current_active_user),
+    phone_service: PhoneNumberService = Depends(get_phone_number_service),
 ):
     """
     Release (delete) a phone number
@@ -543,22 +542,21 @@ async def release_phone_number(
         phone_number: Phone number to release
         force: Force release even if active
         current_user: Authenticated user
-        twilio_client: Enhanced Twilio client
+        phone_service: Phone number service
 
     Returns:
         Dict: Release confirmation
     """
     try:
         # Release the number
-        result = await twilio_client.release_phone_number(
-            user_id=current_user.id, phone_number=phone_number, force=force
+        result = await phone_service.cancel_phone_number(
+            user_id=current_user.id, phone_number_id=phone_number
         )
 
         return {
             "message": "Phone number released successfully",
             "phone_number": phone_number,
             "released_at": datetime.utcnow(),
-            "refund_amount": result.get("refund_amount", 0.0),
         }
 
     except ValueError as e:
@@ -573,25 +571,26 @@ async def release_phone_number(
 async def get_number_usage(
     phone_number: str = Path(..., description="Phone number"),
     period_days: int = Query(30, ge=1, le=365, description="Usage period in days"),
-    current_user: User = Depends(get_current_user),
-    twilio_client: EnhancedTwilioClient = Depends(get_twilio_client),
+    current_user: User = Depends(get_current_active_user),
+    phone_service: PhoneNumberService = Depends(get_phone_number_service),
 ):
     """
     Get usage statistics for a phone number
 
     Args:
-        phone_number: Phone number
+        phone_number: Phone number ID
         period_days: Usage period in days
         current_user: Authenticated user
-        twilio_client: Enhanced Twilio client
+        phone_service: Phone number service
 
     Returns:
         NumberUsageResponse: Usage statistics
     """
     try:
         # Get usage statistics
-        usage_stats = await twilio_client.get_number_usage_stats(
-            user_id=current_user.id, phone_number=phone_number, period_days=period_days
+        usage_stats = await phone_service.get_usage_statistics(
+            user_id=current_user.id,
+            phone_number_id=phone_number,
         )
 
         return NumberUsageResponse(
@@ -602,9 +601,9 @@ async def get_number_usage(
             messages_received=usage_stats["messages_received"],
             calls_made=usage_stats["calls_made"],
             calls_received=usage_stats["calls_received"],
-            total_cost=usage_stats["total_cost"],
+            total_cost=float(usage_stats["costs"]["total_cost"]),
             cost_breakdown=usage_stats["cost_breakdown"],
-            usage_by_country=usage_stats["usage_by_country"],
+            usage_by_country={},  # Placeholder
         )
 
     except ValueError as e:
@@ -661,8 +660,10 @@ async def calculate_cost_estimate(
 @router.post("/optimize", response_model=OptimizationRecommendationResponse)
 async def get_optimization_recommendations(
     request: NumberOptimizationRequest,
-    current_user: User = Depends(get_current_user),
-    routing_engine: SmartRoutingEngine = Depends(get_routing_engine),
+    current_user: User = Depends(get_current_active_user),
+    routing_engine: SmartRoutingEngine = Depends(
+        get_routing_engine
+    ),  # This can be enhanced
 ):
     """
     Get optimization recommendations for number portfolio
@@ -706,8 +707,8 @@ async def get_optimization_recommendations(
 @router.get("/analytics", response_model=NumberAnalyticsResponse)
 async def get_number_analytics(
     period_days: int = Query(30, ge=1, le=365, description="Analytics period in days"),
-    current_user: User = Depends(get_current_user),
-    twilio_client: EnhancedTwilioClient = Depends(get_twilio_client),
+    current_user: User = Depends(get_current_active_user),
+    phone_service: PhoneNumberService = Depends(get_phone_number_service),
 ):
     """
     Get comprehensive analytics for user's number portfolio
@@ -715,22 +716,22 @@ async def get_number_analytics(
     Args:
         period_days: Analytics period in days
         current_user: Authenticated user
-        twilio_client: Enhanced Twilio client
+        phone_service: Phone number service
 
     Returns:
         NumberAnalyticsResponse: Comprehensive analytics
     """
     try:
         # Get analytics data
-        analytics = await twilio_client.get_number_portfolio_analytics(
+        analytics = await phone_service.get_portfolio_analytics(
             user_id=current_user.id, period_days=period_days
         )
 
         return NumberAnalyticsResponse(
             total_numbers=analytics["total_numbers"],
             active_numbers=analytics["active_numbers"],
-            total_monthly_cost=analytics["total_monthly_cost"],
-            usage_efficiency=analytics["usage_efficiency"],
+            total_monthly_cost=float(analytics["total_monthly_cost"]),
+            usage_efficiency=float(analytics["usage_efficiency"]),
             top_performing_numbers=analytics["top_performing_numbers"],
             underutilized_numbers=analytics["underutilized_numbers"],
             cost_trends=analytics["cost_trends"],
@@ -746,19 +747,19 @@ async def get_number_analytics(
 
 @router.get("/countries/supported")
 async def get_supported_countries(
-    twilio_client: EnhancedTwilioClient = Depends(get_twilio_client),
+    phone_service: PhoneNumberService = Depends(get_phone_number_service),
 ):
     """
     Get list of supported countries for number purchase
 
     Args:
-        twilio_client: Enhanced Twilio client
+        phone_service: Phone number service
 
     Returns:
         Dict: Supported countries with capabilities and pricing
     """
     try:
-        supported_countries = await twilio_client.get_supported_countries()
+        supported_countries = await phone_service.get_supported_countries()
 
         return {
             "countries": supported_countries,

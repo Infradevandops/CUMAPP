@@ -3,21 +3,22 @@
 Enhanced Verification Service for CumApp Communication Platform
 Handles TextVerified integration with user association, history tracking, and code extraction
 """
-import re
-import json
 import asyncio
-from typing import List, Dict, Optional, Any, Tuple
-from datetime import datetime, timedelta
-from sqlalchemy.orm import Session
-from sqlalchemy import and_, or_, desc, func
+import json
 import logging
+import re
+from datetime import datetime, timedelta
+from typing import Any, Dict, List, Optional, Tuple
 
+from sqlalchemy import and_, desc, func, or_
+from sqlalchemy.orm import Session
+
+from core.error_handler import with_error_handling
+from core.retry_handler import textverified_retry_decorator
 from models.user_models import User
 from models.verification_models import VerificationRequest
-from textverified_client import TextVerifiedClient
 from services.notification_service import NotificationService
-from core.retry_handler import textverified_retry_decorator
-from core.error_handler import with_error_handling
+from textverified_client import TextVerifiedClient
 
 logger = logging.getLogger(__name__)
 

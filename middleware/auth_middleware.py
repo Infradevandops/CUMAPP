@@ -3,16 +3,17 @@
 JWT Authentication Middleware for FastAPI
 """
 import logging
-from typing import Optional, Callable
 from datetime import datetime
-from fastapi import Request, Response, HTTPException, status
-from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
-from starlette.middleware.base import BaseHTTPMiddleware
-from sqlalchemy.orm import Session
+from typing import Callable, Optional
 
+from fastapi import HTTPException, Request, Response, status
+from fastapi.security import HTTPAuthorizationCredentials, HTTPBearer
+from sqlalchemy.orm import Session
+from starlette.middleware.base import BaseHTTPMiddleware
+
+from auth.security import hash_api_key, verify_token
 from core.database import SessionLocal
-from models.user_models import User, APIKey
-from auth.security import verify_token, hash_api_key
+from models.user_models import APIKey, User
 
 logger = logging.getLogger(__name__)
 
@@ -162,8 +163,9 @@ class SessionManager:
         Create a new user session
         """
         try:
-            from models.user_models import Session as UserSession
             from datetime import timedelta
+
+            from models.user_models import Session as UserSession
 
             session = UserSession(
                 user_id=user_id,

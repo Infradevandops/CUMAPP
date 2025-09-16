@@ -3,21 +3,20 @@
 Integrated Verification API Endpoints
 Provides comprehensive verification workflow with smart routing and enhanced tracking
 """
-from fastapi import APIRouter, Depends, HTTPException, Query, Path
-from fastapi.security import HTTPBearer
-from sqlalchemy.orm import Session
-from typing import List, Dict, Any, Optional
-from pydantic import BaseModel, Field
+from typing import Any, Dict, List, Optional
 
-from core.database import get_db
+from fastapi import APIRouter, Depends, HTTPException, Path, Query
+from fastapi.security import HTTPBearer
+from pydantic import BaseModel, Field
+from sqlalchemy.orm import Session
+
 from auth.jwt_handler import verify_jwt_token
+from core.database import get_db
+from enhanced_twilio_client import EnhancedTwilioClient
 from models.user_models import User
 from services.integrated_verification_service import (
-    IntegratedVerificationService,
-    create_integrated_verification_service,
-)
+    IntegratedVerificationService, create_integrated_verification_service)
 from textverified_client import TextVerifiedClient
-from enhanced_twilio_client import EnhancedTwilioClient
 
 # Initialize router and security
 router = APIRouter(
@@ -120,7 +119,7 @@ def get_integrated_verification_service(
 ) -> IntegratedVerificationService:
     """Get integrated verification service instance"""
     try:
-        from main import textverified_client, enhanced_twilio_client
+        from main import enhanced_twilio_client, textverified_client
 
         return create_integrated_verification_service(
             db_session=db,

@@ -3,16 +3,16 @@
 Initialize TextVerified Migration Database
 Creates tables, runs migrations, and seeds initial data
 """
-import sys
 import os
+import sys
 from datetime import datetime
 
 # Add the project root to the Python path
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
-from core.database import engine, get_db, create_tables
-from models.user_models import Base
+from core.database import create_tables, engine, get_db
 from models.enhanced_models import *
+from models.user_models import Base
 from scripts.seed_country_routing import seed_country_routing
 
 

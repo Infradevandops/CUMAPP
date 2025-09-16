@@ -2,11 +2,12 @@
 """
 Real verification service with TextVerified API integration
 """
-import os
 import asyncio
 import logging
-from typing import Dict, List, Optional
+import os
 from datetime import datetime, timedelta
+from typing import Dict, List, Optional
+
 import httpx
 
 logger = logging.getLogger(__name__)

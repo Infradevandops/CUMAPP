@@ -5,27 +5,18 @@ Combines retry logic, circuit breakers, and error reporting for robust error han
 """
 import asyncio
 import logging
-from typing import Callable, Any, Optional, Dict, List, Type
-from functools import wraps
 from dataclasses import dataclass
 from datetime import datetime
+from functools import wraps
+from typing import Any, Callable, Dict, List, Optional, Type
 
-from core.exceptions import (
-    BaseServiceException,
-    TextVerifiedException,
-    TwilioException,
-    DatabaseException,
-    NetworkException,
-    map_textverified_error,
-    map_twilio_error,
-)
-from core.retry_handler import RetryHandler, RetryConfig, ServiceRetryConfigs
-from core.circuit_breaker import (
-    CircuitBreaker,
-    CircuitBreakerConfig,
-    ServiceCircuitConfigs,
-    circuit_manager,
-)
+from core.circuit_breaker import (CircuitBreaker, CircuitBreakerConfig,
+                                  ServiceCircuitConfigs, circuit_manager)
+from core.exceptions import (BaseServiceException, DatabaseException,
+                             NetworkException, TextVerifiedException,
+                             TwilioException, map_textverified_error,
+                             map_twilio_error)
+from core.retry_handler import RetryConfig, RetryHandler, ServiceRetryConfigs
 
 logger = logging.getLogger(__name__)
 

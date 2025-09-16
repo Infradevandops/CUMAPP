@@ -2,38 +2,23 @@
 """
 Models package initialization
 """
-# Import Base first to ensure single registry
-from models.user_models import Base
-
-# Import all models using the same Base
-from models.user_models import (
-    User,
-    Session as UserSession,
-    APIKey,
-    UserRole,
-    SubscriptionPlan,
-    UserCreate,
-    UserResponse,
-)
-from models.verification_models import VerificationRequest
+from models.conversation_models import (Conversation, ConversationCreate,
+                                        ConversationFilters,
+                                        ConversationListResponse,
+                                        ConversationResponse,
+                                        ConversationStatus, ConversationUpdate,
+                                        Message, MessageCreate, MessageFilters,
+                                        MessageListResponse, MessageResponse,
+                                        MessageType, MessageUpdate,
+                                        conversation_participants)
 from models.phone_number_models import PhoneNumber
-from models.conversation_models import (
-    Conversation,
-    Message,
-    conversation_participants,
-    ConversationStatus,
-    MessageType,
-    ConversationCreate,
-    ConversationUpdate,
-    ConversationResponse,
-    MessageCreate,
-    MessageUpdate,
-    MessageResponse,
-    ConversationListResponse,
-    MessageListResponse,
-    ConversationFilters,
-    MessageFilters,
-)
+# Import all models using the same Base
+# Import Base first to ensure single registry
+from models.user_models import APIKey, Base
+from models.user_models import Session as UserSession
+from models.user_models import (SubscriptionPlan, User, UserCreate,
+                                UserResponse, UserRole)
+from models.verification_models import VerificationRequest
 
 __all__ = [
     # Base

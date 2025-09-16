@@ -2,15 +2,18 @@
 """
 Unit tests for Enhanced Verification Service
 """
-import pytest
 import asyncio
-from unittest.mock import Mock, AsyncMock, patch
 from datetime import datetime, timedelta
+from unittest.mock import AsyncMock, Mock, patch
+
+import pytest
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 
-from models.user_models import Base, User, VerificationRequest, SubscriptionPlan
-from services.verification_service import VerificationService, CodeExtractionService
+from models.user_models import (Base, SubscriptionPlan, User,
+                                VerificationRequest)
+from services.verification_service import (CodeExtractionService,
+                                           VerificationService)
 from textverified_client import TextVerifiedClient
 
 

@@ -4,33 +4,26 @@ Enhanced Communication API Endpoints for CumApp Communication Platform
 Provides comprehensive SMS and voice communication with smart routing, webhook handling,
 conversation management, call features, and user dashboard
 """
+import asyncio
 import logging
-from typing import Dict, List, Optional, Any
 from datetime import datetime, timedelta
-from fastapi import (
-    APIRouter,
-    HTTPException,
-    Depends,
-    BackgroundTasks,
-    Query,
-    Path,
-    Request,
-)
-from fastapi.security import HTTPBearer
+from typing import Any, Dict, List, Optional
+
+from fastapi import (APIRouter, BackgroundTasks, Depends, HTTPException, Path,
+                     Query, Request)
 from fastapi.responses import JSONResponse, Response
+from fastapi.security import HTTPBearer
 from pydantic import BaseModel, Field, validator
 from sqlalchemy.orm import Session
-import asyncio
 
-from core.database import get_db
 from auth.jwt_handler import verify_jwt_token
+from core.database import get_db
+from enhanced_twilio_client import (EnhancedTwilioClient,
+                                    create_enhanced_twilio_client)
 from models.user_models import User
-from services.communication_service import (
-    CommunicationService,
-    create_communication_service,
-)
+from services.communication_service import (CommunicationService,
+                                            create_communication_service)
 from services.smart_routing_engine import SmartRoutingEngine
-from enhanced_twilio_client import EnhancedTwilioClient, create_enhanced_twilio_client
 
 logger = logging.getLogger(__name__)
 

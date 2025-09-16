@@ -5,18 +5,20 @@ Combines TextVerified integration, user management, and smart routing for comple
 """
 import asyncio
 import logging
-from typing import Dict, List, Optional, Any, Tuple
 from datetime import datetime, timedelta
-from sqlalchemy.orm import Session
-from sqlalchemy import and_, or_, desc, func
+from typing import Any, Dict, List, Optional, Tuple
 
+from sqlalchemy import and_, desc, func, or_
+from sqlalchemy.orm import Session
+
+from enhanced_twilio_client import EnhancedTwilioClient
 from models.user_models import User
 from models.verification_models import VerificationRequest
-from textverified_client import TextVerifiedClient
-from services.verification_service import VerificationService, CodeExtractionService
-from services.smart_routing_engine import SmartRoutingEngine
 from services.notification_service import NotificationService
-from enhanced_twilio_client import EnhancedTwilioClient
+from services.smart_routing_engine import SmartRoutingEngine
+from services.verification_service import (CodeExtractionService,
+                                           VerificationService)
+from textverified_client import TextVerifiedClient
 
 logger = logging.getLogger(__name__)
 

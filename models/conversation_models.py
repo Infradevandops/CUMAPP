@@ -2,24 +2,15 @@
 """
 Enhanced Conversation and Message Models for CumApp Platform
 """
-import uuid
 import enum
+import uuid
 from datetime import datetime
 from typing import Optional
-from sqlalchemy import (
-    Column,
-    String,
-    Text,
-    Boolean,
-    DateTime,
-    ForeignKey,
-    Enum,
-    Table,
-    Integer,
-    Index,
-)
-from sqlalchemy.orm import relationship
+
 from pydantic import BaseModel, Field
+from sqlalchemy import (Boolean, Column, DateTime, Enum, ForeignKey, Index,
+                        Integer, String, Table, Text)
+from sqlalchemy.orm import relationship
 
 from core.database import Base
 

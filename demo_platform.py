@@ -4,11 +4,12 @@ CumApp Platform Demo Script
 Demonstrates all platform capabilities using mock services
 """
 import asyncio
-import httpx
 import json
-import time
-from typing import Dict, Any
 import logging
+import time
+from typing import Any, Dict
+
+import httpx
 
 # Configure logging
 logging.basicConfig(

@@ -2,36 +2,25 @@
 """
 Authentication Service for CumApp Platform
 """
+import logging
 import uuid
 from datetime import datetime, timedelta
-from typing import Optional, Dict, Any, Tuple
-from sqlalchemy.orm import Session
-from sqlalchemy.exc import IntegrityError
-from fastapi import HTTPException, Depends, status
-from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
-import logging
+from typing import Any, Dict, Optional, Tuple
 
+from fastapi import Depends, HTTPException, status
+from fastapi.security import HTTPAuthorizationCredentials, HTTPBearer
+from sqlalchemy.exc import IntegrityError
+from sqlalchemy.orm import Session
+
+from auth.security import (create_access_token, create_refresh_token,
+                           generate_api_key, generate_reset_token,
+                           generate_verification_token, hash_api_key,
+                           hash_password, is_strong_password, verify_api_key,
+                           verify_password, verify_token)
 from core.database import get_db
-from models.user_models import (
-    User,
-    Session as UserSession,
-    APIKey,
-    UserRole,
-    SubscriptionPlan,
-)
-from auth.security import (
-    hash_password,
-    verify_password,
-    create_access_token,
-    create_refresh_token,
-    verify_token,
-    generate_api_key,
-    hash_api_key,
-    verify_api_key,
-    generate_verification_token,
-    generate_reset_token,
-    is_strong_password,
-)
+from models.user_models import APIKey
+from models.user_models import Session as UserSession
+from models.user_models import SubscriptionPlan, User, UserRole
 
 logger = logging.getLogger(__name__)
 security = HTTPBearer()

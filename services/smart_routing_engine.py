@@ -3,13 +3,15 @@
 Smart Routing Engine for CumApp Communication Platform
 Provides intelligent number selection, cost optimization, and geographic routing
 """
-import math
 import logging
-from typing import Dict, List, Optional, Tuple, Any
+import math
 from dataclasses import dataclass
 from datetime import datetime
+from typing import Any, Dict, List, Optional, Tuple
+
 import phonenumbers
-from phonenumbers import geocoder, carrier
+from phonenumbers import carrier, geocoder
+
 from enhanced_twilio_client import EnhancedTwilioClient
 
 logger = logging.getLogger(__name__)

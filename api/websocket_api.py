@@ -2,22 +2,16 @@
 """
 WebSocket API endpoints for real-time communication
 """
-from fastapi import (
-    APIRouter,
-    WebSocket,
-    WebSocketDisconnect,
-    Query,
-    Depends,
-    HTTPException,
-    status,
-)
-from fastapi.responses import HTMLResponse
-from typing import Optional
 import logging
+from typing import Optional
 
-from services.websocket_manager import websocket_handler, connection_manager
-from services.auth_service import get_current_active_user
+from fastapi import (APIRouter, Depends, HTTPException, Query, WebSocket,
+                     WebSocketDisconnect, status)
+from fastapi.responses import HTMLResponse
+
 from models import User
+from services.auth_service import get_current_active_user
+from services.websocket_manager import connection_manager, websocket_handler
 
 logger = logging.getLogger(__name__)
 

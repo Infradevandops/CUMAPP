@@ -2,20 +2,18 @@
 """
 Authentication API endpoints for CumApp Platform
 """
+import logging
+from typing import Optional
+
 from fastapi import APIRouter, Depends, HTTPException, status
 from fastapi.security import HTTPBearer
-from sqlalchemy.orm import Session
 from pydantic import BaseModel, EmailStr
-from typing import Optional
-import logging
+from sqlalchemy.orm import Session
 
 from core.database import get_db
-from services.auth_service import (
-    AuthenticationService,
-    get_current_user,
-    get_current_active_user,
-)
 from models.user_models import User, UserCreate, UserResponse
+from services.auth_service import (AuthenticationService,
+                                   get_current_active_user, get_current_user)
 
 logger = logging.getLogger(__name__)
 
@@ -142,7 +140,7 @@ async def login_user(login_data: LoginRequest, db: Session = Depends(get_db)):
     Authenticate user and return access tokens
     """
     try:
-        from auth.security import verify_password, create_access_token
+        from auth.security import create_access_token, verify_password
         from models.user_models import User
 
         # Find user
@@ -262,7 +260,8 @@ async def change_password(
     Change user password
     """
     try:
-        from auth.security import verify_password, hash_password, is_strong_password
+        from auth.security import (hash_password, is_strong_password,
+                                   verify_password)
 
         # Verify current password
         if not verify_password(

@@ -3,8 +3,9 @@ Inbox API for managing all user messages and notifications
 """
 
 import logging
-from typing import List, Optional, Dict, Any
 from datetime import datetime, timedelta
+from typing import Any, Dict, List, Optional
+
 from fastapi import APIRouter, Depends, HTTPException, Query
 from pydantic import BaseModel, Field
 

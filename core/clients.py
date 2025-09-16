@@ -2,12 +2,14 @@
 """
 Client initialization for external services.
 """
-import os
 import logging
+import os
+
 from twilio.rest import Client
-from textverified_client import TextVerifiedClient
-from groq_client import GroqAIClient
+
 from enhanced_twilio_client import EnhancedTwilioClient
+from groq_client import GroqAIClient
+from textverified_client import TextVerifiedClient
 
 logger = logging.getLogger(__name__)
 

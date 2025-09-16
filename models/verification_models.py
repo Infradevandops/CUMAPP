@@ -3,26 +3,16 @@
 Verification Models for CumApp Communication Platform
 Enhanced models for TextVerified integration and verification management
 """
-import uuid
 import enum
+import uuid
 from datetime import datetime, timedelta
-from typing import Optional, List, Dict, Any
 from decimal import Decimal
-from sqlalchemy import (
-    Column,
-    String,
-    Text,
-    Boolean,
-    DateTime,
-    ForeignKey,
-    Enum,
-    Integer,
-    Numeric,
-    Index,
-    JSON,
-)
-from sqlalchemy.orm import relationship
+from typing import Any, Dict, List, Optional
+
 from pydantic import BaseModel, Field, validator
+from sqlalchemy import (JSON, Boolean, Column, DateTime, Enum, ForeignKey,
+                        Index, Integer, Numeric, String, Text)
+from sqlalchemy.orm import relationship
 
 from core.database import Base
 
@@ -193,7 +183,7 @@ class VerificationMessage(Base):
     # Provider details
     provider_message_id = Column(String(200))
 
-    message_metadata = Column(JSON) # Additional message metadata
+    message_metadata = Column(JSON)  # Additional message metadata
 
     # Relationships
     verification = relationship("VerificationRequest")

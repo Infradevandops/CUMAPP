@@ -2,20 +2,18 @@
 """
 Unit tests for Communication Service
 """
-import pytest
 import asyncio
-from unittest.mock import Mock, patch, AsyncMock
 from datetime import datetime, timedelta
+from unittest.mock import AsyncMock, Mock, patch
 
-from services.communication_service import (
-    CommunicationService,
-    MessageType,
-    CallStatus,
-    create_communication_service,
-)
-from models.user_models import User
-from models.conversation_models import Message, Conversation
+import pytest
+
+from models.conversation_models import Conversation, Message
 from models.phone_number_models import PhoneNumber
+from models.user_models import User
+from services.communication_service import (CallStatus, CommunicationService,
+                                            MessageType,
+                                            create_communication_service)
 
 
 class TestCommunicationService:

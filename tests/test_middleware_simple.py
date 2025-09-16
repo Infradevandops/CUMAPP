@@ -7,9 +7,10 @@ import sys
 import traceback
 
 try:
-    from middleware.auth_middleware import JWTAuthMiddleware, SessionManager
     from auth.security import create_access_token, create_refresh_token
-    from core.database import SessionLocal, create_tables, check_database_connection
+    from core.database import (SessionLocal, check_database_connection,
+                               create_tables)
+    from middleware.auth_middleware import JWTAuthMiddleware, SessionManager
     from models.user_models import User
     from services.auth_service import AuthenticationService
 

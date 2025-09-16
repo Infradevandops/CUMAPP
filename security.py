@@ -5,10 +5,11 @@ Handles input sanitization, CSRF protection, and security headers
 """
 import html
 import re
-from typing import Any, Dict, Optional
-from fastapi import Request, HTTPException
-from fastapi.security import HTTPBearer
 import secrets
+from typing import Any, Dict, Optional
+
+from fastapi import HTTPException, Request
+from fastapi.security import HTTPBearer
 
 
 class SecurityUtils:

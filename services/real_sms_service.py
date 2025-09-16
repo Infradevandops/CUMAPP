@@ -2,11 +2,12 @@
 """
 Real SMS service with Twilio integration
 """
-import os
 import logging
+import os
 from typing import Dict, Optional
-from twilio.rest import Client
+
 from twilio.base.exceptions import TwilioRestException
+from twilio.rest import Client
 
 logger = logging.getLogger(__name__)
 

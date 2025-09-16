@@ -2,21 +2,21 @@
 """
 Unit tests for Enhanced WebSocket Manager
 """
-import pytest
 import asyncio
 import json
-from unittest.mock import Mock, AsyncMock, patch
 from datetime import datetime
+from unittest.mock import AsyncMock, Mock, patch
+
+import pytest
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 from sqlalchemy.pool import StaticPool
 
-from models import Base, User, Conversation, Message, MessageType, ConversationStatus
-from services.websocket_manager import (
-    AuthenticatedConnectionManager,
-    AuthenticatedWebSocketHandler,
-)
-from auth.security import hash_password, create_access_token
+from auth.security import create_access_token, hash_password
+from models import (Base, Conversation, ConversationStatus, Message,
+                    MessageType, User)
+from services.websocket_manager import (AuthenticatedConnectionManager,
+                                        AuthenticatedWebSocketHandler)
 
 # Test database setup
 SQLALCHEMY_DATABASE_URL = "sqlite:///./test_websocket.db"

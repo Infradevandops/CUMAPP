@@ -2,16 +2,17 @@
 """
 Tests for Enhanced Chat Interface Features
 """
-import pytest
 import asyncio
 import json
-from unittest.mock import Mock, patch, AsyncMock
+import time
+from unittest.mock import AsyncMock, Mock, patch
+
+import pytest
 from fastapi.testclient import TestClient
 from fastapi.websockets import WebSocket
-import time
 
 from main import app
-from models import User, Conversation, Message, MessageType, ConversationStatus
+from models import Conversation, ConversationStatus, Message, MessageType, User
 from services.conversation_service import ConversationService
 from services.websocket_manager import ConnectionManager
 

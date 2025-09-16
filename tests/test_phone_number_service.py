@@ -2,16 +2,17 @@
 """
 Unit tests for Phone Number Service
 """
-import pytest
 import asyncio
 from datetime import datetime, timedelta
 from decimal import Decimal
-from unittest.mock import Mock, patch, AsyncMock
+from unittest.mock import AsyncMock, Mock, patch
+
+import pytest
 from sqlalchemy.orm import Session
 
-from services.phone_number_service import PhoneNumberService
-from models.user_models import User
 from models.phone_number_models import PhoneNumber
+from models.user_models import User
+from services.phone_number_service import PhoneNumberService
 
 
 class TestPhoneNumberService:

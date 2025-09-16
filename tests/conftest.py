@@ -4,12 +4,14 @@ Pytest configuration and fixtures for CumApp tests.
 
 import os
 import sys
+
 print(sys.path)
 
 sys.path.insert(0, "/Users/machine/Project/GitHub/CumApp")
+from unittest.mock import AsyncMock, Mock
+
 import pytest
 from fastapi.testclient import TestClient
-from unittest.mock import Mock, AsyncMock
 
 # Set test environment variables
 os.environ.update(

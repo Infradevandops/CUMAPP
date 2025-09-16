@@ -3,12 +3,13 @@
 TextVerified API Client
 Requirements: requests
 """
-import requests
-import time
-import os
-from datetime import datetime, timezone
-from typing import List, Optional, Dict, Any
 import logging
+import os
+import time
+from datetime import datetime, timezone
+from typing import Any, Dict, List, Optional
+
+import requests
 
 logger = logging.getLogger(__name__)
 

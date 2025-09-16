@@ -7,14 +7,14 @@ import json
 import logging
 from datetime import datetime, timedelta
 from decimal import Decimal
-from typing import List, Optional, Dict, Any, Tuple
-from sqlalchemy.orm import Session
-from sqlalchemy import and_, or_, desc, func
+from typing import Any, Dict, List, Optional, Tuple
 
-from models.user_models import User
+from sqlalchemy import and_, desc, func, or_
+from sqlalchemy.orm import Session
+
+from enhanced_twilio_client import EnhancedTwilioClient
 from models.phone_number_models import PhoneNumber
-from textverified_client import TextVerifiedClient
-from mock_twilio_client import MockTwilioClient
+from models.user_models import User
 
 logger = logging.getLogger(__name__)
 
@@ -22,7 +22,12 @@ logger = logging.getLogger(__name__)
 class PhoneNumberService:
     """Service for managing phone number marketplace and subscriptions"""
 
-    def __init__(self, db: Session, twilio_client, textverified_client):
+    def __init__(
+        self,
+        db: Session,
+        twilio_client: Optional[EnhancedTwilioClient] = None,
+        textverified_client=None,
+    ):
         self.db = db
         self.textverified_client = textverified_client
         self.twilio_client = twilio_client
@@ -38,33 +43,26 @@ class PhoneNumberService:
         Search for available phone numbers by country and area code
         """
         try:
-            if capabilities is None:
-                capabilities = ["sms"]
-
-            # For demo purposes, generate mock available numbers
-            # In production, this would query actual providers
-            available_numbers = []
-
-            # Generate mock numbers based on country code
-            base_numbers = self._generate_mock_numbers(country_code, area_code, limit)
-
-            for i, number in enumerate(base_numbers):
-                available_number = {
-                    "phone_number": number,
-                    "country_code": country_code,
-                    "area_code": area_code or self._extract_area_code(number),
-                    "region": self._get_region_for_country(country_code),
-                    "provider": "mock",
-                    "monthly_cost": Decimal("1.00") + (Decimal("0.50") * i % 3),
-                    "sms_cost_per_message": Decimal("0.01"),
-                    "voice_cost_per_minute": Decimal("0.02"),
-                    "setup_fee": Decimal("0.00"),
-                    "capabilities": capabilities,
-                }
-                available_numbers.append(available_number)
-
-            return available_numbers, len(available_numbers)
-
+            if self.twilio_client:
+                # Use real Twilio client
+                available_numbers = await self.twilio_client.search_available_numbers(
+                    country_code=country_code,
+                    area_code=area_code,
+                    limit=limit,
+                    sms_enabled="sms" in capabilities,
+                    voice_enabled="voice" in capabilities,
+                    mms_enabled="mms" in capabilities,
+                )
+                return available_numbers, len(available_numbers)
+            else:
+                # Fallback to mock data if no client
+                logger.warning(
+                    "Twilio client not available, using mock data for number search."
+                )
+                mock_numbers = self._generate_mock_numbers(
+                    country_code, area_code, limit
+                )
+                return mock_numbers, len(mock_numbers)
         except Exception as e:
             logger.error(f"Error searching available numbers: {e}")
             raise
@@ -106,8 +104,19 @@ class PhoneNumberService:
             if owned_count >= max_numbers:
                 raise ValueError(f"Maximum number limit reached ({max_numbers})")
 
-            # Get number details (mock for now)
-            number_details = await self._get_number_details(phone_number)
+            # Provision number with Twilio if client is available
+            if self.twilio_client:
+                provisioned_number = await self.twilio_client.purchase_number(
+                    phone_number
+                )
+                number_details = await self._get_number_details(
+                    phone_number, provider_id=provisioned_number.get("sid")
+                )
+            else:
+                logger.warning(
+                    "Twilio client not available, using mock data for number purchase."
+                )
+                number_details = await self._get_number_details(phone_number)
 
             # Create or update phone number record
             if existing:
@@ -122,11 +131,13 @@ class PhoneNumberService:
                     area_code=number_details["area_code"],
                     region=number_details["region"],
                     provider=number_details["provider"],
-                    provider_id=number_details.get("provider_id"),
+                    provider_id=number_details.get(
+                        "provider_id", f"mock_{phone_number}"
+                    ),
                     owner_id=user_id,
-                    monthly_cost=str(number_details["monthly_cost"]),
-                    sms_cost_per_message=str(number_details["sms_cost_per_message"]),
-                    voice_cost_per_minute=str(number_details["voice_cost_per_minute"]),
+                    monthly_cost=number_details["monthly_cost"],
+                    sms_cost_per_message=number_details["sms_cost_per_message"],
+                    voice_cost_per_minute=number_details["voice_cost_per_minute"],
                     setup_fee=str(number_details["setup_fee"]),
                     auto_renew=auto_renew,
                     status="active",
@@ -147,7 +158,7 @@ class PhoneNumberService:
             return {
                 "success": True,
                 "message": "Phone number purchased successfully",
-                "phone_number": phone_number_record,
+                "phone_number": phone_number_record.to_dict(),
                 "transaction_id": transaction_id,
             }
 
@@ -396,24 +407,24 @@ class PhoneNumberService:
     # Helper methods
     def _generate_mock_numbers(
         self, country_code: str, area_code: Optional[str], limit: int
-    ) -> List[str]:
+    ) -> List[Dict[str, Any]]:
         """Generate mock phone numbers for demo purposes"""
         numbers = []
 
         if country_code.upper() == "US":
             base_area = area_code or "555"
             for i in range(limit):
-                number = f"+1{base_area}{1000 + i:04d}"
-                numbers.append(number)
+                phone_num_str = f"+1{base_area}{1000 + i:04d}"
+                numbers.append(self._get_mock_number_details(phone_num_str))
         elif country_code.upper() == "GB":
             for i in range(limit):
-                number = f"+44700{100000 + i:06d}"
-                numbers.append(number)
+                phone_num_str = f"+44700{100000 + i:06d}"
+                numbers.append(self._get_mock_number_details(phone_num_str))
         elif country_code.upper() == "CA":
             base_area = area_code or "416"
             for i in range(limit):
-                number = f"+1{base_area}{1000 + i:04d}"
-                numbers.append(number)
+                phone_num_str = f"+1{base_area}{1000 + i:04d}"
+                numbers.append(self._get_mock_number_details(phone_num_str))
         else:
             # Generic international format
             for i in range(limit):
@@ -441,18 +452,20 @@ class PhoneNumberService:
         }
         return regions.get(country_code.upper(), "Unknown")
 
-    async def _get_number_details(self, phone_number: str) -> Dict[str, Any]:
-        """Get detailed information about a phone number"""
-        # Mock implementation for demo
+    def _get_mock_number_details(
+        self, phone_number: str, provider_id: Optional[str] = None
+    ) -> Dict[str, Any]:
+        """Get mock detailed information about a phone number"""
         country_code = "US" if phone_number.startswith("+1") else "GB"
 
         return {
             "phone_number": phone_number,
+            "friendly_name": phone_number,
             "country_code": country_code,
             "area_code": self._extract_area_code(phone_number),
             "region": self._get_region_for_country(country_code),
             "provider": "mock",
-            "provider_id": f"mock_{phone_number.replace('+', '')}",
+            "provider_id": provider_id or f"mock_{phone_number.replace('+', '')}",
             "monthly_cost": Decimal("1.50"),
             "sms_cost_per_message": Decimal("0.01"),
             "voice_cost_per_minute": Decimal("0.02"),

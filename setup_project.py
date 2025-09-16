@@ -192,15 +192,15 @@ def run_tests():
     try:
         # Test imports
         import fastapi
-        import uvicorn
         import requests
+        import uvicorn
 
         print("✅ Core dependencies importable")
 
         # Test custom modules
-        from textverified_client import TextVerifiedClient
         from groq_client import GroqAIClient
         from mock_twilio_client import MockTwilioClient
+        from textverified_client import TextVerifiedClient
 
         print("✅ Custom modules importable")
 

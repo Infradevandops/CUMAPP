@@ -3,10 +3,10 @@
 Seed Country Routing Data
 Populates the country_routing table with initial data for international SMS routing
 """
-import sys
 import os
-from decimal import Decimal
+import sys
 from datetime import datetime
+from decimal import Decimal
 
 # Add the project root to the Python path
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))

@@ -2,28 +2,19 @@
 """
 Conversation Management Service for CumApp Platform
 """
+import logging
 import uuid
 from datetime import datetime
-from typing import Optional, List, Dict, Any, Tuple
-from sqlalchemy.orm import Session, joinedload
-from sqlalchemy import and_, or_, desc, asc, func, text
-from fastapi import HTTPException, status
-import logging
+from typing import Any, Dict, List, Optional, Tuple
 
-from models import (
-    User,
-    Conversation,
-    Message,
-    conversation_participants,
-    ConversationStatus,
-    MessageType,
-    ConversationFilters,
-    MessageFilters,
-    ConversationCreate,
-    ConversationUpdate,
-    MessageCreate,
-    MessageUpdate,
-)
+from fastapi import HTTPException, status
+from sqlalchemy import and_, asc, desc, func, or_, text
+from sqlalchemy.orm import Session, joinedload
+
+from models import (Conversation, ConversationCreate, ConversationFilters,
+                    ConversationStatus, ConversationUpdate, Message,
+                    MessageCreate, MessageFilters, MessageType, MessageUpdate,
+                    User, conversation_participants)
 
 logger = logging.getLogger(__name__)
 

@@ -3,26 +3,16 @@
 Subscription Models for CumApp Communication Platform
 Enhanced models for subscription management, billing, and usage tracking
 """
-import uuid
 import enum
+import uuid
 from datetime import datetime, timedelta
-from typing import Optional, List, Dict, Any
 from decimal import Decimal
-from sqlalchemy import (
-    Column,
-    String,
-    Text,
-    Boolean,
-    DateTime,
-    ForeignKey,
-    Enum,
-    Integer,
-    Numeric,
-    Index,
-    JSON,
-)
-from sqlalchemy.orm import relationship
+from typing import Any, Dict, List, Optional
+
 from pydantic import BaseModel, Field, validator
+from sqlalchemy import (JSON, Boolean, Column, DateTime, Enum, ForeignKey,
+                        Index, Integer, Numeric, String, Text)
+from sqlalchemy.orm import relationship
 
 from core.database import Base
 

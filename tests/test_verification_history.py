@@ -2,20 +2,20 @@
 """
 Tests for Verification History and Export Features
 """
-import pytest
 import json
-from fastapi.testclient import TestClient
-from unittest.mock import Mock, AsyncMock, patch
 from datetime import datetime, timedelta
+from unittest.mock import AsyncMock, Mock, patch
+
+import pytest
+from fastapi.testclient import TestClient
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 
-from main import app
-from models.user_models import User, SubscriptionPlan
-from models.verification_models import VerificationRequest
-from core.database import get_db, Base
-from core.database import get_db
 from auth.jwt_handler import create_jwt_token
+from core.database import Base, get_db
+from main import app
+from models.user_models import SubscriptionPlan, User
+from models.verification_models import VerificationRequest
 
 
 # Test database setup

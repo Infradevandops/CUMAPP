@@ -7,9 +7,10 @@ import sys
 import traceback
 
 try:
-    from core.database import SessionLocal, create_tables, check_database_connection
-    from services.auth_service import AuthenticationService
     from auth.security import hash_password, verify_password
+    from core.database import (SessionLocal, check_database_connection,
+                               create_tables)
+    from services.auth_service import AuthenticationService
 
     print("✅ All imports successful")
 except Exception as e:

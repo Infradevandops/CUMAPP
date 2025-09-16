@@ -3,8 +3,8 @@
 Direct test of authentication system without server
 """
 import asyncio
-import sys
 import os
+import sys
 
 # Add current directory to path
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
@@ -16,9 +16,10 @@ async def test_auth_direct():
 
     try:
         # Import required modules
-        from core.database import SessionLocal, create_tables, check_database_connection
-        from services.auth_service import AuthenticationService
         from auth.security import hash_password, verify_password
+        from core.database import (SessionLocal, check_database_connection,
+                                   create_tables)
+        from services.auth_service import AuthenticationService
 
         print("✅ All imports successful")
 

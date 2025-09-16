@@ -2,28 +2,24 @@
 """
 Unit tests for JWT Middleware and Session Management
 """
-import pytest
 import asyncio
 from datetime import datetime, timedelta
-from fastapi import FastAPI, Request, Depends
+
+import pytest
+from fastapi import Depends, FastAPI, Request
 from fastapi.testclient import TestClient
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 from sqlalchemy.pool import StaticPool
 
-from models.user_models import Base, User, Session as UserSession, APIKey
-from middleware.auth_middleware import (
-    JWTAuthMiddleware,
-    SessionManager,
-    get_current_user_from_middleware,
-)
-from auth.security import (
-    create_access_token,
-    create_refresh_token,
-    generate_api_key,
-    hash_api_key,
-)
+from auth.security import (create_access_token, create_refresh_token,
+                           generate_api_key, hash_api_key)
 from core.database import get_db
+from middleware.auth_middleware import (JWTAuthMiddleware, SessionManager,
+                                        get_current_user_from_middleware)
+from models.user_models import APIKey, Base
+from models.user_models import Session as UserSession
+from models.user_models import User
 
 # Test database setup
 SQLALCHEMY_DATABASE_URL = "sqlite:///./test_middleware.db"

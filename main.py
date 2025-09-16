@@ -2,8 +2,8 @@
 """
 Main application file for the CumApp platform.
 """
-import os
 import logging
+import os
 from contextlib import asynccontextmanager
 
 from dotenv import load_dotenv
@@ -13,29 +13,32 @@ from fastapi.staticfiles import StaticFiles
 # Load environment variables
 load_dotenv()
 
+from api.admin_api import router as admin_router
+from api.ai_assistant_api import router as ai_assistant_router
+from api.api_key_api import router as api_key_router
+# Import API routers
+from api.auth_api import router as auth_router
+from api.communication_api import router as communication_router
+from api.communication_dashboard_api import \
+    router as communication_dashboard_router
+from api.enhanced_communication_api import router as enhanced_comm_router
+from api.enhanced_verification_api import \
+    router as enhanced_verification_router
+from api.frontend import router as frontend_router
+from api.inbox_api import router as inbox_router
+from api.integrated_verification_api import \
+    router as integrated_verification_router
+from api.international_routing_api import \
+    router as international_routing_router
+from api.payment_api import router as payment_router
+from api.phone_number_api import router as phone_router
+from api.smart_routing_api import router as smart_routing_router
+from api.subscription_api import router as subscription_router
+from api.verification_api import router as verification_router
+from core.clients import groq_client, textverified_client, twilio_client
 # Import core components
 from core.database import check_database_connection, create_tables
 from core.middleware import setup_middleware
-from core.clients import twilio_client, textverified_client, groq_client
-
-# Import API routers
-from api.auth_api import router as auth_router
-from api.verification_api import router as verification_router
-from api.phone_number_api import router as phone_router
-from api.payment_api import router as payment_router
-from api.admin_api import router as admin_router
-from api.api_key_api import router as api_key_router
-from api.enhanced_communication_api import router as enhanced_comm_router
-from api.smart_routing_api import router as smart_routing_router
-from api.integrated_verification_api import router as integrated_verification_router
-from api.communication_api import router as communication_router
-from api.subscription_api import router as subscription_router
-from api.ai_assistant_api import router as ai_assistant_router
-from api.enhanced_verification_api import router as enhanced_verification_router
-from api.inbox_api import router as inbox_router
-from api.communication_dashboard_api import router as communication_dashboard_router
-from api.international_routing_api import router as international_routing_router
-from api.frontend import router as frontend_router
 
 # Configure logging
 logging.basicConfig(level=logging.INFO)

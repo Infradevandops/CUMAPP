@@ -2,16 +2,15 @@
 """
 Unit tests for Integrated Verification Service
 """
-import pytest
 import asyncio
-from unittest.mock import Mock, patch, AsyncMock
 from datetime import datetime, timedelta
+from unittest.mock import AsyncMock, Mock, patch
 
-from services.integrated_verification_service import (
-    IntegratedVerificationService,
-    create_integrated_verification_service,
-)
+import pytest
+
 from models.verification_models import VerificationRequest
+from services.integrated_verification_service import (
+    IntegratedVerificationService, create_integrated_verification_service)
 
 
 class TestIntegratedVerificationService:

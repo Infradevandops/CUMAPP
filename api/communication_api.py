@@ -4,20 +4,19 @@ Communication API Endpoints
 Provides comprehensive SMS and voice communication with smart routing, history management,
 call recording, forwarding, and user number management dashboard
 """
-from fastapi import APIRouter, Depends, HTTPException, Query, Path, Request
-from fastapi.security import HTTPBearer
-from sqlalchemy.orm import Session
-from typing import List, Dict, Any, Optional
-from pydantic import BaseModel, Field
+from typing import Any, Dict, List, Optional
 
-from core.database import get_db
+from fastapi import APIRouter, Depends, HTTPException, Path, Query, Request
+from fastapi.security import HTTPBearer
+from pydantic import BaseModel, Field
+from sqlalchemy.orm import Session
+
 from auth.jwt_handler import verify_jwt_token
-from models.user_models import User
-from services.communication_service import (
-    CommunicationService,
-    create_communication_service,
-)
+from core.database import get_db
 from enhanced_twilio_client import EnhancedTwilioClient
+from models.user_models import User
+from services.communication_service import (CommunicationService,
+                                            create_communication_service)
 
 # Initialize router and security
 router = APIRouter(prefix="/api/communication", tags=["communication"])

@@ -2,31 +2,21 @@
 """
 Unit tests for Conversation Service
 """
-import pytest
 import asyncio
 from datetime import datetime, timedelta
+
+import pytest
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 from sqlalchemy.pool import StaticPool
 
-from models import (
-    Base,
-    User,
-    Conversation,
-    Message,
-    ConversationStatus,
-    MessageType,
-    UserRole,
-    SubscriptionPlan,
-    ConversationCreate,
-    ConversationUpdate,
-    MessageCreate,
-    MessageUpdate,
-    ConversationFilters,
-    MessageFilters,
-)
-from services.conversation_service import ConversationService
 from auth.security import hash_password
+from models import (Base, Conversation, ConversationCreate,
+                    ConversationFilters, ConversationStatus,
+                    ConversationUpdate, Message, MessageCreate, MessageFilters,
+                    MessageType, MessageUpdate, SubscriptionPlan, User,
+                    UserRole)
+from services.conversation_service import ConversationService
 
 # Test database setup
 SQLALCHEMY_DATABASE_URL = "sqlite:///./test_conversation_service.db"

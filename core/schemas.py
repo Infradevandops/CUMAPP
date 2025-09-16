@@ -2,8 +2,9 @@
 """
 Pydantic schemas for the FastAPI application.
 """
+from typing import Dict, List, Optional
+
 from pydantic import BaseModel
-from typing import List, Dict, Optional
 
 
 class VerificationRequest(BaseModel):

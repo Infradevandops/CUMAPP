@@ -2,18 +2,16 @@
 """
 Unit tests for Smart Routing Engine
 """
-import pytest
 import asyncio
-from unittest.mock import Mock, patch, AsyncMock
 import math
+from unittest.mock import AsyncMock, Mock, patch
 
-from services.smart_routing_engine import (
-    SmartRoutingEngine,
-    CountryInfo,
-    NumberOption,
-    RoutingRecommendation,
-    create_smart_routing_engine,
-)
+import pytest
+
+from services.smart_routing_engine import (CountryInfo, NumberOption,
+                                           RoutingRecommendation,
+                                           SmartRoutingEngine,
+                                           create_smart_routing_engine)
 
 
 class TestSmartRoutingEngine:

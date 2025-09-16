@@ -4,23 +4,16 @@ Messaging Service for CumApp Communication Platform
 Handles both internal messaging and SMS to external numbers
 """
 import asyncio
-from typing import List, Dict, Optional, Any
 from datetime import datetime, timedelta
-from sqlalchemy.orm import Session
-from sqlalchemy import and_, or_
+from typing import Any, Dict, List, Optional
 
-from models.database import (
-    User,
-    PhoneNumber,
-    Conversation,
-    ConversationParticipant,
-    Message,
-    Contact,
-    MessageType,
-    MessageStatus,
-    NumberStatus,
-)
+from sqlalchemy import and_, or_
+from sqlalchemy.orm import Session
+
 from mock_twilio_client import MockTwilioClient
+from models.database import (Contact, Conversation, ConversationParticipant,
+                             Message, MessageStatus, MessageType, NumberStatus,
+                             PhoneNumber, User)
 
 
 class MessagingService:

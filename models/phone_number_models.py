@@ -2,25 +2,16 @@
 """
 Phone Number Models for CumApp Platform
 """
-import uuid
 import enum
+import uuid
 from datetime import datetime, timedelta
-from typing import Optional, List
 from decimal import Decimal
-from sqlalchemy import (
-    Column,
-    String,
-    Boolean,
-    DateTime,
-    ForeignKey,
-    Enum,
-    Integer,
-    Numeric,
-    Index,
-    Text,
-)
-from sqlalchemy.orm import relationship
+from typing import List, Optional
+
 from pydantic import BaseModel, Field
+from sqlalchemy import (Boolean, Column, DateTime, Enum, ForeignKey, Index,
+                        Integer, Numeric, String, Text)
+from sqlalchemy.orm import relationship
 
 from core.database import Base
 

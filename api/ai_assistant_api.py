@@ -3,19 +3,17 @@
 AI Assistant API endpoints for CumApp Communication Platform
 Provides API endpoints for AI assistance, contextual help, and intent analysis
 """
-import logging
-from typing import Dict, List, Optional, Any
-from datetime import datetime
-from fastapi import APIRouter, HTTPException, Depends, BackgroundTasks
-from pydantic import BaseModel, Field, validator
 import asyncio
+import logging
+from datetime import datetime
+from typing import Any, Dict, List, Optional
 
-from services.ai_assistant_service import (
-    AIAssistantService,
-    ConversationRole,
-    IntentType,
-    ResponseSuggestion,
-)
+from fastapi import APIRouter, BackgroundTasks, Depends, HTTPException
+from pydantic import BaseModel, Field, validator
+
+from services.ai_assistant_service import (AIAssistantService,
+                                           ConversationRole, IntentType,
+                                           ResponseSuggestion)
 
 logger = logging.getLogger(__name__)
 

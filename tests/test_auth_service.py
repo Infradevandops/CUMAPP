@@ -2,21 +2,20 @@
 """
 Unit tests for Authentication Service
 """
-import pytest
 import asyncio
 from datetime import datetime, timedelta
+
+import pytest
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 from sqlalchemy.pool import StaticPool
 
-from models.user_models import Base, User, Session as UserSession
+from auth.security import (create_access_token, hash_password, verify_password,
+                           verify_token)
+from models.user_models import Base
+from models.user_models import Session as UserSession
+from models.user_models import User
 from services.auth_service import AuthenticationService
-from auth.security import (
-    hash_password,
-    verify_password,
-    create_access_token,
-    verify_token,
-)
 
 # Test database setup
 SQLALCHEMY_DATABASE_URL = "sqlite:///./test.db"

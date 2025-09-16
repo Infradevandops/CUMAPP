@@ -4,14 +4,14 @@ AI Assistant Service for CumApp Communication Platform
 Provides local language model integration for privacy-focused processing,
 conversation context management, and response suggestion algorithms
 """
-import logging
-import json
-import re
-from typing import Dict, List, Optional, Any, Tuple
-from datetime import datetime, timedelta
-from dataclasses import dataclass
-from enum import Enum
 import asyncio
+import json
+import logging
+import re
+from dataclasses import dataclass
+from datetime import datetime, timedelta
+from enum import Enum
+from typing import Any, Dict, List, Optional, Tuple
 
 logger = logging.getLogger(__name__)
 

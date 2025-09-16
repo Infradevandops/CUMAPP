@@ -2,15 +2,16 @@
 """
 Tests for Enhanced Chat Search and Infinite Scroll Functionality
 """
-import pytest
 from datetime import datetime, timedelta
 from unittest.mock import Mock, patch
+
+import pytest
 from fastapi.testclient import TestClient
 from sqlalchemy.orm import Session
 
 from main import app
+from models import Conversation, ConversationStatus, Message, MessageType, User
 from services.conversation_service import ConversationService
-from models import User, Conversation, Message, MessageType, ConversationStatus
 
 
 class TestEnhancedSearch:

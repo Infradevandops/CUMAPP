@@ -2,23 +2,15 @@
 """
 User Management Models for CumApp Communication Platform
 """
-from datetime import datetime, timedelta
-from typing import List, Optional, Dict, Any
-from enum import Enum
-from pydantic import BaseModel, EmailStr
-from sqlalchemy import (
-    Column,
-    Integer,
-    String,
-    DateTime,
-    Boolean,
-    Text,
-    ForeignKey,
-    Table,
-    Index,
-)
-from sqlalchemy.orm import relationship
 import uuid
+from datetime import datetime, timedelta
+from enum import Enum
+from typing import Any, Dict, List, Optional
+
+from pydantic import BaseModel, EmailStr
+from sqlalchemy import (Boolean, Column, DateTime, ForeignKey, Index, Integer,
+                        String, Table, Text)
+from sqlalchemy.orm import relationship
 
 from core.database import Base
 
