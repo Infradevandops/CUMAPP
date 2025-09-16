@@ -4,114 +4,108 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Billing - CumApp</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
 </head>
-<body class="bg-light">
-    <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
-        <div class="container">
-            <a class="navbar-brand fw-bold" href="/dashboard">
-                <i class="fas fa-sms me-2"></i>CumApp
+<body class="bg-gray-100">
+    <nav class="bg-blue-600 text-white">
+        <div class="container mx-auto px-4 py-3 flex justify-between items-center">
+            <a class="text-xl font-bold" href="/dashboard">
+                <i class="fas fa-sms mr-2"></i>CumApp
             </a>
-            <div class="navbar-nav ms-auto">
-                <a class="nav-link" href="/dashboard">Dashboard</a>
-                <a class="nav-link" href="/numbers">Numbers</a>
-                <a class="nav-link" href="#" onclick="logout()">Logout</a>
+            <div class="flex items-center space-x-6">
+                <a class="hover:text-gray-300" href="/dashboard">Dashboard</a>
+                <a class="hover:text-gray-300" href="/numbers">Numbers</a>
+                <a class="hover:text-gray-300" href="#" onclick="logout()">Logout</a>
             </div>
         </div>
     </nav>
 
-    <div class="container mt-4">
-        <div class="row">
-            <div class="col-12">
-                <h2><i class="fas fa-credit-card me-2"></i>Billing & Credits</h2>
-                <p class="text-muted">Manage your account balance and payment methods</p>
+    <div class="container mx-auto mt-4 px-4">
+        <div class="flex flex-wrap -mx-4">
+            <div class="w-full px-4">
+                <h2 class="text-2xl font-bold"><i class="fas fa-credit-card mr-2"></i>Billing & Credits</h2>
+                <p class="text-gray-500">Manage your account balance and payment methods</p>
             </div>
         </div>
 
         <!-- Balance Card -->
-        <div class="row mb-4">
-            <div class="col-md-4">
-                <div class="card bg-primary text-white">
-                    <div class="card-body text-center">
-                        <h3 class="mb-0" id="currentBalance">$0.00</h3>
-                        <p class="mb-0">Current Balance</p>
-                    </div>
+        <div class="flex flex-wrap -mx-4 mb-4">
+            <div class="w-full md:w-1/3 px-4 mb-4">
+                <div class="bg-blue-500 text-white rounded-lg shadow-md p-4 text-center">
+                    <h3 class="text-2xl font-bold mb-0" id="currentBalance">$0.00</h3>
+                    <p class="mb-0">Current Balance</p>
                 </div>
             </div>
-            <div class="col-md-4">
-                <div class="card bg-success text-white">
-                    <div class="card-body text-center">
-                        <h3 class="mb-0" id="totalSpent">$0.00</h3>
-                        <p class="mb-0">Total Spent</p>
-                    </div>
+            <div class="w-full md:w-1/3 px-4 mb-4">
+                <div class="bg-green-500 text-white rounded-lg shadow-md p-4 text-center">
+                    <h3 class="text-2xl font-bold mb-0" id="totalSpent">$0.00</h3>
+                    <p class="mb-0">Total Spent</p>
                 </div>
             </div>
-            <div class="col-md-4">
-                <div class="card bg-info text-white">
-                    <div class="card-body text-center">
-                        <h3 class="mb-0" id="thisMonth">$0.00</h3>
-                        <p class="mb-0">This Month</p>
-                    </div>
+            <div class="w-full md:w-1/3 px-4 mb-4">
+                <div class="bg-cyan-500 text-white rounded-lg shadow-md p-4 text-center">
+                    <h3 class="text-2xl font-bold mb-0" id="thisMonth">$0.00</h3>
+                    <p class="mb-0">This Month</p>
                 </div>
             </div>
         </div>
 
         <!-- Add Credits -->
-        <div class="row mb-4">
-            <div class="col-12">
-                <div class="card">
-                    <div class="card-header">
-                        <h5 class="mb-0">Add Credits</h5>
+        <div class="flex flex-wrap -mx-4 mb-4">
+            <div class="w-full px-4">
+                <div class="bg-white rounded-lg shadow-md">
+                    <div class="p-4 border-b">
+                        <h5 class="text-xl font-bold mb-0">Add Credits</h5>
                     </div>
-                    <div class="card-body">
-                        <div class="row">
-                            <div class="col-md-3 mb-3">
-                                <div class="card credit-option" onclick="selectAmount(5)">
-                                    <div class="card-body text-center">
-                                        <h4>$5</h4>
-                                        <small class="text-muted">~10 verifications</small>
+                    <div class="p-4">
+                        <div class="flex flex-wrap -mx-4">
+                            <div class="w-full md:w-1/4 px-4 mb-3">
+                                <div class="border rounded-lg cursor-pointer transition-all hover:border-blue-500 hover:shadow-lg" onclick="selectAmount(5)">
+                                    <div class="p-4 text-center">
+                                        <h4 class="text-2xl font-bold">$5</h4>
+                                        <small class="text-gray-500">~10 verifications</small>
                                     </div>
                                 </div>
                             </div>
-                            <div class="col-md-3 mb-3">
-                                <div class="card credit-option" onclick="selectAmount(10)">
-                                    <div class="card-body text-center">
-                                        <h4>$10</h4>
-                                        <small class="text-muted">~20 verifications</small>
-                                        <span class="badge bg-success">Popular</span>
+                            <div class="w-full md:w-1/4 px-4 mb-3">
+                                <div class="border rounded-lg cursor-pointer transition-all hover:border-blue-500 hover:shadow-lg" onclick="selectAmount(10)">
+                                    <div class="p-4 text-center">
+                                        <h4 class="text-2xl font-bold">$10</h4>
+                                        <small class="text-gray-500">~20 verifications</small>
+                                        <span class="px-2 py-1 rounded-full text-sm bg-green-500 text-white">Popular</span>
                                     </div>
                                 </div>
                             </div>
-                            <div class="col-md-3 mb-3">
-                                <div class="card credit-option" onclick="selectAmount(25)">
-                                    <div class="card-body text-center">
-                                        <h4>$25</h4>
-                                        <small class="text-muted">~50 verifications</small>
-                                        <span class="badge bg-warning">Best Value</span>
+                            <div class="w-full md:w-1/4 px-4 mb-3">
+                                <div class="border rounded-lg cursor-pointer transition-all hover:border-blue-500 hover:shadow-lg" onclick="selectAmount(25)">
+                                    <div class="p-4 text-center">
+                                        <h4 class="text-2xl font-bold">$25</h4>
+                                        <small class="text-gray-500">~50 verifications</small>
+                                        <span class="px-2 py-1 rounded-full text-sm bg-yellow-500 text-white">Best Value</span>
                                     </div>
                                 </div>
                             </div>
-                            <div class="col-md-3 mb-3">
-                                <div class="card credit-option" onclick="selectAmount(50)">
-                                    <div class="card-body text-center">
-                                        <h4>$50</h4>
-                                        <small class="text-muted">~100 verifications</small>
+                            <div class="w-full md:w-1/4 px-4 mb-3">
+                                <div class="border rounded-lg cursor-pointer transition-all hover:border-blue-500 hover:shadow-lg" onclick="selectAmount(50)">
+                                    <div class="p-4 text-center">
+                                        <h4 class="text-2xl font-bold">$50</h4>
+                                        <small class="text-gray-500">~100 verifications</small>
                                     </div>
                                 </div>
                             </div>
                         </div>
                         
-                        <div class="row mt-3">
-                            <div class="col-md-6">
-                                <div class="input-group">
-                                    <span class="input-group-text">$</span>
-                                    <input type="number" class="form-control" id="customAmount" placeholder="Custom amount" min="1" max="500">
+                        <div class="flex flex-wrap -mx-4 mt-3">
+                            <div class="w-full md:w-1/2 px-4">
+                                <div class="flex">
+                                    <span class="px-3 py-2 bg-gray-200 border border-r-0 rounded-l-md">$</span>
+                                    <input type="number" class="w-full px-3 py-2 border rounded-r-md" id="customAmount" placeholder="Custom amount" min="1" max="500">
                                 </div>
                             </div>
-                            <div class="col-md-6">
-                                <button class="btn btn-primary w-100" onclick="addCredits()">
-                                    <i class="fas fa-plus me-2"></i>Add Credits
+                            <div class="w-full md:w-1/2 px-4">
+                                <button class="w-full px-4 py-2 rounded-md bg-blue-500 text-white" onclick="addCredits()">
+                                    <i class="fas fa-plus mr-2"></i>Add Credits
                                 </button>
                             </div>
                         </div>
@@ -121,27 +115,27 @@
         </div>
 
         <!-- Transaction History -->
-        <div class="row">
-            <div class="col-12">
-                <div class="card">
-                    <div class="card-header">
-                        <h5 class="mb-0">Transaction History</h5>
+        <div class="flex flex-wrap -mx-4">
+            <div class="w-full px-4">
+                <div class="bg-white rounded-lg shadow-md">
+                    <div class="p-4 border-b">
+                        <h5 class="text-xl font-bold mb-0">Transaction History</h5>
                     </div>
-                    <div class="card-body">
-                        <div class="table-responsive">
-                            <table class="table table-striped">
+                    <div class="p-4">
+                        <div class="overflow-x-auto">
+                            <table class="w-full even:bg-gray-100">
                                 <thead>
                                     <tr>
-                                        <th>Date</th>
-                                        <th>Type</th>
-                                        <th>Description</th>
-                                        <th>Amount</th>
-                                        <th>Balance</th>
+                                        <th class="px-4 py-2 text-left">Date</th>
+                                        <th class="px-4 py-2 text-left">Type</th>
+                                        <th class="px-4 py-2 text-left">Description</th>
+                                        <th class="px-4 py-2 text-left">Amount</th>
+                                        <th class="px-4 py-2 text-left">Balance</th>
                                     </tr>
                                 </thead>
                                 <tbody id="transactionHistory">
                                     <tr>
-                                        <td colspan="5" class="text-center text-muted py-4">
+                                        <td colspan="5" class="text-center text-gray-500 py-4">
                                             No transactions yet
                                         </td>
                                     </tr>
@@ -155,69 +149,66 @@
     </div>
 
     <!-- Payment Modal -->
-    <div class="modal fade" id="paymentModal" tabindex="-1">
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title">Add Credits</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+    <div id="paymentModal" class="fixed inset-0 bg-gray-800 bg-opacity-50 flex items-center justify-center hidden">
+        <div class="bg-white rounded-lg shadow-lg w-full max-w-md">
+            <div class="p-4 border-b flex justify-between items-center">
+                <h5 class="text-xl font-bold">Add Credits</h5>
+                <button type="button" class="text-gray-500 hover:text-gray-800" onclick="closeModal()">&times;</button>
+            </div>
+            <div class="p-4">
+                <div class="text-center mb-4">
+                    <h3 class="text-2xl font-bold">$<span id="paymentAmount">10</span></h3>
+                    <p class="text-gray-500">Credits to add</p>
                 </div>
-                <div class="modal-body">
-                    <div class="text-center mb-4">
-                        <h3>$<span id="paymentAmount">10</span></h3>
-                        <p class="text-muted">Credits to add</p>
-                    </div>
-                    
-                    <div class="mb-3">
-                        <label class="form-label">Payment Method</label>
-                        <div class="row">
-                            <div class="col-6">
-                                <div class="card payment-method active" onclick="selectPayment('card')">
-                                    <div class="card-body text-center">
-                                        <i class="fas fa-credit-card fa-2x mb-2"></i>
-                                        <p class="mb-0">Credit Card</p>
-                                    </div>
+                
+                <div class="mb-3">
+                    <label class="font-bold">Payment Method</label>
+                    <div class="flex -mx-2 mt-2">
+                        <div class="w-1/2 px-2">
+                            <div class="border rounded-lg cursor-pointer transition-all border-blue-500 bg-blue-50" onclick="selectPayment('card')">
+                                <div class="p-4 text-center">
+                                    <i class="fas fa-credit-card fa-2x mb-2"></i>
+                                    <p class="mb-0">Credit Card</p>
                                 </div>
                             </div>
-                            <div class="col-6">
-                                <div class="card payment-method" onclick="selectPayment('paypal')">
-                                    <div class="card-body text-center">
-                                        <i class="fab fa-paypal fa-2x mb-2"></i>
-                                        <p class="mb-0">PayPal</p>
-                                    </div>
+                        </div>
+                        <div class="w-1/2 px-2">
+                            <div class="border rounded-lg cursor-pointer transition-all" onclick="selectPayment('paypal')">
+                                <div class="p-4 text-center">
+                                    <i class="fab fa-paypal fa-2x mb-2"></i>
+                                    <p class="mb-0">PayPal</p>
                                 </div>
                             </div>
                         </div>
                     </div>
+                </div>
 
-                    <div id="cardForm">
-                        <div class="mb-3">
-                            <label class="form-label">Card Number</label>
-                            <input type="text" class="form-control" placeholder="1234 5678 9012 3456">
+                <div id="cardForm">
+                    <div class="mb-3">
+                        <label class="font-bold">Card Number</label>
+                        <input type="text" class="w-full px-3 py-2 border rounded-md" placeholder="1234 5678 9012 3456">
+                    </div>
+                    <div class="flex -mx-2">
+                        <div class="w-1/2 px-2">
+                            <label class="font-bold">Expiry</label>
+                            <input type="text" class="w-full px-3 py-2 border rounded-md" placeholder="MM/YY">
                         </div>
-                        <div class="row">
-                            <div class="col-6">
-                                <label class="form-label">Expiry</label>
-                                <input type="text" class="form-control" placeholder="MM/YY">
-                            </div>
-                            <div class="col-6">
-                                <label class="form-label">CVV</label>
-                                <input type="text" class="form-control" placeholder="123">
-                            </div>
+                        <div class="w-1/2 px-2">
+                            <label class="font-bold">CVV</label>
+                            <input type="text" class="w-full px-3 py-2 border rounded-md" placeholder="123">
                         </div>
                     </div>
                 </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-                    <button type="button" class="btn btn-primary" onclick="processPayment()">
-                        <i class="fas fa-lock me-2"></i>Pay Securely
-                    </button>
-                </div>
+            </div>
+            <div class="p-4 border-t flex justify-end space-x-2">
+                <button type="button" class="px-4 py-2 rounded-md bg-gray-200" onclick="closeModal()">Cancel</button>
+                <button type="button" class="px-4 py-2 rounded-md bg-blue-500 text-white" onclick="processPayment()">
+                    <i class="fas fa-lock mr-2"></i>Pay Securely
+                </button>
             </div>
         </div>
     </div>
 
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script>
         let selectedAmount = 10;
         let currentBalance = 0;
@@ -227,9 +218,8 @@
             selectedAmount = amount;
             document.getElementById('customAmount').value = amount;
             
-            // Update UI
-            document.querySelectorAll('.credit-option').forEach(el => el.classList.remove('selected'));
-            event.target.closest('.credit-option').classList.add('selected');
+            document.querySelectorAll('.credit-option').forEach(el => el.classList.remove('border-blue-500', 'shadow-lg'));
+            event.target.closest('.credit-option').classList.add('border-blue-500', 'shadow-lg');
         }
 
         function addCredits() {
@@ -242,12 +232,18 @@
             }
 
             document.getElementById('paymentAmount').textContent = selectedAmount;
-            new bootstrap.Modal(document.getElementById('paymentModal')).show();
+            document.getElementById('paymentModal').classList.remove('hidden');
+        }
+
+        function closeModal() {
+            document.getElementById('paymentModal').classList.add('hidden');
         }
 
         function selectPayment(method) {
-            document.querySelectorAll('.payment-method').forEach(el => el.classList.remove('active'));
-            event.target.closest('.payment-method').classList.add('active');
+            document.querySelectorAll('.payment-method').forEach(el => {
+                el.classList.remove('border-blue-500', 'bg-blue-50');
+            });
+            event.target.closest('.payment-method').classList.add('border-blue-500', 'bg-blue-50');
             
             if (method === 'paypal') {
                 document.getElementById('cardForm').style.display = 'none';
@@ -257,16 +253,13 @@
         }
 
         async function processPayment() {
-            // Simulate payment processing
             const loadingBtn = event.target;
-            loadingBtn.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i>Processing...';
+            loadingBtn.innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i>Processing...';
             loadingBtn.disabled = true;
 
             setTimeout(() => {
-                // Add to balance
                 currentBalance += selectedAmount;
                 
-                // Add transaction
                 transactions.unshift({
                     date: new Date().toLocaleDateString(),
                     type: 'Credit',
@@ -276,9 +269,9 @@
                 });
 
                 updateUI();
-                bootstrap.Modal.getInstance(document.getElementById('paymentModal')).hide();
+                closeModal();
                 
-                loadingBtn.innerHTML = '<i class="fas fa-lock me-2"></i>Pay Securely';
+                loadingBtn.innerHTML = '<i class="fas fa-lock mr-2"></i>Pay Securely';
                 loadingBtn.disabled = false;
                 
                 alert('Credits added successfully!');
@@ -292,7 +285,7 @@
             if (transactions.length === 0) {
                 historyBody.innerHTML = `
                     <tr>
-                        <td colspan="5" class="text-center text-muted py-4">
+                        <td colspan="5" class="text-center text-gray-500 py-4">
                             No transactions yet
                         </td>
                     </tr>
@@ -300,11 +293,11 @@
             } else {
                 historyBody.innerHTML = transactions.map(t => `
                     <tr>
-                        <td>${t.date}</td>
-                        <td><span class="badge bg-${t.type === 'Credit' ? 'success' : 'danger'}">${t.type}</span></td>
-                        <td>${t.description}</td>
-                        <td class="text-${t.amount.startsWith('+') ? 'success' : 'danger'}">${t.amount}</td>
-                        <td>${t.balance}</td>
+                        <td class="px-4 py-2">${t.date}</td>
+                        <td class="px-4 py-2"><span class="px-2 py-1 rounded-full text-sm ${t.type === 'Credit' ? 'bg-green-500 text-white' : 'bg-red-500 text-white'}">${t.type}</span></td>
+                        <td class="px-4 py-2">${t.description}</td>
+                        <td class="px-4 py-2 ${t.amount.startsWith('+') ? 'text-green-500' : 'text-red-500'}">${t.amount}</td>
+                        <td class="px-4 py-2">${t.balance}</td>
                     </tr>
                 `).join('');
             }
@@ -315,31 +308,11 @@
             window.location.href = '/login';
         }
 
-        // Check auth
         if (!localStorage.getItem('token')) {
             window.location.href = '/login';
         }
 
         updateUI();
     </script>
-
-    <style>
-        .credit-option {
-            cursor: pointer;
-            transition: all 0.2s;
-        }
-        .credit-option:hover, .credit-option.selected {
-            border-color: #0d6efd;
-            box-shadow: 0 0 0 0.2rem rgba(13, 110, 253, 0.25);
-        }
-        .payment-method {
-            cursor: pointer;
-            transition: all 0.2s;
-        }
-        .payment-method.active {
-            border-color: #0d6efd;
-            background-color: #e7f3ff;
-        }
-    </style>
 </body>
 </html>

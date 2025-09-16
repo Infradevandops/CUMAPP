@@ -4,263 +4,253 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Phone Number Marketplace - CumApp</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     <link href="/static/css/phone-marketplace.css" rel="stylesheet">
 </head>
-<body>
-    <div class="marketplace-container">
-        <!-- Header -->
-        <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
-            <div class="container-fluid">
-                <span class="navbar-brand">
-                    <i class="fas fa-phone me-2"></i>Phone Number Marketplace
-                </span>
-                <div class="d-flex align-items-center">
-                    <div class="user-info me-3">
-                        <span class="navbar-text">
-                            <i class="fas fa-user me-1"></i>
-                            <span id="current-user">Loading...</span>
-                        </span>
+<body class="bg-gray-100 min-h-screen">
+    <!-- Header -->
+    <nav class="bg-blue-600 text-white shadow-md py-3">
+        <div class="container mx-auto px-4 flex justify-between items-center">
+            <span class="text-xl font-bold">
+                <i class="fas fa-phone mr-2"></i>Phone Number Marketplace
+            </span>
+            <div class="flex items-center">
+                <div class="mr-3">
+                    <span class="text-sm">
+                        <i class="fas fa-user mr-1"></i>
+                        <span id="current-user">Loading...</span>
+                    </span>
+                </div>
+                <button class="px-3 py-1 text-sm border border-white text-white rounded-md hover:bg-white hover:text-blue-600" onclick="showMyNumbers()">
+                    <i class="fas fa-list mr-1"></i>My Numbers
+                </button>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <div class="container mx-auto mt-4 px-4">
+        <div class="flex flex-col lg:flex-row -mx-2">
+            <!-- Sidebar - Search Filters -->
+            <div class="w-full lg:w-1/4 px-2 mb-4 lg:mb-0">
+                <div class="bg-white rounded-lg shadow-md">
+                    <div class="p-4 border-b border-gray-200">
+                        <h6 class="text-lg font-bold mb-0"><i class="fas fa-filter mr-2"></i>Search Filters</h6>
                     </div>
-                    <button class="btn btn-outline-light btn-sm" onclick="showMyNumbers()">
-                        <i class="fas fa-list me-1"></i>My Numbers
-                    </button>
+                    <div class="p-4">
+                        <form id="search-form">
+                            <div class="mb-4">
+                                <label class="block text-gray-700 text-sm font-bold mb-2">Country</label>
+                                <select class="block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm" id="country-select" onchange="updateSearch()">
+                                    <option value="">Select Country</option>
+                                </select>
+                            </div>
+                            
+                            <div class="mb-4">
+                                <label class="block text-gray-700 text-sm font-bold mb-2">Area Code</label>
+                                <input type="text" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" id="area-code" 
+                                       placeholder="e.g., 555" onchange="updateSearch()">
+                            </div>
+                            
+                            <div class="mb-4">
+                                <label class="block text-gray-700 text-sm font-bold mb-2">Capabilities</label>
+                                <div class="flex items-center mb-2">
+                                    <input class="form-checkbox h-4 w-4 text-blue-600" type="checkbox" id="cap-sms" 
+                                           value="sms" checked onchange="updateSearch()">
+                                    <label class="ml-2 text-gray-700" for="cap-sms">SMS</label>
+                                </div>
+                                <div class="flex items-center mb-2">
+                                    <input class="form-checkbox h-4 w-4 text-blue-600" type="checkbox" id="cap-voice" 
+                                           value="voice" onchange="updateSearch()">
+                                    <label class="ml-2 text-gray-700" for="cap-voice">Voice</label>
+                                </div>
+                                <div class="flex items-center mb-2">
+                                    <input class="form-checkbox h-4 w-4 text-blue-600" type="checkbox" id="cap-mms" 
+                                           value="mms" onchange="updateSearch()">
+                                    <label class="ml-2 text-gray-700" for="cap-mms">MMS</label>
+                                </div>
+                            </div>
+                            
+                            <div class="mb-4">
+                                <label class="block text-gray-700 text-sm font-bold mb-2">Results Limit</label>
+                                <select class="block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm" id="limit-select" onchange="updateSearch()">
+                                    <option value="10">10 numbers</option>
+                                    <option value="20" selected>20 numbers</option>
+                                    <option value="50">50 numbers</option>
+                                </select>
+                            </div>
+                            
+                            <button type="button" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline w-full" onclick="searchNumbers()">
+                                <i class="fas fa-search mr-1"></i>Search Numbers
+                            </button>
+                        </form>
+                    </div>
+                </div>
+                
+                <!-- Subscription Info -->
+                <div class="bg-white rounded-lg shadow-md mt-4">
+                    <div class="p-4 border-b border-gray-200">
+                        <h6 class="text-lg font-bold mb-0"><i class="fas fa-info-circle mr-2"></i>Subscription Info</h6>
+                    </div>
+                    <div class="p-4">
+                        <div id="subscription-info">
+                            <div class="text-center">
+                                <div class="animate-spin h-5 w-5 border-2 border-blue-500 border-t-transparent rounded-full mx-auto"></div>
+                                <small class="block mt-2">Loading...</small>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
-        </nav>
 
-        <!-- Main Content -->
-        <div class="container-fluid mt-4">
-            <div class="row">
-                <!-- Sidebar - Search Filters -->
-                <div class="col-lg-3">
-                    <div class="card">
-                        <div class="card-header">
-                            <h6 class="mb-0"><i class="fas fa-filter me-2"></i>Search Filters</h6>
-                        </div>
-                        <div class="card-body">
-                            <form id="search-form">
-                                <div class="mb-3">
-                                    <label class="form-label">Country</label>
-                                    <select class="form-select" id="country-select" onchange="updateSearch()">
-                                        <option value="">Select Country</option>
-                                    </select>
-                                </div>
-                                
-                                <div class="mb-3">
-                                    <label class="form-label">Area Code</label>
-                                    <input type="text" class="form-control" id="area-code" 
-                                           placeholder="e.g., 555" onchange="updateSearch()">
-                                </div>
-                                
-                                <div class="mb-3">
-                                    <label class="form-label">Capabilities</label>
-                                    <div class="form-check">
-                                        <input class="form-check-input" type="checkbox" id="cap-sms" 
-                                               value="sms" checked onchange="updateSearch()">
-                                        <label class="form-check-label" for="cap-sms">SMS</label>
-                                    </div>
-                                    <div class="form-check">
-                                        <input class="form-check-input" type="checkbox" id="cap-voice" 
-                                               value="voice" onchange="updateSearch()">
-                                        <label class="form-check-label" for="cap-voice">Voice</label>
-                                    </div>
-                                    <div class="form-check">
-                                        <input class="form-check-input" type="checkbox" id="cap-mms" 
-                                               value="mms" onchange="updateSearch()">
-                                        <label class="form-check-label" for="cap-mms">MMS</label>
-                                    </div>
-                                </div>
-                                
-                                <div class="mb-3">
-                                    <label class="form-label">Results Limit</label>
-                                    <select class="form-select" id="limit-select" onchange="updateSearch()">
-                                        <option value="10">10 numbers</option>
-                                        <option value="20" selected>20 numbers</option>
-                                        <option value="50">50 numbers</option>
-                                    </select>
-                                </div>
-                                
-                                <button type="button" class="btn btn-primary w-100" onclick="searchNumbers()">
-                                    <i class="fas fa-search me-1"></i>Search Numbers
-                                </button>
-                            </form>
-                        </div>
+            <!-- Main Content Area -->
+            <div class="w-full lg:w-3/4 px-2">
+                <!-- Search Results Header -->
+                <div class="flex flex-col md:flex-row justify-between items-center mb-4">
+                    <div>
+                        <h4 class="text-2xl font-bold mb-0">Available Phone Numbers</h4>
+                        <small class="text-gray-500" id="results-count">Select a country to search</small>
                     </div>
-                    
-                    <!-- Subscription Info -->
-                    <div class="card mt-3">
-                        <div class="card-header">
-                            <h6 class="mb-0"><i class="fas fa-info-circle me-2"></i>Subscription Info</h6>
-                        </div>
-                        <div class="card-body">
-                            <div id="subscription-info">
-                                <div class="text-center">
-                                    <div class="spinner-border spinner-border-sm" role="status"></div>
-                                    <small class="d-block mt-2">Loading...</small>
+                    <div class="flex space-x-2 mt-4 md:mt-0" role="group">
+                        <button type="button" class="px-3 py-2 border border-gray-300 rounded-md text-gray-700 hover:bg-gray-100 active:bg-gray-200" 
+                                onclick="setViewMode('grid')" id="grid-view-btn">
+                            <i class="fas fa-th-large"></i>
+                        </button>
+                        <button type="button" class="px-3 py-2 border border-gray-300 rounded-md text-gray-700 hover:bg-gray-100" 
+                                onclick="setViewMode('list')" id="list-view-btn">
+                            <i class="fas fa-list"></i>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Loading State -->
+                <div id="loading-state" class="text-center py-5" style="display: none;">
+                    <div class="animate-spin h-8 w-8 border-4 border-blue-500 border-t-transparent rounded-full mx-auto"></div>
+                    <p class="mt-3">Searching for available numbers...</p>
+                </div>
+
+                <!-- Search Results -->
+                <div id="search-results">
+                    <div class="welcome-message text-center py-5">
+                        <i class="fas fa-phone text-3xl text-gray-500 mb-3"></i>
+                        <h5 class="text-xl font-bold">Welcome to the Phone Number Marketplace</h5>
+                        <p class="text-gray-500">
+                            Purchase dedicated phone numbers for your SMS communications.<br>
+                            Select a country from the filters to get started.
+                        </p>
+                        <div class="flex flex-wrap -mx-2 mt-4">
+                            <div class="w-full md:w-1/3 px-2 mb-4">
+                                <div class="feature-item p-4 bg-white rounded-lg shadow-md">
+                                    <i class="fas fa-globe text-blue-500 text-2xl mb-2"></i>
+                                    <h6 class="text-lg font-bold">Global Coverage</h6>
+                                    <small class="text-gray-500">Numbers available in 50+ countries</small>
+                                </div>
+                            </div>
+                            <div class="w-full md:w-1/3 px-2 mb-4">
+                                <div class="feature-item p-4 bg-white rounded-lg shadow-md">
+                                    <i class="fas fa-dollar-sign text-green-500 text-2xl mb-2"></i>
+                                    <h6 class="text-lg font-bold">Competitive Pricing</h6>
+                                    <small class="text-gray-500">Starting from $1.00/month</small>
+                                </div>
+                            </div>
+                            <div class="w-full md:w-1/3 px-2 mb-4">
+                                <div class="feature-item p-4 bg-white rounded-lg shadow-md">
+                                    <i class="fas fa-bolt text-yellow-500 text-2xl mb-2"></i>
+                                    <h6 class="text-lg font-bold">Instant Activation</h6>
+                                    <small class="text-gray-500">Numbers ready to use immediately</small>
                                 </div>
                             </div>
                         </div>
                     </div>
                 </div>
 
-                <!-- Main Content Area -->
-                <div class="col-lg-9">
-                    <!-- Search Results Header -->
-                    <div class="d-flex justify-content-between align-items-center mb-3">
-                        <div>
-                            <h4 class="mb-0">Available Phone Numbers</h4>
-                            <small class="text-muted" id="results-count">Select a country to search</small>
-                        </div>
-                        <div class="btn-group" role="group">
-                            <button type="button" class="btn btn-outline-secondary btn-sm active" 
-                                    onclick="setViewMode('grid')" id="grid-view-btn">
-                                <i class="fas fa-th-large"></i>
-                            </button>
-                            <button type="button" class="btn btn-outline-secondary btn-sm" 
-                                    onclick="setViewMode('list')" id="list-view-btn">
-                                <i class="fas fa-list"></i>
-                            </button>
-                        </div>
-                    </div>
-
-                    <!-- Loading State -->
-                    <div id="loading-state" class="text-center py-5" style="display: none;">
-                        <div class="spinner-border text-primary" role="status"></div>
-                        <p class="mt-3">Searching for available numbers...</p>
-                    </div>
-
-                    <!-- Search Results -->
-                    <div id="search-results">
-                        <div class="welcome-message text-center py-5">
-                            <i class="fas fa-phone fa-3x text-muted mb-3"></i>
-                            <h5>Welcome to the Phone Number Marketplace</h5>
-                            <p class="text-muted">
-                                Purchase dedicated phone numbers for your SMS communications.<br>
-                                Select a country from the filters to get started.
-                            </p>
-                            <div class="row mt-4">
-                                <div class="col-md-4">
-                                    <div class="feature-item">
-                                        <i class="fas fa-globe text-primary fa-2x mb-2"></i>
-                                        <h6>Global Coverage</h6>
-                                        <small class="text-muted">Numbers available in 50+ countries</small>
-                                    </div>
-                                </div>
-                                <div class="col-md-4">
-                                    <div class="feature-item">
-                                        <i class="fas fa-dollar-sign text-success fa-2x mb-2"></i>
-                                        <h6>Competitive Pricing</h6>
-                                        <small class="text-muted">Starting from $1.00/month</small>
-                                    </div>
-                                </div>
-                                <div class="col-md-4">
-                                    <div class="feature-item">
-                                        <i class="fas fa-bolt text-warning fa-2x mb-2"></i>
-                                        <h6>Instant Activation</h6>
-                                        <small class="text-muted">Numbers ready to use immediately</small>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Pagination -->
-                    <nav id="pagination-nav" style="display: none;">
-                        <ul class="pagination justify-content-center">
-                            <!-- Pagination will be generated here -->
-                        </ul>
-                    </nav>
-                </div>
+                <!-- Pagination -->
+                <nav id="pagination-nav" class="mt-4" style="display: none;">
+                    <ul class="flex justify-center space-x-2">
+                        <!-- Pagination will be generated here -->
+                    </ul>
+                </nav>
             </div>
         </div>
     </div>
 
     <!-- Purchase Modal -->
-    <div class="modal fade" id="purchaseModal" tabindex="-1">
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title">Purchase Phone Number</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+    <div id="purchaseModal" class="fixed inset-0 bg-gray-800 bg-opacity-50 flex items-center justify-center hidden">
+        <div class="bg-white rounded-lg shadow-lg w-full max-w-md">
+            <div class="p-4 border-b border-gray-200 flex justify-between items-center">
+                <h5 class="text-xl font-bold">Purchase Phone Number</h5>
+                <button type="button" class="text-gray-500 hover:text-gray-800" onclick="closeModal('purchaseModal')">&times;</button>
+            </div>
+            <div class="p-4">
+                <div id="purchase-details">
+                    <!-- Purchase details will be populated here -->
                 </div>
-                <div class="modal-body">
-                    <div id="purchase-details">
-                        <!-- Purchase details will be populated here -->
-                    </div>
-                    
-                    <div class="form-check mt-3">
-                        <input class="form-check-input" type="checkbox" id="auto-renew" checked>
-                        <label class="form-check-label" for="auto-renew">
-                            Enable automatic renewal
-                        </label>
-                    </div>
-                    
-                    <div class="alert alert-info mt-3">
-                        <i class="fas fa-info-circle me-2"></i>
-                        <strong>Note:</strong> Your subscription will be charged monthly. 
-                        You can cancel anytime from your account dashboard.
-                    </div>
+                
+                <div class="flex items-center mt-4">
+                    <input class="form-checkbox h-4 w-4 text-blue-600" type="checkbox" id="auto-renew" checked>
+                    <label class="ml-2 text-gray-700" for="auto-renew">
+                        Enable automatic renewal
+                    </label>
                 </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-                    <button type="button" class="btn btn-primary" onclick="confirmPurchase()" id="confirm-purchase-btn">
-                        <i class="fas fa-credit-card me-1"></i>Purchase Number
-                    </button>
+                
+                <div class="bg-blue-100 border-l-4 border-blue-500 text-blue-700 p-4 mt-4" role="alert">
+                    <i class="fas fa-info-circle mr-2"></i>
+                    <strong>Note:</strong> Your subscription will be charged monthly. 
+                    You can cancel anytime from your account dashboard.
                 </div>
+            </div>
+            <div class="p-4 border-t border-gray-200 flex justify-end space-x-2">
+                <button type="button" class="px-4 py-2 rounded-md bg-gray-200 hover:bg-gray-300 text-gray-800 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-offset-2" onclick="closeModal('purchaseModal')">Cancel</button>
+                <button type="button" class="px-4 py-2 rounded-md bg-blue-500 hover:bg-blue-700 text-white focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2" onclick="confirmPurchase()" id="confirm-purchase-btn">
+                    <i class="fas fa-credit-card mr-1"></i>Purchase Number
+                </button>
             </div>
         </div>
     </div>
 
     <!-- My Numbers Modal -->
-    <div class="modal fade" id="myNumbersModal" tabindex="-1">
-        <div class="modal-dialog modal-lg">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title">My Phone Numbers</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+    <div id="myNumbersModal" class="fixed inset-0 bg-gray-800 bg-opacity-50 flex items-center justify-center hidden">
+        <div class="bg-white rounded-lg shadow-lg w-full max-w-2xl">
+            <div class="p-4 border-b border-gray-200 flex justify-between items-center">
+                <h5 class="text-xl font-bold">My Phone Numbers</h5>
+                <button type="button" class="text-gray-500 hover:text-gray-800" onclick="closeModal('myNumbersModal')">&times;</button>
+            </div>
+            <div class="p-4">
+                <div id="owned-numbers-list">
+                    <!-- Owned numbers will be loaded here -->
                 </div>
-                <div class="modal-body">
-                    <div id="owned-numbers-list">
-                        <!-- Owned numbers will be loaded here -->
-                    </div>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                </div>
+            </div>
+            <div class="p-4 border-t border-gray-200 flex justify-end">
+                <button type="button" class="px-4 py-2 rounded-md bg-gray-200 hover:bg-gray-300 text-gray-800 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-offset-2" onclick="closeModal('myNumbersModal')">Close</button>
             </div>
         </div>
     </div>
 
     <!-- Number Details Modal -->
-    <div class="modal fade" id="numberDetailsModal" tabindex="-1">
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title">Number Details & Usage</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+    <div id="numberDetailsModal" class="fixed inset-0 bg-gray-800 bg-opacity-50 flex items-center justify-center hidden">
+        <div class="bg-white rounded-lg shadow-lg w-full max-w-md">
+            <div class="p-4 border-b border-gray-200 flex justify-between items-center">
+                <h5 class="text-xl font-bold">Number Details & Usage</h5>
+                <button type="button" class="text-gray-500 hover:text-gray-800" onclick="closeModal('numberDetailsModal')">&times;</button>
+            </div>
+            <div class="p-4">
+                <div id="number-details-content">
+                    <!-- Number details will be loaded here -->
                 </div>
-                <div class="modal-body">
-                    <div id="number-details-content">
-                        <!-- Number details will be loaded here -->
-                    </div>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                    <button type="button" class="btn btn-warning" onclick="renewNumber()" id="renew-btn" style="display: none;">
-                        <i class="fas fa-sync me-1"></i>Renew
-                    </button>
-                    <button type="button" class="btn btn-danger" onclick="cancelNumber()" id="cancel-btn" style="display: none;">
-                        <i class="fas fa-times me-1"></i>Cancel
-                    </button>
-                </div>
+            </div>
+            <div class="p-4 border-t border-gray-200 flex justify-end space-x-2">
+                <button type="button" class="px-4 py-2 rounded-md bg-gray-200 hover:bg-gray-300 text-gray-800 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-offset-2" onclick="closeModal('numberDetailsModal')">Close</button>
+                <button type="button" class="px-4 py-2 rounded-md bg-yellow-500 hover:bg-yellow-600 text-white focus:outline-none focus:ring-2 focus:ring-yellow-500 focus:ring-offset-2" onclick="renewNumber()" id="renew-btn" style="display: none;">
+                    <i class="fas fa-sync mr-1"></i>Renew
+                </button>
+                <button type="button" class="px-4 py-2 rounded-md bg-red-500 hover:bg-red-600 text-white focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2" onclick="cancelNumber()" id="cancel-btn" style="display: none;">
+                    <i class="fas fa-times mr-1"></i>Cancel
+                </button>
             </div>
         </div>
     </div>
 
     <!-- Scripts -->
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
     <script src="/static/js/phone-marketplace.js"></script>
 </body>
-</html>

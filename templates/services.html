@@ -4,37 +4,46 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Services - CumApp</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
 </head>
-<body class="bg-light">
-    <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
-        <div class="container">
-            <a class="navbar-brand fw-bold" href="/dashboard">
-                <i class="fas fa-sms me-2"></i>CumApp
+<body class="bg-gray-100">
+    <nav class="bg-blue-600 text-white shadow-md py-3">
+        <div class="container mx-auto px-4 flex justify-between items-center">
+            <a class="text-xl font-bold" href="/dashboard">
+                <i class="fas fa-sms mr-2"></i>CumApp
             </a>
-            <div class="navbar-nav ms-auto">
-                <a class="nav-link" href="/dashboard">Dashboard</a>
-                <a class="nav-link" href="#" onclick="logout()">Logout</a>
+            <div class="md:hidden">
+                <button onclick="toggleNavbar()" class="text-white focus:outline-none">
+                    <i class="fas fa-bars"></i>
+                </button>
             </div>
+            <div class="hidden md:flex items-center space-x-4" id="navbarNav">
+                <a class="px-3 py-2 rounded-md hover:bg-blue-700" href="/dashboard">Dashboard</a>
+                <a class="px-3 py-2 rounded-md hover:bg-blue-700" href="#" onclick="logout()">Logout</a>
+            </div>
+        </div>
+        <div class="hidden md:hidden" id="mobileNavbarContent">
+            <a class="block px-4 py-2 text-sm hover:bg-blue-700" href="/dashboard">Dashboard</a>
+            <a class="block px-4 py-2 text-sm hover:bg-blue-700" href="#" onclick="logout()">Logout</a>
         </div>
     </nav>
 
-    <div class="container mt-4">
-        <div class="row">
-            <div class="col-12">
-                <h2><i class="fas fa-list me-2"></i>Select Service</h2>
-                <p class="text-muted">Choose a service to get verification SMS</p>
+    <div class="container mx-auto mt-4 px-4">
+        <div class="flex flex-wrap -mx-2">
+            <div class="w-full px-2">
+                <h2 class="text-2xl font-bold mb-2"><i class="fas fa-list mr-2"></i>Select Service</h2>
+                <p class="text-gray-500 mb-4">Choose a service to get verification SMS</p>
             </div>
         </div>
 
         <!-- Search -->
-        <div class="row mb-4">
-            <div class="col-md-6">
-                <input type="text" class="form-control" id="searchServices" placeholder="Search services...">
+        <div class="flex flex-wrap -mx-2 mb-4">
+            <div class="w-full md:w-1/2 px-2 mb-4 md:mb-0">
+                <input type="text" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" id="searchServices" placeholder="Search services...">
             </div>
-            <div class="col-md-3">
-                <select class="form-select" id="categoryFilter">
+            <div class="w-full md:w-1/4 px-2">
+                <select class="block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm" id="categoryFilter">
                     <option value="">All Categories</option>
                     <option value="social">Social Media</option>
                     <option value="messaging">Messaging</option>
@@ -46,40 +55,37 @@
         </div>
 
         <!-- Services Grid -->
-        <div class="row" id="servicesGrid">
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4" id="servicesGrid">
             <!-- Services will be loaded here -->
         </div>
     </div>
 
     <!-- Verification Modal -->
-    <div class="modal fade" id="verificationModal" tabindex="-1">
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title">Start Verification</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+    <div id="verificationModal" class="fixed inset-0 bg-gray-800 bg-opacity-50 flex items-center justify-center hidden">
+        <div class="bg-white rounded-lg shadow-lg w-full max-w-md">
+            <div class="p-4 border-b border-gray-200 flex justify-between items-center">
+                <h5 class="text-xl font-bold">Start Verification</h5>
+                <button type="button" class="text-gray-500 hover:text-gray-800" onclick="closeModal('verificationModal')">&times;</button>
+            </div>
+            <div class="p-4">
+                <div id="verificationStep1">
+                    <h6 class="text-lg font-bold" id="selectedService"></h6>
+                    <p class="text-gray-700">Cost: <span id="serviceCost">$0.50</span></p>
+                    <button class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline" onclick="startVerification()">Get Number</button>
                 </div>
-                <div class="modal-body">
-                    <div id="verificationStep1">
-                        <h6 id="selectedService"></h6>
-                        <p>Cost: <span id="serviceCost">$0.50</span></p>
-                        <button class="btn btn-primary" onclick="startVerification()">Get Number</button>
+                <div id="verificationStep2" style="display:none;">
+                    <h6 class="text-lg font-bold">Your Number</h6>
+                    <div class="bg-blue-100 border-l-4 border-blue-500 text-blue-700 p-4 mb-4" role="alert">
+                        <strong id="phoneNumber"></strong>
+                        <button class="ml-2 px-3 py-1 text-sm border border-blue-500 text-blue-500 rounded-md hover:bg-blue-500 hover:text-white focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2" onclick="copyNumber()">Copy</button>
                     </div>
-                    <div id="verificationStep2" style="display:none;">
-                        <h6>Your Number</h6>
-                        <div class="alert alert-info">
-                            <strong id="phoneNumber"></strong>
-                            <button class="btn btn-sm btn-outline-primary ms-2" onclick="copyNumber()">Copy</button>
-                        </div>
-                        <p>Use this number to verify with <span id="serviceNameStep2"></span></p>
-                        <div id="smsMessages"></div>
-                    </div>
+                    <p class="text-gray-700">Use this number to verify with <span id="serviceNameStep2"></span></p>
+                    <div id="smsMessages"></div>
                 </div>
             </div>
         </div>
     </div>
 
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script>
         const services = [
             {name: 'WhatsApp', category: 'messaging', icon: 'fab fa-whatsapp', color: 'success', cost: 0.50},
@@ -101,12 +107,12 @@
         function renderServices(servicesToRender = services) {
             const grid = document.getElementById('servicesGrid');
             grid.innerHTML = servicesToRender.map(service => `
-                <div class="col-md-3 mb-3">
-                    <div class="card h-100 service-card" onclick="selectService('${service.name}', ${service.cost})">
-                        <div class="card-body text-center">
-                            <i class="${service.icon} fa-3x text-${service.color} mb-3"></i>
-                            <h6 class="card-title">${service.name}</h6>
-                            <p class="text-muted">$${service.cost}</p>
+                <div class="w-full px-2 mb-4">
+                    <div class="bg-white rounded-lg shadow-md h-full cursor-pointer transform hover:-translate-y-1 transition-transform duration-200" onclick="selectService('${service.name}', ${service.cost})">
+                        <div class="p-4 text-center">
+                            <i class="${service.icon} text-3xl text-${service.color}-500 mb-3"></i>
+                            <h6 class="text-lg font-bold">${service.name}</h6>
+                            <p class="text-gray-500">$${service.cost}</p>
                         </div>
                     </div>
                 </div>
@@ -116,7 +122,11 @@
         function selectService(serviceName, cost) {
             document.getElementById('selectedService').textContent = serviceName;
             document.getElementById('serviceCost').textContent = `$${cost}`;
-            new bootstrap.Modal(document.getElementById('verificationModal')).show();
+            document.getElementById('verificationModal').classList.remove('hidden');
+        }
+
+        function closeModal(modalId) {
+            document.getElementById(modalId).classList.add('hidden');
         }
 
         async function startVerification() {
@@ -177,13 +187,13 @@
                     
                     if (data.messages && data.messages.length > 0) {
                         messagesDiv.innerHTML = data.messages.map(msg => `
-                            <div class="alert alert-success">
+                            <div class="bg-green-100 border-l-4 border-green-500 text-green-700 p-4 mb-2" role="alert">
                                 <strong>SMS Received:</strong> ${msg.content}
-                                <button class="btn btn-sm btn-outline-success ms-2" onclick="copyText('${msg.content}')">Copy</button>
+                                <button class="ml-2 px-3 py-1 text-sm border border-green-500 text-green-500 rounded-md hover:bg-green-500 hover:text-white focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2" onclick="copyText('${msg.content}')">Copy</button>
                             </div>
                         `).join('');
                     } else {
-                        messagesDiv.innerHTML = '<p class="text-muted">Waiting for SMS...</p>';
+                        messagesDiv.innerHTML = '<p class="text-gray-500">Waiting for SMS...</p>';
                         setTimeout(pollForMessages, 3000);
                     }
                 }
@@ -220,6 +230,11 @@
             const filtered = category ? services.filter(s => s.category === category) : services;
             renderServices(filtered);
         });
+
+        function toggleNavbar() {
+            const navbarContent = document.getElementById('mobileNavbarContent');
+            navbarContent.classList.toggle('hidden');
+        }
 
         // Check auth and load services
         if (!localStorage.getItem('token')) {

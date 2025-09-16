@@ -4,83 +4,82 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>CumApp - Enhanced Chat Interface</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
-    <link href="/static/css/enhanced-chat.css" rel="stylesheet">
 </head>
-<body>
-    <div class="chat-container">
+<body class="font-sans bg-gray-100">
+    <div class="h-screen flex flex-col overflow-hidden">
         <!-- Header -->
-        <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
-            <div class="container-fluid">
-                <span class="navbar-brand">
-                    <i class="fas fa-comments me-2"></i>CumApp Enhanced Chat
-                </span>
-                <div class="d-flex align-items-center">
-                    <div class="notification-settings me-3">
-                        <button class="btn btn-outline-light btn-sm" onclick="toggleNotifications()" id="notification-btn">
-                            <i class="fas fa-bell" id="notification-icon"></i>
+        <nav class="bg-blue-600 text-white shadow-md">
+            <div class="container mx-auto px-4">
+                <div class="flex justify-between items-center py-3">
+                    <span class="text-xl font-bold">
+                        <i class="fas fa-comments mr-2"></i>CumApp Enhanced Chat
+                    </span>
+                    <div class="flex items-center">
+                        <div class="relative mr-3">
+                            <button class="px-3 py-1 rounded-md border border-white text-white text-sm hover:bg-white hover:text-blue-600" onclick="toggleNotifications()" id="notification-btn">
+                                <i class="fas fa-bell" id="notification-icon"></i>
+                            </button>
+                        </div>
+                        <div class="mr-3">
+                            <span class="text-sm">
+                                <i class="fas fa-user mr-1"></i>
+                                <span id="current-user">Loading...</span>
+                                <span class="inline-block w-2 h-2 bg-green-500 rounded-full" id="user-status"></span>
+                            </span>
+                        </div>
+                        <button class="px-3 py-1 rounded-md border border-white text-white text-sm hover:bg-white hover:text-blue-600" onclick="showSettings()">
+                            <i class="fas fa-cog"></i>
                         </button>
                     </div>
-                    <div class="user-info me-3">
-                        <span class="navbar-text">
-                            <i class="fas fa-user me-1"></i>
-                            <span id="current-user">Loading...</span>
-                            <span class="online-indicator" id="user-status"></span>
-                        </span>
-                    </div>
-                    <button class="btn btn-outline-light btn-sm" onclick="showSettings()">
-                        <i class="fas fa-cog"></i>
-                    </button>
                 </div>
             </div>
         </nav>
 
         <!-- Connection Status Bar -->
-        <div id="connection-status" class="connection-status disconnected">
-            <i class="fas fa-wifi me-1"></i>
+        <div id="connection-status" class="p-2 text-center text-sm bg-red-200 text-red-800">
+            <i class="fas fa-wifi mr-1"></i>
             <span id="connection-text">Connecting...</span>
         </div>
 
         <!-- Main Chat Layout -->
-        <div class="chat-body">
+        <div class="flex-1 flex overflow-hidden">
             <!-- Sidebar -->
-            <div class="chat-sidebar" id="chat-sidebar">
-                <div class="sidebar-header">
-                    <div class="d-flex justify-content-between align-items-center mb-3">
-                        <h6 class="mb-0">Conversations</h6>
-                        <button class="btn btn-primary btn-sm" onclick="showNewConversationModal()">
+            <div class="w-1/4 bg-white border-r border-gray-200 flex flex-col shadow-lg" id="chat-sidebar">
+                <div class="p-4 border-b border-gray-200 bg-gray-50">
+                    <div class="flex justify-between items-center mb-3">
+                        <h6 class="font-bold mb-0">Conversations</h6>
+                        <button class="px-2 py-1 rounded-md bg-blue-500 text-white text-sm" onclick="showNewConversationModal()">
                             <i class="fas fa-plus"></i>
                         </button>
                     </div>
-                    <div class="search-container">
-                        <input type="text" class="form-control form-control-sm" 
-                               placeholder="Search conversations..." 
-                               id="conversation-search"
-                               oninput="filterConversations()">
+                    <div class="relative">
+                        <input type="text" class="w-full pl-8 pr-3 py-1 border rounded-md text-sm" placeholder="Search conversations..." id="conversation-search" oninput="filterConversations()">
+                        <i class="fas fa-search absolute left-2 top-1/2 -translate-y-1/2 text-gray-400"></i>
                     </div>
                 </div>
                 
-                <div class="conversations-list" id="conversations-list">
+                <div class="flex-1 overflow-y-auto" id="conversations-list">
                     <!-- Conversations will be loaded here -->
                 </div>
             </div>
 
             <!-- Main Chat Area -->
-            <div class="chat-main">
+            <div class="flex-1 flex flex-col bg-white">
                 <!-- Chat Header -->
-                <div class="chat-header" id="chat-header" style="display: none;">
-                    <div class="d-flex justify-content-between align-items-center">
-                        <div class="conversation-info">
-                            <h6 class="mb-0" id="conversation-title">Select a conversation</h6>
-                            <small class="text-muted" id="conversation-subtitle"></small>
-                            <div class="participant-status" id="participant-status"></div>
+                <div class="p-4 border-b border-gray-200 bg-gray-50 shadow-sm hidden" id="chat-header">
+                    <div class="flex justify-between items-center">
+                        <div>
+                            <h6 class="font-bold mb-0" id="conversation-title">Select a conversation</h6>
+                            <small class="text-gray-500" id="conversation-subtitle"></small>
+                            <div class="text-xs text-gray-500 mt-1" id="participant-status"></div>
                         </div>
-                        <div class="chat-actions">
-                            <button class="btn btn-outline-secondary btn-sm me-2" onclick="searchInConversation()">
+                        <div class="flex space-x-2">
+                            <button class="px-2 py-1 rounded-md text-gray-500 hover:bg-gray-200 text-sm" onclick="searchInConversation()">
                                 <i class="fas fa-search"></i>
                             </button>
-                            <button class="btn btn-outline-secondary btn-sm" onclick="showConversationInfo()">
+                            <button class="px-2 py-1 rounded-md text-gray-500 hover:bg-gray-200 text-sm" onclick="showConversationInfo()">
                                 <i class="fas fa-info-circle"></i>
                             </button>
                         </div>
@@ -88,52 +87,47 @@
                 </div>
 
                 <!-- Messages Container -->
-                <div class="messages-container" id="messages-container">
-                    <div class="welcome-message text-center text-muted">
+                <div class="flex-1 overflow-y-auto p-4 bg-gray-100" id="messages-container">
+                    <div class="text-center text-gray-500 mt-10">
                         <i class="fas fa-comments fa-3x mb-3"></i>
-                        <h5>Welcome to Enhanced Chat</h5>
+                        <h5 class="font-bold">Welcome to Enhanced Chat</h5>
                         <p>Select a conversation to start messaging with enhanced features</p>
-                        <ul class="feature-list">
-                            <li><i class="fas fa-check text-success"></i> Real-time typing indicators</li>
-                            <li><i class="fas fa-check text-success"></i> Message threading & timestamps</li>
-                            <li><i class="fas fa-check text-success"></i> Read receipts & delivery status</li>
-                            <li><i class="fas fa-check text-success"></i> Desktop notifications</li>
-                            <li><i class="fas fa-check text-success"></i> Infinite scroll message history</li>
+                        <ul class="list-none p-0 mt-4 space-y-1">
+                            <li><i class="fas fa-check text-green-500"></i> Real-time typing indicators</li>
+                            <li><i class="fas fa-check text-green-500"></i> Message threading & timestamps</li>
+                            <li><i class="fas fa-check text-green-500"></i> Read receipts & delivery status</li>
+                            <li><i class="fas fa-check text-green-500"></i> Desktop notifications</li>
+                            <li><i class="fas fa-check text-green-500"></i> Infinite scroll message history</li>
                         </ul>
                     </div>
                 </div>
 
                 <!-- Typing Indicators -->
-                <div class="typing-indicators" id="typing-indicators" style="display: none;">
-                    <div class="typing-indicator">
-                        <div class="typing-dots">
-                            <span></span>
-                            <span></span>
-                            <span></span>
+                <div class="p-2 bg-gray-100 border-t border-gray-200 hidden" id="typing-indicators">
+                    <div class="flex items-center gap-2 text-sm text-gray-500 italic">
+                        <div class="flex gap-1">
+                            <span class="w-2 h-2 bg-gray-500 rounded-full animate-bounce"></span>
+                            <span class="w-2 h-2 bg-gray-500 rounded-full animate-bounce delay-75"></span>
+                            <span class="w-2 h-2 bg-gray-500 rounded-full animate-bounce delay-150"></span>
                         </div>
-                        <span class="typing-text" id="typing-text">Someone is typing...</span>
+                        <span id="typing-text">Someone is typing...</span>
                     </div>
                 </div>
 
                 <!-- Message Input -->
-                <div class="message-input-container" id="message-input-container" style="display: none;">
-                    <div class="message-input-wrapper">
-                        <div class="input-actions">
-                            <button class="btn btn-outline-secondary btn-sm" onclick="toggleEmojiPicker()">
+                <div class="bg-white border-t border-gray-200 p-4 hidden" id="message-input-container">
+                    <div class="flex flex-col gap-2">
+                        <div class="flex space-x-2">
+                            <button class="px-2 py-1 rounded-md text-gray-500 hover:bg-gray-200 text-sm" onclick="toggleEmojiPicker()">
                                 <i class="fas fa-smile"></i>
                             </button>
-                            <button class="btn btn-outline-secondary btn-sm" onclick="attachFile()">
+                            <button class="px-2 py-1 rounded-md text-gray-500 hover:bg-gray-200 text-sm" onclick="attachFile()">
                                 <i class="fas fa-paperclip"></i>
                             </button>
                         </div>
-                        <div class="message-input">
-                            <textarea id="message-textarea" 
-                                    placeholder="Type a message..." 
-                                    rows="1"
-                                    onkeydown="handleMessageKeyDown(event)"
-                                    oninput="handleMessageInput()"
-                                    onpaste="handleMessagePaste(event)"></textarea>
-                            <button class="send-button" id="send-button" onclick="sendMessage()" disabled>
+                        <div class="flex items-end gap-2 bg-gray-100 rounded-full p-2 border border-gray-200">
+                            <textarea id="message-textarea" placeholder="Type a message..." rows="1" class="flex-1 bg-transparent resize-none outline-none px-2 text-sm max-h-24" onkeydown="handleMessageKeyDown(event)" oninput="handleMessageInput()" onpaste="handleMessagePaste(event)"></textarea>
+                            <button id="send-button" class="w-8 h-8 rounded-full bg-blue-500 text-white flex items-center justify-center hover:bg-blue-600 disabled:bg-gray-400 disabled:cursor-not-allowed transform hover:scale-105 transition-transform" onclick="sendMessage()" disabled>
                                 <i class="fas fa-paper-plane"></i>
                             </button>
                         </div>
@@ -144,157 +138,127 @@
     </div>
 
     <!-- Message Search Modal -->
-    <div class="modal fade" id="messageSearchModal" tabindex="-1">
-        <div class="modal-dialog modal-lg">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title">Search Messages</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+    <div id="messageSearchModal" class="fixed inset-0 bg-gray-800 bg-opacity-50 flex items-center justify-center hidden">
+        <div class="bg-white rounded-lg shadow-lg w-full max-w-2xl">
+            <div class="p-4 border-b flex justify-between items-center">
+                <h5 class="text-xl font-bold">Search Messages</h5>
+                <button type="button" class="text-gray-500 hover:text-gray-800" onclick="closeModal('messageSearchModal')">&times;</button>
+            </div>
+            <div class="p-4">
+                <div class="mb-3">
+                    <div class="flex">
+                        <input type="text" class="flex-1 px-3 py-2 border rounded-l-md" id="search-query" placeholder="Search messages...">
+                        <button class="px-4 py-2 bg-blue-500 text-white rounded-r-md" onclick="performMessageSearch()">
+                            <i class="fas fa-search"></i>
+                        </button>
+                    </div>
                 </div>
-                <div class="modal-body">
-                    <div class="search-form mb-3">
-                        <div class="input-group">
-                            <input type="text" class="form-control" id="search-query" 
-                                   placeholder="Search messages...">
-                            <button class="btn btn-primary" onclick="performMessageSearch()">
-                                <i class="fas fa-search"></i>
-                            </button>
-                        </div>
+                <div class="mb-3">
+                    <div class="flex space-x-4">
+                        <select class="w-1/2 px-2 py-1 border rounded-md text-sm" id="search-type">
+                            <option value="">All message types</option>
+                            <option value="CHAT">Chat messages</option>
+                            <option value="SMS">SMS messages</option>
+                        </select>
+                        <input type="date" class="w-1/2 px-2 py-1 border rounded-md text-sm" id="search-date">
                     </div>
-                    <div class="search-filters mb-3">
-                        <div class="row">
-                            <div class="col-md-6">
-                                <select class="form-select form-select-sm" id="search-type">
-                                    <option value="">All message types</option>
-                                    <option value="CHAT">Chat messages</option>
-                                    <option value="SMS">SMS messages</option>
-                                </select>
-                            </div>
-                            <div class="col-md-6">
-                                <input type="date" class="form-control form-control-sm" id="search-date">
-                            </div>
-                        </div>
-                    </div>
-                    <div class="search-results" id="search-results">
-                        <!-- Search results will appear here -->
-                    </div>
+                </div>
+                <div class="max-h-96 overflow-y-auto" id="search-results">
+                    <!-- Search results will appear here -->
                 </div>
             </div>
         </div>
     </div>
 
     <!-- New Conversation Modal -->
-    <div class="modal fade" id="newConversationModal" tabindex="-1">
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title">New Conversation</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+    <div id="newConversationModal" class="fixed inset-0 bg-gray-800 bg-opacity-50 flex items-center justify-center hidden">
+        <div class="bg-white rounded-lg shadow-lg w-full max-w-md">
+            <div class="p-4 border-b flex justify-between items-center">
+                <h5 class="text-xl font-bold">New Conversation</h5>
+                <button type="button" class="text-gray-500 hover:text-gray-800" onclick="closeModal('newConversationModal')">&times;</button>
+            </div>
+            <div class="p-4">
+                <div class="mb-3">
+                    <label class="font-bold">Conversation Type</label>
+                    <select class="w-full mt-1 px-3 py-2 border rounded-md" id="conversation-type" onchange="toggleConversationOptions()">
+                        <option value="internal">Internal Chat</option>
+                        <option value="sms">SMS Conversation</option>
+                        <option value="group">Group Chat</option>
+                    </select>
                 </div>
-                <div class="modal-body">
-                    <div class="mb-3">
-                        <label class="form-label">Conversation Type</label>
-                        <select class="form-select" id="conversation-type" onchange="toggleConversationOptions()">
-                            <option value="internal">Internal Chat</option>
-                            <option value="sms">SMS Conversation</option>
-                            <option value="group">Group Chat</option>
-                        </select>
-                    </div>
-                    
-                    <div class="mb-3" id="sms-fields" style="display: none;">
-                        <label class="form-label">Phone Number</label>
-                        <input type="tel" class="form-control" id="phone-number" 
-                               placeholder="+1234567890">
-                    </div>
-                    
-                    <div class="mb-3" id="internal-fields">
-                        <label class="form-label">Select User</label>
-                        <select class="form-select" id="recipient-user">
-                            <option value="">Choose a user...</option>
-                        </select>
-                    </div>
-                    
-                    <div class="mb-3" id="group-fields" style="display: none;">
-                        <label class="form-label">Group Name</label>
-                        <input type="text" class="form-control" id="group-name" 
-                               placeholder="Enter group name">
-                        <label class="form-label mt-2">Add Participants</label>
-                        <select class="form-select" id="group-participants" multiple>
-                            <!-- Users will be loaded here -->
-                        </select>
-                    </div>
+                
+                <div class="mb-3 hidden" id="sms-fields">
+                    <label class="font-bold">Phone Number</label>
+                    <input type="tel" class="w-full mt-1 px-3 py-2 border rounded-md" id="phone-number" placeholder="+1234567890">
                 </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-                    <button type="button" class="btn btn-primary" onclick="createConversation()">
-                        Create Conversation
-                    </button>
+                
+                <div class="mb-3" id="internal-fields">
+                    <label class="font-bold">Select User</label>
+                    <select class="w-full mt-1 px-3 py-2 border rounded-md" id="recipient-user">
+                        <option value="">Choose a user...</option>
+                    </select>
                 </div>
+                
+                <div class="mb-3 hidden" id="group-fields">
+                    <label class="font-bold">Group Name</label>
+                    <input type="text" class="w-full mt-1 px-3 py-2 border rounded-md" id="group-name" placeholder="Enter group name">
+                    <label class="font-bold mt-2">Add Participants</label>
+                    <select class="w-full mt-1 px-3 py-2 border rounded-md" id="group-participants" multiple>
+                        <!-- Users will be loaded here -->
+                    </select>
+                </div>
+            </div>
+            <div class="p-4 border-t flex justify-end space-x-2">
+                <button type="button" class="px-4 py-2 rounded-md bg-gray-200" onclick="closeModal('newConversationModal')">Cancel</button>
+                <button type="button" class="px-4 py-2 rounded-md bg-blue-500 text-white" onclick="createConversation()">
+                    Create Conversation
+                </button>
             </div>
         </div>
     </div>
 
     <!-- Settings Modal -->
-    <div class="modal fade" id="settingsModal" tabindex="-1">
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title">Chat Settings</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-                </div>
-                <div class="modal-body">
-                    <div class="mb-3">
-                        <h6>Notifications</h6>
-                        <div class="form-check">
-                            <input class="form-check-input" type="checkbox" id="desktop-notifications" 
-                                   onchange="updateNotificationSettings()">
-                            <label class="form-check-label" for="desktop-notifications">
-                                Enable desktop notifications
-                            </label>
-                        </div>
-                        <div class="form-check">
-                            <input class="form-check-input" type="checkbox" id="sound-notifications"
-                                   onchange="updateNotificationSettings()">
-                            <label class="form-check-label" for="sound-notifications">
-                                Enable sound notifications
-                            </label>
-                        </div>
+    <div id="settingsModal" class="fixed inset-0 bg-gray-800 bg-opacity-50 flex items-center justify-center hidden">
+        <div class="bg-white rounded-lg shadow-lg w-full max-w-md">
+            <div class="p-4 border-b flex justify-between items-center">
+                <h5 class="text-xl font-bold">Chat Settings</h5>
+                <button type="button" class="text-gray-500 hover:text-gray-800" onclick="closeModal('settingsModal')">&times;</button>
+            </div>
+            <div class="p-4">
+                <div class="mb-3">
+                    <h6 class="font-bold">Notifications</h6>
+                    <div class="flex items-center">
+                        <input type="checkbox" id="desktop-notifications" class="mr-2" onchange="updateNotificationSettings()">
+                        <label for="desktop-notifications">Enable desktop notifications</label>
                     </div>
-                    
-                    <div class="mb-3">
-                        <h6>Chat Preferences</h6>
-                        <div class="form-check">
-                            <input class="form-check-input" type="checkbox" id="show-timestamps" checked
-                                   onchange="updateChatSettings()">
-                            <label class="form-check-label" for="show-timestamps">
-                                Show message timestamps
-                            </label>
-                        </div>
-                        <div class="form-check">
-                            <input class="form-check-input" type="checkbox" id="show-read-receipts" checked
-                                   onchange="updateChatSettings()">
-                            <label class="form-check-label" for="show-read-receipts">
-                                Show read receipts
-                            </label>
-                        </div>
-                        <div class="form-check">
-                            <input class="form-check-input" type="checkbox" id="auto-scroll" checked
-                                   onchange="updateChatSettings()">
-                            <label class="form-check-label" for="auto-scroll">
-                                Auto-scroll to new messages
-                            </label>
-                        </div>
+                    <div class="flex items-center">
+                        <input type="checkbox" id="sound-notifications" class="mr-2" onchange="updateNotificationSettings()">
+                        <label for="sound-notifications">Enable sound notifications</label>
                     </div>
                 </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-primary" data-bs-dismiss="modal">Save Settings</button>
+                
+                <div class="mb-3">
+                    <h6 class="font-bold">Chat Preferences</h6>
+                    <div class="flex items-center">
+                        <input type="checkbox" id="show-timestamps" class="mr-2" checked onchange="updateChatSettings()">
+                        <label for="show-timestamps">Show message timestamps</label>
+                    </div>
+                    <div class="flex items-center">
+                        <input type="checkbox" id="show-read-receipts" class="mr-2" checked onchange="updateChatSettings()">
+                        <label for="show-read-receipts">Show read receipts</label>
+                    </div>
+                    <div class="flex items-center">
+                        <input type="checkbox" id="auto-scroll" class="mr-2" checked onchange="updateChatSettings()">
+                        <label for="auto-scroll">Auto-scroll to new messages</label>
+                    </div>
                 </div>
+            </div>
+            <div class="p-4 border-t flex justify-end">
+                <button type="button" class="px-4 py-2 rounded-md bg-blue-500 text-white" onclick="closeModal('settingsModal')">Save Settings</button>
             </div>
         </div>
     </div>
 
-    <!-- Scripts -->
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
     <script src="/static/js/enhanced-chat.js"></script>
 </body>
 </html>

@@ -4,308 +4,23 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>CumApp - Communication Platform</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
-    <style>
-        body {
-            background-color: #f8f9fa;
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-        }
-        
-        .chat-container {
-            height: 100vh;
-            display: flex;
-            flex-direction: column;
-        }
-        
-        .chat-header {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
-            padding: 1rem;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-        }
-        
-        .chat-body {
-            flex: 1;
-            display: flex;
-            overflow: hidden;
-        }
-        
-        .sidebar {
-            width: 350px;
-            background: white;
-            border-right: 1px solid #e9ecef;
-            display: flex;
-            flex-direction: column;
-        }
-        
-        .sidebar-header {
-            padding: 1rem;
-            border-bottom: 1px solid #e9ecef;
-            background: #f8f9fa;
-        }
-        
-        .conversations-list {
-            flex: 1;
-            overflow-y: auto;
-        }
-        
-        .conversation-item {
-            padding: 1rem;
-            border-bottom: 1px solid #f1f3f4;
-            cursor: pointer;
-            transition: background-color 0.2s;
-        }
-        
-        .conversation-item:hover {
-            background-color: #f8f9fa;
-        }
-        
-        .conversation-item.active {
-            background-color: #e3f2fd;
-            border-left: 4px solid #2196f3;
-        }
-        
-        .conversation-name {
-            font-weight: 600;
-            margin-bottom: 0.25rem;
-        }
-        
-        .conversation-preview {
-            color: #6c757d;
-            font-size: 0.875rem;
-            white-space: nowrap;
-            overflow: hidden;
-            text-overflow: ellipsis;
-        }
-        
-        .conversation-meta {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-top: 0.25rem;
-        }
-        
-        .conversation-time {
-            font-size: 0.75rem;
-            color: #6c757d;
-        }
-        
-        .unread-badge {
-            background: #dc3545;
-            color: white;
-            border-radius: 50%;
-            padding: 0.25rem 0.5rem;
-            font-size: 0.75rem;
-            min-width: 1.5rem;
-            text-align: center;
-        }
-        
-        .chat-main {
-            flex: 1;
-            display: flex;
-            flex-direction: column;
-            background: white;
-        }
-        
-        .chat-main-header {
-            padding: 1rem;
-            border-bottom: 1px solid #e9ecef;
-            background: #f8f9fa;
-        }
-        
-        .messages-container {
-            flex: 1;
-            overflow-y: auto;
-            padding: 1rem;
-            background: #f8f9fa;
-        }
-        
-        .message {
-            margin-bottom: 1rem;
-            display: flex;
-        }
-        
-        .message.sent {
-            justify-content: flex-end;
-        }
-        
-        .message.received {
-            justify-content: flex-start;
-        }
-        
-        .message-bubble {
-            max-width: 70%;
-            padding: 0.75rem 1rem;
-            border-radius: 1rem;
-            position: relative;
-        }
-        
-        .message.sent .message-bubble {
-            background: #007bff;
-            color: white;
-            border-bottom-right-radius: 0.25rem;
-        }
-        
-        .message.received .message-bubble {
-            background: white;
-            color: #333;
-            border: 1px solid #e9ecef;
-            border-bottom-left-radius: 0.25rem;
-        }
-        
-        .message-time {
-            font-size: 0.75rem;
-            opacity: 0.7;
-            margin-top: 0.25rem;
-        }
-        
-        .message-status {
-            font-size: 0.75rem;
-            margin-top: 0.25rem;
-        }
-        
-        .typing-indicator {
-            padding: 0.5rem 1rem;
-            font-style: italic;
-            color: #6c757d;
-            font-size: 0.875rem;
-        }
-        
-        .message-input-container {
-            padding: 1rem;
-            border-top: 1px solid #e9ecef;
-            background: white;
-        }
-        
-        .message-input {
-            display: flex;
-            gap: 0.5rem;
-            align-items: flex-end;
-        }
-        
-        .message-input textarea {
-            flex: 1;
-            border: 1px solid #e9ecef;
-            border-radius: 1.5rem;
-            padding: 0.75rem 1rem;
-            resize: none;
-            max-height: 120px;
-        }
-        
-        .send-button {
-            background: #007bff;
-            color: white;
-            border: none;
-            border-radius: 50%;
-            width: 40px;
-            height: 40px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            cursor: pointer;
-        }
-        
-        .send-button:hover {
-            background: #0056b3;
-        }
-        
-        .send-button:disabled {
-            background: #6c757d;
-            cursor: not-allowed;
-        }
-        
-        .online-indicator {
-            width: 8px;
-            height: 8px;
-            background: #28a745;
-            border-radius: 50%;
-            display: inline-block;
-            margin-left: 0.5rem;
-        }
-        
-        .offline-indicator {
-            width: 8px;
-            height: 8px;
-            background: #6c757d;
-            border-radius: 50%;
-            display: inline-block;
-            margin-left: 0.5rem;
-        }
-        
-        .connection-status {
-            padding: 0.5rem;
-            text-align: center;
-            font-size: 0.875rem;
-        }
-        
-        .connection-status.connected {
-            background: #d4edda;
-            color: #155724;
-        }
-        
-        .connection-status.disconnected {
-            background: #f8d7da;
-            color: #721c24;
-        }
-        
-        .new-conversation-btn {
-            position: fixed;
-            bottom: 2rem;
-            right: 2rem;
-            width: 60px;
-            height: 60px;
-            background: #007bff;
-            color: white;
-            border: none;
-            border-radius: 50%;
-            font-size: 1.5rem;
-            box-shadow: 0 4px 12px rgba(0,123,255,0.3);
-            cursor: pointer;
-            z-index: 1000;
-        }
-        
-        .new-conversation-btn:hover {
-            background: #0056b3;
-            transform: scale(1.05);
-        }
-        
-        @media (max-width: 768px) {
-            .sidebar {
-                width: 100%;
-                position: absolute;
-                z-index: 100;
-                height: 100%;
-                transform: translateX(-100%);
-                transition: transform 0.3s;
-            }
-            
-            .sidebar.show {
-                transform: translateX(0);
-            }
-            
-            .chat-main {
-                width: 100%;
-            }
-        }
-    </style>
 </head>
-<body>
-    <div class="chat-container">
+<body class="bg-gray-100 font-sans">
+    <div class="h-screen flex flex-col">
         <!-- Header -->
-        <div class="chat-header">
-            <div class="d-flex justify-content-between align-items-center">
+        <div class="bg-gradient-to-r from-purple-600 to-blue-600 text-white p-4 shadow-md">
+            <div class="flex justify-between items-center">
                 <div>
-                    <h4 class="mb-0">
-                        <i class="fas fa-comments me-2"></i>CumApp Chat
-                    </h4>
+                    <h4 class="font-bold text-lg"><i class="fas fa-comments mr-2"></i>CumApp Chat</h4>
                     <small id="user-info">Loading...</small>
                 </div>
                 <div>
-                    <button class="btn btn-light btn-sm me-2" onclick="toggleSidebar()">
+                    <button class="px-2 py-1 rounded-md bg-white bg-opacity-20 hover:bg-opacity-30 md:hidden" onclick="toggleSidebar()">
                         <i class="fas fa-bars"></i>
                     </button>
-                    <button class="btn btn-light btn-sm" onclick="showSettings()">
+                    <button class="px-2 py-1 rounded-md bg-white bg-opacity-20 hover:bg-opacity-30" onclick="showSettings()">
                         <i class="fas fa-cog"></i>
                     </button>
                 </div>
@@ -313,70 +28,67 @@
         </div>
         
         <!-- Connection Status -->
-        <div id="connection-status" class="connection-status disconnected">
-            <i class="fas fa-wifi me-1"></i>Connecting...
+        <div id="connection-status" class="p-2 text-center text-sm bg-red-200 text-red-800">
+            <i class="fas fa-wifi mr-1"></i>Connecting...
         </div>
         
         <!-- Chat Body -->
-        <div class="chat-body">
+        <div class="flex-1 flex overflow-hidden">
             <!-- Sidebar -->
-            <div class="sidebar" id="sidebar">
-                <div class="sidebar-header">
-                    <div class="d-flex justify-content-between align-items-center">
-                        <h6 class="mb-0">Conversations</h6>
-                        <button class="btn btn-sm btn-outline-primary" onclick="showNewConversation()">
+            <div id="sidebar" class="w-full md:w-1/3 lg:w-1/4 bg-white border-r border-gray-200 flex flex-col absolute md:relative h-full z-20 transform -translate-x-full md:translate-x-0 transition-transform duration-300 ease-in-out">
+                <div class="p-4 border-b border-gray-200 bg-gray-50">
+                    <div class="flex justify-between items-center">
+                        <h6 class="font-bold">Conversations</h6>
+                        <button class="px-2 py-1 rounded-md text-sm bg-blue-500 text-white hover:bg-blue-600" onclick="showNewConversation()">
                             <i class="fas fa-plus"></i>
                         </button>
                     </div>
                     <div class="mt-2">
-                        <input type="text" class="form-control form-control-sm" 
-                               placeholder="Search conversations..." id="search-input">
+                        <input type="text" class="w-full px-2 py-1 border rounded-md text-sm" placeholder="Search conversations..." id="search-input">
                     </div>
                 </div>
                 
-                <div class="conversations-list" id="conversations-list">
+                <div class="flex-1 overflow-y-auto" id="conversations-list">
                     <!-- Conversations will be loaded here -->
                 </div>
             </div>
             
             <!-- Main Chat Area -->
-            <div class="chat-main">
-                <div class="chat-main-header" id="chat-header" style="display: none;">
-                    <div class="d-flex justify-content-between align-items-center">
+            <div class="flex-1 flex flex-col bg-white">
+                <div id="chat-header" class="p-4 border-b border-gray-200 bg-gray-50 hidden">
+                    <div class="flex justify-between items-center">
                         <div>
-                            <h6 class="mb-0" id="conversation-name">Select a conversation</h6>
-                            <small class="text-muted" id="conversation-info"></small>
+                            <h6 class="font-bold" id="conversation-name">Select a conversation</h6>
+                            <small class="text-gray-500" id="conversation-info"></small>
                         </div>
                         <div>
-                            <button class="btn btn-sm btn-outline-secondary me-2" onclick="showConversationInfo()">
+                            <button class="px-2 py-1 rounded-md text-sm text-gray-500 hover:bg-gray-200" onclick="showConversationInfo()">
                                 <i class="fas fa-info-circle"></i>
                             </button>
-                            <button class="btn btn-sm btn-outline-secondary" onclick="showConversationSettings()">
+                            <button class="px-2 py-1 rounded-md text-sm text-gray-500 hover:bg-gray-200" onclick="showConversationSettings()">
                                 <i class="fas fa-ellipsis-v"></i>
                             </button>
                         </div>
                     </div>
                 </div>
                 
-                <div class="messages-container" id="messages-container">
-                    <div class="text-center text-muted mt-5">
+                <div class="flex-1 overflow-y-auto p-4 bg-gray-100" id="messages-container">
+                    <div class="text-center text-gray-500 mt-10">
                         <i class="fas fa-comments fa-3x mb-3"></i>
-                        <h5>Welcome to CumApp Chat</h5>
+                        <h5 class="font-bold">Welcome to CumApp Chat</h5>
                         <p>Select a conversation to start messaging or create a new one</p>
                     </div>
                 </div>
                 
-                <div class="typing-indicator" id="typing-indicator" style="display: none;">
-                    <i class="fas fa-circle-notch fa-spin me-1"></i>
+                <div id="typing-indicator" class="px-4 py-2 text-sm text-gray-500 italic hidden">
+                    <i class="fas fa-circle-notch fa-spin mr-1"></i>
                     <span id="typing-text">Someone is typing...</span>
                 </div>
                 
-                <div class="message-input-container" id="message-input-container" style="display: none;">
-                    <div class="message-input">
-                        <textarea id="message-input" placeholder="Type a message..." 
-                                rows="1" onkeydown="handleKeyDown(event)" 
-                                oninput="handleTyping()"></textarea>
-                        <button class="send-button" id="send-button" onclick="sendMessage()" disabled>
+                <div id="message-input-container" class="p-4 border-t border-gray-200 bg-white hidden">
+                    <div class="flex items-end gap-2">
+                        <textarea id="message-input" placeholder="Type a message..." rows="1" class="flex-1 px-3 py-2 border rounded-full resize-none max-h-28" onkeydown="handleKeyDown(event)" oninput="handleTyping()"></textarea>
+                        <button id="send-button" class="w-10 h-10 rounded-full bg-blue-500 text-white flex items-center justify-center hover:bg-blue-600 disabled:bg-gray-400 disabled:cursor-not-allowed" onclick="sendMessage()" disabled>
                             <i class="fas fa-paper-plane"></i>
                         </button>
                     </div>
@@ -386,54 +98,50 @@
     </div>
     
     <!-- New Conversation Button -->
-    <button class="new-conversation-btn" onclick="showNewConversation()">
+    <button class="fixed bottom-8 right-8 w-14 h-14 rounded-full bg-blue-500 text-white text-2xl shadow-lg hover:bg-blue-600 transform hover:scale-105 transition-all" onclick="showNewConversation()">
         <i class="fas fa-plus"></i>
     </button>
     
     <!-- Modals -->
     <!-- New Conversation Modal -->
-    <div class="modal fade" id="newConversationModal" tabindex="-1">
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title">New Conversation</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+    <div id="newConversationModal" class="fixed inset-0 bg-gray-800 bg-opacity-50 flex items-center justify-center hidden">
+        <div class="bg-white rounded-lg shadow-lg w-full max-w-md">
+            <div class="p-4 border-b flex justify-between items-center">
+                <h5 class="text-xl font-bold">New Conversation</h5>
+                <button type="button" class="text-gray-500 hover:text-gray-800" onclick="closeModal('newConversationModal')">&times;</button>
+            </div>
+            <div class="p-4">
+                <div class="mb-3">
+                    <label class="font-bold">Message Type</label>
+                    <select id="message-type" class="w-full mt-1 px-3 py-2 border rounded-md">
+                        <option value="internal">Platform User</option>
+                        <option value="sms">SMS to Phone Number</option>
+                    </select>
                 </div>
-                <div class="modal-body">
-                    <div class="mb-3">
-                        <label class="form-label">Message Type</label>
-                        <select class="form-select" id="message-type">
-                            <option value="internal">Platform User</option>
-                            <option value="sms">SMS to Phone Number</option>
-                        </select>
-                    </div>
-                    <div class="mb-3" id="user-select-group">
-                        <label class="form-label">Select User</label>
-                        <select class="form-select" id="recipient-user">
-                            <option value="">Choose a user...</option>
-                        </select>
-                    </div>
-                    <div class="mb-3" id="phone-input-group" style="display: none;">
-                        <label class="form-label">Phone Number</label>
-                        <input type="tel" class="form-control" id="recipient-phone" 
-                               placeholder="+1234567890">
-                    </div>
-                    <div class="mb-3" id="from-number-group" style="display: none;">
-                        <label class="form-label">From Number</label>
-                        <select class="form-select" id="from-number">
-                            <option value="">Choose your number...</option>
-                        </select>
-                    </div>
+                <div id="user-select-group" class="mb-3">
+                    <label class="font-bold">Select User</label>
+                    <select id="recipient-user" class="w-full mt-1 px-3 py-2 border rounded-md">
+                        <option value="">Choose a user...</option>
+                    </select>
                 </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-                    <button type="button" class="btn btn-primary" onclick="createConversation()">Start Conversation</button>
+                <div id="phone-input-group" class="mb-3 hidden">
+                    <label class="font-bold">Phone Number</label>
+                    <input type="tel" id="recipient-phone" class="w-full mt-1 px-3 py-2 border rounded-md" placeholder="+1234567890">
                 </div>
+                <div id="from-number-group" class="mb-3 hidden">
+                    <label class="font-bold">From Number</label>
+                    <select id="from-number" class="w-full mt-1 px-3 py-2 border rounded-md">
+                        <option value="">Choose your number...</option>
+                    </select>
+                </div>
+            </div>
+            <div class="p-4 border-t flex justify-end space-x-2">
+                <button type="button" class="px-4 py-2 rounded-md bg-gray-200" onclick="closeModal('newConversationModal')">Cancel</button>
+                <button type="button" class="px-4 py-2 rounded-md bg-blue-500 text-white" onclick="createConversation()">Start Conversation</button>
             </div>
         </div>
     </div>
     
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
     <script>
         // Global variables
         let ws = null;
@@ -498,11 +206,11 @@
         function updateConnectionStatus(connected) {
             const statusEl = document.getElementById('connection-status');
             if (connected) {
-                statusEl.className = 'connection-status connected';
-                statusEl.innerHTML = '<i class="fas fa-wifi me-1"></i>Connected';
+                statusEl.className = 'p-2 text-center text-sm bg-green-200 text-green-800';
+                statusEl.innerHTML = '<i class="fas fa-wifi mr-1"></i>Connected';
             } else {
-                statusEl.className = 'connection-status disconnected';
-                statusEl.innerHTML = '<i class="fas fa-wifi me-1"></i>Disconnected - Reconnecting...';
+                statusEl.className = 'p-2 text-center text-sm bg-red-200 text-red-800';
+                statusEl.innerHTML = '<i class="fas fa-wifi mr-1"></i>Disconnected - Reconnecting...';
             }
         }
         
@@ -553,10 +261,10 @@
             
             if (conversations.length === 0) {
                 container.innerHTML = `
-                    <div class="text-center text-muted p-4">
+                    <div class="text-center text-gray-500 p-4">
                         <i class="fas fa-inbox fa-2x mb-2"></i>
                         <p>No conversations yet</p>
-                        <button class="btn btn-primary btn-sm" onclick="showNewConversation()">
+                        <button class="mt-2 px-3 py-1 rounded-md text-sm bg-blue-500 text-white hover:bg-blue-600" onclick="showNewConversation()">
                             Start a conversation
                         </button>
                     </div>
@@ -565,17 +273,15 @@
             }
             
             container.innerHTML = conversations.map(conv => `
-                <div class="conversation-item ${currentConversation?.id === conv.id ? 'active' : ''}" 
+                <div class="p-4 border-b border-gray-200 cursor-pointer hover:bg-gray-50 ${currentConversation?.id === conv.id ? 'bg-blue-50 border-l-4 border-blue-500' : ''}" 
                      onclick="selectConversation('${conv.id}')">
-                    <div class="conversation-name">${conv.name}</div>
-                    <div class="conversation-preview">
+                    <div class="font-bold mb-1">${conv.name}</div>
+                    <div class="text-sm text-gray-500 truncate mb-1">
                         ${conv.last_message ? conv.last_message.content : 'No messages yet'}
                     </div>
-                    <div class="conversation-meta">
-                        <span class="conversation-time">
-                            ${conv.last_message ? formatTime(conv.last_message.created_at) : ''}
-                        </span>
-                        ${conv.unread_count > 0 ? `<span class="unread-badge">${conv.unread_count}</span>` : ''}
+                    <div class="flex justify-between items-center text-xs text-gray-500">
+                        <span>${conv.last_message ? formatTime(conv.last_message.created_at) : ''}</span>
+                        ${conv.unread_count > 0 ? `<span class="w-5 h-5 rounded-full bg-red-500 text-white flex items-center justify-center text-xs">${conv.unread_count}</span>` : ''}
                     </div>
                 </div>
             `).join('');
@@ -587,9 +293,8 @@
             
             currentConversation = conversation;
             
-            // Update UI
-            document.getElementById('chat-header').style.display = 'block';
-            document.getElementById('message-input-container').style.display = 'block';
+            document.getElementById('chat-header').classList.remove('hidden');
+            document.getElementById('message-input-container').classList.remove('hidden');
             document.getElementById('conversation-name').textContent = conversation.name;
             
             let info = '';
@@ -600,15 +305,12 @@
             }
             document.getElementById('conversation-info').textContent = info;
             
-            // Load messages
             await loadMessages(conversationId);
             
-            // Update conversations list
             renderConversations();
             
-            // Hide sidebar on mobile
             if (window.innerWidth <= 768) {
-                document.getElementById('sidebar').classList.remove('show');
+                document.getElementById('sidebar').classList.add('-translate-x-full');
             }
         }
         
@@ -636,7 +338,7 @@
             
             if (messages.length === 0) {
                 container.innerHTML = `
-                    <div class="text-center text-muted mt-5">
+                    <div class="text-center text-gray-500 mt-10">
                         <i class="fas fa-comment fa-2x mb-2"></i>
                         <p>No messages yet. Start the conversation!</p>
                     </div>
@@ -647,46 +349,42 @@
             container.innerHTML = messages.map(msg => {
                 const isSent = msg.sender_id === currentUser;
                 return `
-                    <div class="message ${isSent ? 'sent' : 'received'}">
-                        <div class="message-bubble">
+                    <div class="flex ${isSent ? 'justify-end' : 'justify-start'} mb-4">
+                        <div class="max-w-xs lg:max-w-md px-4 py-2 rounded-2xl ${isSent ? 'bg-blue-500 text-white rounded-br-none' : 'bg-white text-gray-800 rounded-bl-none shadow'}">
                             <div>${msg.content}</div>
-                            <div class="message-time">${formatTime(msg.created_at)}</div>
-                            ${isSent ? `<div class="message-status">${getStatusIcon(msg.status)}</div>` : ''}
+                            <div class="text-xs mt-1 ${isSent ? 'text-blue-200' : 'text-gray-400'}">${formatTime(msg.created_at)}</div>
+                            ${isSent ? `<div class="text-xs mt-1 ${isSent ? 'text-blue-200' : 'text-gray-400'}">${getStatusIcon(msg.status)}</div>` : ''}
                         </div>
                     </div>
                 `;
             }).join('');
             
-            // Scroll to bottom
             container.scrollTop = container.scrollHeight;
         }
         
         function handleNewMessage(message) {
-            // Update conversation in list
             const convIndex = conversations.findIndex(c => c.id === message.conversation_id);
             if (convIndex !== -1) {
                 conversations[convIndex].last_message = message;
                 conversations[convIndex].updated_at = message.created_at;
                 
-                // Move to top
                 const conv = conversations.splice(convIndex, 1)[0];
                 conversations.unshift(conv);
                 
                 renderConversations();
             }
             
-            // If this is the current conversation, add message
             if (currentConversation && currentConversation.id === message.conversation_id) {
                 const container = document.getElementById('messages-container');
                 const isSent = message.sender_id === currentUser;
                 
                 const messageEl = document.createElement('div');
-                messageEl.className = `message ${isSent ? 'sent' : 'received'}`;
+                messageEl.className = `flex ${isSent ? 'justify-end' : 'justify-start'} mb-4`;
                 messageEl.innerHTML = `
-                    <div class="message-bubble">
+                    <div class="max-w-xs lg:max-w-md px-4 py-2 rounded-2xl ${isSent ? 'bg-blue-500 text-white rounded-br-none' : 'bg-white text-gray-800 rounded-bl-none shadow'}">
                         <div>${message.content}</div>
-                        <div class="message-time">${formatTime(message.created_at)}</div>
-                        ${isSent ? `<div class="message-status">${getStatusIcon(message.status)}</div>` : ''}
+                        <div class="text-xs mt-1 ${isSent ? 'text-blue-200' : 'text-gray-400'}">${formatTime(message.created_at)}</div>
+                        ${isSent ? `<div class="text-xs mt-1 ${isSent ? 'text-blue-200' : 'text-gray-400'}">${getStatusIcon(message.status)}</div>` : ''}
                     </div>
                 `;
                 
@@ -750,13 +448,10 @@
             const input = document.getElementById('message-input');
             const sendButton = document.getElementById('send-button');
             
-            // Enable/disable send button
             sendButton.disabled = !input.value.trim();
             
-            // Adjust textarea height
             adjustTextareaHeight(input);
             
-            // Send typing indicator
             if (currentConversation && ws && ws.readyState === WebSocket.OPEN) {
                 if (!isTyping) {
                     isTyping = true;
@@ -767,10 +462,8 @@
                     }));
                 }
                 
-                // Clear existing timer
                 clearTimeout(typingTimer);
                 
-                // Set timer to stop typing indicator
                 typingTimer = setTimeout(() => {
                     if (isTyping) {
                         isTyping = false;
@@ -786,7 +479,7 @@
         
         function adjustTextareaHeight(textarea) {
             textarea.style.height = 'auto';
-            textarea.style.height = Math.min(textarea.scrollHeight, 120) + 'px';
+            textarea.style.height = Math.min(textarea.scrollHeight, 112) + 'px';
         }
         
         function handleTypingIndicator(data) {
@@ -798,24 +491,25 @@
                     const typingUsers = data.typing_users.filter(uid => uid !== currentUser);
                     if (typingUsers.length > 0) {
                         text.textContent = `${typingUsers.length === 1 ? 'Someone is' : 'People are'} typing...`;
-                        indicator.style.display = 'block';
+                        indicator.classList.remove('hidden');
                     } else {
-                        indicator.style.display = 'none';
+                        indicator.classList.add('hidden');
                     }
                 } else {
-                    indicator.style.display = 'none';
+                    indicator.classList.add('hidden');
                 }
             }
         }
         
         async function showNewConversation() {
-            // Load available users (this would come from an API)
             const userSelect = document.getElementById('recipient-user');
             userSelect.innerHTML = '<option value="">Choose a user...</option>';
             
-            // Show modal
-            const modal = new bootstrap.Modal(document.getElementById('newConversationModal'));
-            modal.show();
+            document.getElementById('newConversationModal').classList.remove('hidden');
+        }
+
+        function closeModal(modalId) {
+            document.getElementById(modalId).classList.add('hidden');
         }
         
         async function loadUserNumbers() {
@@ -841,26 +535,25 @@
         }
         
         function setupEventListeners() {
-            // Message type change
             document.getElementById('message-type').addEventListener('change', function() {
                 const userGroup = document.getElementById('user-select-group');
                 const phoneGroup = document.getElementById('phone-input-group');
                 const fromGroup = document.getElementById('from-number-group');
                 
                 if (this.value === 'sms') {
-                    userGroup.style.display = 'none';
-                    phoneGroup.style.display = 'block';
-                    fromGroup.style.display = 'block';
+                    userGroup.classList.add('hidden');
+                    phoneGroup.classList.remove('hidden');
+                    fromGroup.classList.remove('hidden');
                 } else {
-                    userGroup.style.display = 'block';
-                    phoneGroup.style.display = 'none';
-                    fromGroup.style.display = 'none';
+                    userGroup.classList.remove('hidden');
+                    phoneGroup.classList.add('hidden');
+                    fromGroup.classList.add('hidden');
                 }
             });
         }
         
         function toggleSidebar() {
-            document.getElementById('sidebar').classList.toggle('show');
+            document.getElementById('sidebar').classList.toggle('-translate-x-full');
         }
         
         function formatTime(timestamp) {
@@ -883,8 +576,8 @@
             switch(status) {
                 case 'sent': return '<i class="fas fa-check"></i>';
                 case 'delivered': return '<i class="fas fa-check-double"></i>';
-                case 'read': return '<i class="fas fa-check-double text-primary"></i>';
-                case 'failed': return '<i class="fas fa-exclamation-triangle text-danger"></i>';
+                case 'read': return '<i class="fas fa-check-double text-blue-400"></i>';
+                case 'failed': return '<i class="fas fa-exclamation-triangle text-red-400"></i>';
                 default: return '<i class="fas fa-clock"></i>';
             }
         }
@@ -892,6 +585,7 @@
         // Placeholder functions
         function createConversation() {
             console.log('Create conversation');
+            closeModal('newConversationModal');
         }
         
         function showSettings() {

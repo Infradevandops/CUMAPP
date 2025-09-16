@@ -4,210 +4,116 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>International Routing - CumApp</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
-    <style>
-        .inbox-badge {
-            position: absolute;
-            top: -5px;
-            right: -5px;
-            font-size: 0.7rem;
-        }
-        .country-card {
-            transition: all 0.3s ease;
-            cursor: pointer;
-            border: 2px solid transparent;
-        }
-        .country-card:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 6px 20px rgba(0,0,0,0.15);
-            border-color: #007bff;
-        }
-        .country-card.selected {
-            border-color: #28a745;
-            background-color: #f8fff9;
-        }
-        .cost-comparison {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
-            border-radius: 15px;
-            padding: 20px;
-        }
-        .savings-badge {
-            background: linear-gradient(45deg, #28a745, #20c997);
-            color: white;
-            padding: 5px 15px;
-            border-radius: 20px;
-            font-weight: bold;
-        }
-        .route-option {
-            border: 1px solid #dee2e6;
-            border-radius: 10px;
-            padding: 15px;
-            margin: 10px 0;
-            transition: all 0.3s ease;
-        }
-        .route-option:hover {
-            border-color: #007bff;
-            box-shadow: 0 4px 12px rgba(0,123,255,0.15);
-        }
-        .route-option.recommended {
-            border-color: #28a745;
-            background-color: #f8fff9;
-        }
-        .nav-link.active {
-            background-color: rgba(255,255,255,0.1) !important;
-            border-radius: 5px;
-        }
-    </style>
 </head>
-<body class="bg-light">
+<body class="bg-gray-100">
     <!-- Enhanced Navigation -->
-    <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
-        <div class="container">
-            <a class="navbar-brand fw-bold" href="/dashboard">
-                <i class="fas fa-sms me-2"></i>CumApp
-            </a>
-            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
-                <span class="navbar-toggler-icon"></span>
-            </button>
-            <div class="collapse navbar-collapse" id="navbarNav">
-                <ul class="navbar-nav me-auto">
-                    <li class="nav-item">
-                        <a class="nav-link" href="/dashboard">
-                            <i class="fas fa-home me-1"></i>Dashboard
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="/services">
-                            <i class="fas fa-list me-1"></i>Services
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="/verifications">
-                            <i class="fas fa-check-circle me-1"></i>Verifications
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="/numbers">
-                            <i class="fas fa-phone me-1"></i>Numbers
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="/communication">
-                            <i class="fas fa-comments me-1"></i>Communication
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link active" href="/routing">
-                            <i class="fas fa-globe me-1"></i>International
-                        </a>
-                    </li>
-                    <!-- Inbox Button -->
-                    <li class="nav-item position-relative">
-                        <a class="nav-link" href="/inbox">
-                            <i class="fas fa-inbox me-1"></i>Inbox
-                            <span class="badge bg-danger inbox-badge" id="inboxBadge" style="display: none;">0</span>
-                        </a>
-                    </li>
-                </ul>
-                <ul class="navbar-nav">
-                    <li class="nav-item dropdown">
-                        <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown">
-                            <i class="fas fa-user me-1"></i><span id="userEmail">User</span>
-                        </a>
-                        <ul class="dropdown-menu">
-                            <li><a class="dropdown-item" href="#" onclick="logout()">
-                                <i class="fas fa-sign-out-alt me-2"></i>Logout
-                            </a></li>
-                        </ul>
-                    </li>
-                </ul>
+    <nav class="bg-blue-600 text-white shadow-md">
+        <div class="container mx-auto px-4">
+            <div class="flex justify-between items-center py-3">
+                <a class="text-xl font-bold" href="/dashboard">
+                    <i class="fas fa-sms mr-2"></i>CumApp
+                </a>
+                <div class="hidden md:flex items-center space-x-4">
+                    <a class="px-3 py-2 rounded-md hover:bg-blue-700" href="/dashboard"><i class="fas fa-home mr-1"></i>Dashboard</a>
+                    <a class="px-3 py-2 rounded-md hover:bg-blue-700" href="/services"><i class="fas fa-list mr-1"></i>Services</a>
+                    <a class="px-3 py-2 rounded-md hover:bg-blue-700" href="/verifications"><i class="fas fa-check-circle mr-1"></i>Verifications</a>
+                    <a class="px-3 py-2 rounded-md hover:bg-blue-700" href="/numbers"><i class="fas fa-phone mr-1"></i>Numbers</a>
+                    <a class="px-3 py-2 rounded-md hover:bg-blue-700" href="/communication"><i class="fas fa-comments mr-1"></i>Communication</a>
+                    <a class="px-3 py-2 rounded-md bg-blue-700" href="/routing"><i class="fas fa-globe mr-1"></i>International</a>
+                    <a class="px-3 py-2 rounded-md hover:bg-blue-700 relative" href="/inbox">
+                        <i class="fas fa-inbox mr-1"></i>Inbox
+                        <span class="absolute top-0 right-0 -mt-1 -mr-1 px-2 py-1 bg-red-500 text-white rounded-full text-xs" id="inboxBadge" style="display: none;">0</span>
+                    </a>
+                </div>
+                <div class="hidden md:flex items-center">
+                    <div class="relative">
+                        <button class="px-3 py-2 rounded-md hover:bg-blue-700 flex items-center" onclick="toggleDropdown()"><i class="fas fa-user mr-1"></i><span id="userEmail">User</span><i class="fas fa-caret-down ml-2"></i></button>
+                        <div id="dropdownMenu" class="absolute right-0 mt-2 w-48 bg-white rounded-md shadow-lg py-1 z-20 hidden">
+                            <a href="#" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100" onclick="logout()"><i class="fas fa-sign-out-alt mr-2"></i>Logout</a>
+                        </div>
+                    </div>
+                </div>
+                <div class="md:hidden">
+                    <button onclick="toggleMobileMenu()"><i class="fas fa-bars"></i></button>
+                </div>
+            </div>
+            <div id="mobileMenu" class="hidden md:hidden">
+                <a class="block px-3 py-2 rounded-md hover:bg-blue-700" href="/dashboard"><i class="fas fa-home mr-1"></i>Dashboard</a>
+                <a class="block px-3 py-2 rounded-md hover:bg-blue-700" href="/services"><i class="fas fa-list mr-1"></i>Services</a>
+                <a class="block px-3 py-2 rounded-md hover:bg-blue-700" href="/verifications"><i class="fas fa-check-circle mr-1"></i>Verifications</a>
+                <a class="block px-3 py-2 rounded-md hover:bg-blue-700" href="/numbers"><i class="fas fa-phone mr-1"></i>Numbers</a>
+                <a class="block px-3 py-2 rounded-md hover:bg-blue-700" href="/communication"><i class="fas fa-comments mr-1"></i>Communication</a>
+                <a class="block px-3 py-2 rounded-md bg-blue-700" href="/routing"><i class="fas fa-globe mr-1"></i>International</a>
+                <a class="block px-3 py-2 rounded-md hover:bg-blue-700 relative" href="/inbox">
+                    <i class="fas fa-inbox mr-1"></i>Inbox
+                    <span class="absolute top-0 left-0 ml-6 -mt-1 px-2 py-1 bg-red-500 text-white rounded-full text-xs" id="inboxBadgeMobile" style="display: none;">0</span>
+                </a>
+                <a href="#" class="block px-3 py-2 rounded-md hover:bg-blue-700" onclick="logout()"><i class="fas fa-sign-out-alt mr-2"></i>Logout</a>
             </div>
         </div>
     </nav>
 
-    <div class="container mt-4">
+    <div class="container mx-auto mt-4 px-4">
         <!-- Page Header -->
-        <div class="row mb-4">
-            <div class="col-12">
-                <div class="d-flex justify-content-between align-items-center">
-                    <div>
-                        <h2><i class="fas fa-globe me-2"></i>International SMS Routing</h2>
-                        <p class="text-muted">Optimize your international SMS costs with smart routing</p>
-                    </div>
-                    <div>
-                        <button class="btn btn-outline-primary me-2" onclick="refreshRates()">
-                            <i class="fas fa-sync-alt me-1"></i>Refresh Rates
-                        </button>
-                        <button class="btn btn-success" onclick="showBulkSendModal()">
-                            <i class="fas fa-paper-plane me-1"></i>Send SMS
-                        </button>
-                    </div>
-                </div>
+        <div class="flex justify-between items-center mb-4">
+            <div>
+                <h2 class="text-2xl font-bold"><i class="fas fa-globe mr-2"></i>International SMS Routing</h2>
+                <p class="text-gray-500">Optimize your international SMS costs with smart routing</p>
+            </div>
+            <div>
+                <button class="px-4 py-2 rounded-md border border-blue-500 text-blue-500 mr-2" onclick="refreshRates()">
+                    <i class="fas fa-sync-alt mr-1"></i>Refresh Rates
+                </button>
+                <button class="px-4 py-2 rounded-md bg-green-500 text-white" onclick="showBulkSendModal()">
+                    <i class="fas fa-paper-plane mr-1"></i>Send SMS
+                </button>
             </div>
         </div>
 
         <!-- Quick Stats -->
-        <div class="row mb-4">
-            <div class="col-md-3">
-                <div class="card bg-primary text-white">
-                    <div class="card-body text-center">
-                        <i class="fas fa-globe fa-2x mb-2"></i>
-                        <h4>195</h4>
-                        <small>Countries Supported</small>
-                    </div>
-                </div>
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-4">
+            <div class="bg-blue-500 text-white rounded-lg shadow-md p-4 text-center">
+                <i class="fas fa-globe fa-2x mb-2"></i>
+                <h4 class="text-2xl font-bold">195</h4>
+                <small>Countries Supported</small>
             </div>
-            <div class="col-md-3">
-                <div class="card bg-success text-white">
-                    <div class="card-body text-center">
-                        <i class="fas fa-dollar-sign fa-2x mb-2"></i>
-                        <h4>35%</h4>
-                        <small>Average Savings</small>
-                    </div>
-                </div>
+            <div class="bg-green-500 text-white rounded-lg shadow-md p-4 text-center">
+                <i class="fas fa-dollar-sign fa-2x mb-2"></i>
+                <h4 class="text-2xl font-bold">35%</h4>
+                <small>Average Savings</small>
             </div>
-            <div class="col-md-3">
-                <div class="card bg-info text-white">
-                    <div class="card-body text-center">
-                        <i class="fas fa-route fa-2x mb-2"></i>
-                        <h4>3-5</h4>
-                        <small>Route Options</small>
-                    </div>
-                </div>
+            <div class="bg-cyan-500 text-white rounded-lg shadow-md p-4 text-center">
+                <i class="fas fa-route fa-2x mb-2"></i>
+                <h4 class="text-2xl font-bold">3-5</h4>
+                <small>Route Options</small>
             </div>
-            <div class="col-md-3">
-                <div class="card bg-warning text-white">
-                    <div class="card-body text-center">
-                        <i class="fas fa-clock fa-2x mb-2"></i>
-                        <h4>2-5s</h4>
-                        <small>Delivery Time</small>
-                    </div>
-                </div>
+            <div class="bg-yellow-500 text-white rounded-lg shadow-md p-4 text-center">
+                <i class="fas fa-clock fa-2x mb-2"></i>
+                <h4 class="text-2xl font-bold">2-5s</h4>
+                <small>Delivery Time</small>
             </div>
         </div>
 
         <!-- Main Content -->
-        <div class="row">
+        <div class="flex flex-wrap -mx-2">
             <!-- Country Selection -->
-            <div class="col-lg-4">
-                <div class="card">
-                    <div class="card-header">
-                        <h5 class="mb-0">
-                            <i class="fas fa-map me-2"></i>Select Destination Country
-                        </h5>
+            <div class="w-full lg:w-1/3 px-2">
+                <div class="bg-white rounded-lg shadow-md">
+                    <div class="p-4 border-b">
+                        <h5 class="font-bold mb-0"><i class="fas fa-map mr-2"></i>Select Destination Country</h5>
                     </div>
-                    <div class="card-body">
+                    <div class="p-4">
                         <!-- Search -->
                         <div class="mb-3">
-                            <input type="text" class="form-control" id="countrySearch" placeholder="Search countries..." onkeyup="filterCountries()">
+                            <input type="text" class="w-full px-3 py-2 border rounded-md" id="countrySearch" placeholder="Search countries..." onkeyup="filterCountries()">
                         </div>
                         
                         <!-- Popular Countries -->
                         <div class="mb-3">
-                            <h6 class="text-muted">Popular Destinations</h6>
-                            <div class="row" id="popularCountries">
+                            <h6 class="text-gray-500">Popular Destinations</h6>
+                            <div class="grid grid-cols-2 gap-2" id="popularCountries">
                                 <!-- Popular countries will be loaded here -->
                             </div>
                         </div>
@@ -223,16 +129,14 @@
             </div>
 
             <!-- Routing Options -->
-            <div class="col-lg-8">
-                <div class="card">
-                    <div class="card-header">
-                        <h5 class="mb-0">
-                            <i class="fas fa-route me-2"></i>Smart Routing Options
-                        </h5>
+            <div class="w-full lg:w-2/3 px-2">
+                <div class="bg-white rounded-lg shadow-md">
+                    <div class="p-4 border-b">
+                        <h5 class="font-bold mb-0"><i class="fas fa-route mr-2"></i>Smart Routing Options</h5>
                     </div>
-                    <div class="card-body">
+                    <div class="p-4">
                         <div id="routingOptions">
-                            <div class="text-center text-muted py-5">
+                            <div class="text-center text-gray-500 py-20">
                                 <i class="fas fa-map-marked-alt fa-3x mb-3"></i>
                                 <p>Select a destination country to see routing options</p>
                             </div>
@@ -243,25 +147,20 @@
         </div>
 
         <!-- Cost Comparison Section -->
-        <div class="row mt-4" id="costComparisonSection" style="display: none;">
-            <div class="col-12">
-                <div class="card">
-                    <div class="card-header">
-                        <h5 class="mb-0">
-                            <i class="fas fa-chart-line me-2"></i>Cost Comparison & Recommendations
-                        </h5>
-                    </div>
-                    <div class="card-body">
-                        <div id="costComparison">
-                            <!-- Cost comparison will be loaded here -->
-                        </div>
+        <div class="mt-4 hidden" id="costComparisonSection">
+            <div class="bg-white rounded-lg shadow-md">
+                <div class="p-4 border-b">
+                    <h5 class="font-bold mb-0"><i class="fas fa-chart-line mr-2"></i>Cost Comparison & Recommendations</h5>
+                </div>
+                <div class="p-4">
+                    <div id="costComparison">
+                        <!-- Cost comparison will be loaded here -->
                     </div>
                 </div>
             </div>
         </div>
     </div>
 
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script>
         // Global variables
         let countries = [];
@@ -352,12 +251,10 @@
             const popularCountries = countries.filter(c => c.popular);
 
             container.innerHTML = popularCountries.map(country => `
-                <div class="col-6 mb-2">
-                    <div class="country-card card h-100 text-center p-2" onclick="selectCountry('${country.code}')">
-                        <div style="font-size: 1.5rem;">${country.flag}</div>
-                        <small class="fw-bold">${country.name}</small>
-                        <small class="text-muted">${country.dialCode}</small>
-                    </div>
+                <div class="bg-white rounded-lg shadow-md h-full text-center p-2 cursor-pointer transform hover:-translate-y-1 transition-transform duration-300 border-2 border-transparent hover:border-blue-500" onclick="selectCountry('${country.code}')">
+                    <div class="text-2xl">${country.flag}</div>
+                    <small class="font-bold">${country.name}</small>
+                    <small class="text-gray-500">${country.dialCode}</small>
                 </div>
             `).join('');
         }
@@ -367,15 +264,15 @@
             const container = document.getElementById('allCountries');
 
             container.innerHTML = countries.map(country => `
-                <div class="country-card card mb-2 p-3" onclick="selectCountry('${country.code}')">
-                    <div class="d-flex align-items-center">
-                        <span style="font-size: 1.5rem;" class="me-3">${country.flag}</span>
-                        <div class="flex-grow-1">
-                            <div class="fw-bold">${country.name}</div>
-                            <small class="text-muted">${country.dialCode}</small>
+                <div class="bg-white rounded-lg shadow-md mb-2 p-3 cursor-pointer transform hover:-translate-y-1 transition-transform duration-300 border-2 border-transparent hover:border-blue-500" onclick="selectCountry('${country.code}')">
+                    <div class="flex items-center">
+                        <span class="text-2xl mr-3">${country.flag}</span>
+                        <div class="flex-grow">
+                            <div class="font-bold">${country.name}</div>
+                            <small class="text-gray-500">${country.dialCode}</small>
                         </div>
-                        <div class="text-end">
-                            <small class="text-success fw-bold">$${country.cost.toFixed(3)}/SMS</small>
+                        <div class="text-right">
+                            <small class="text-green-500 font-bold">$${country.cost.toFixed(3)}/SMS</small>
                         </div>
                     </div>
                 </div>
@@ -392,15 +289,15 @@
 
             const container = document.getElementById('allCountries');
             container.innerHTML = filteredCountries.map(country => `
-                <div class="country-card card mb-2 p-3" onclick="selectCountry('${country.code}')">
-                    <div class="d-flex align-items-center">
-                        <span style="font-size: 1.5rem;" class="me-3">${country.flag}</span>
-                        <div class="flex-grow-1">
-                            <div class="fw-bold">${country.name}</div>
-                            <small class="text-muted">${country.dialCode}</small>
+                <div class="bg-white rounded-lg shadow-md mb-2 p-3 cursor-pointer transform hover:-translate-y-1 transition-transform duration-300 border-2 border-transparent hover:border-blue-500" onclick="selectCountry('${country.code}')">
+                    <div class="flex items-center">
+                        <span class="text-2xl mr-3">${country.flag}</span>
+                        <div class="flex-grow">
+                            <div class="font-bold">${country.name}</div>
+                            <small class="text-gray-500">${country.dialCode}</small>
                         </div>
-                        <div class="text-end">
-                            <small class="text-success fw-bold">$${country.cost.toFixed(3)}/SMS</small>
+                        <div class="text-right">
+                            <small class="text-green-500 font-bold">$${country.cost.toFixed(3)}/SMS</small>
                         </div>
                     </div>
                 </div>
@@ -413,9 +310,9 @@
             
             // Update UI
             document.querySelectorAll('.country-card').forEach(card => {
-                card.classList.remove('selected');
+                card.classList.remove('border-green-500', 'bg-green-50');
             });
-            event.currentTarget.classList.add('selected');
+            event.currentTarget.classList.add('border-green-500', 'bg-green-50');
 
             // Load routing options
             loadRoutingOptions(countryCode);
@@ -496,32 +393,32 @@
             const container = document.getElementById('routingOptions');
 
             container.innerHTML = routingOptions.map(route => `
-                <div class="route-option ${route.recommended ? 'recommended' : ''}">
-                    <div class="d-flex justify-content-between align-items-start mb-2">
+                <div class="border rounded-lg p-4 mb-2 transition-all duration-300 ${route.recommended ? 'border-green-500 bg-green-50' : 'border-gray-200'} hover:border-blue-500 hover:shadow-lg">
+                    <div class="flex justify-between items-start mb-2">
                         <div>
-                            <h6 class="mb-1">
+                            <h6 class="font-bold mb-1">
                                 ${route.name}
-                                ${route.recommended ? '<span class="savings-badge ms-2">RECOMMENDED</span>' : ''}
+                                ${route.recommended ? '<span class="ml-2 px-2 py-1 bg-gradient-to-r from-green-400 to-green-600 text-white rounded-full text-xs font-bold">RECOMMENDED</span>' : ''}
                             </h6>
-                            <p class="text-muted mb-2">${route.description}</p>
+                            <p class="text-gray-500 mb-2">${route.description}</p>
                         </div>
-                        <div class="text-end">
-                            <h5 class="text-success mb-0">$${route.cost.toFixed(3)}</h5>
-                            <small class="text-muted">per SMS</small>
+                        <div class="text-right">
+                            <h5 class="text-green-500 font-bold mb-0">$${route.cost.toFixed(3)}</h5>
+                            <small class="text-gray-500">per SMS</small>
                         </div>
                     </div>
-                    <div class="row text-center">
-                        <div class="col-md-4">
-                            <small class="text-muted">Delivery Time</small>
-                            <div class="fw-bold">${route.deliveryTime}</div>
+                    <div class="grid grid-cols-3 text-center">
+                        <div>
+                            <small class="text-gray-500">Delivery Time</small>
+                            <div class="font-bold">${route.deliveryTime}</div>
                         </div>
-                        <div class="col-md-4">
-                            <small class="text-muted">Reliability</small>
-                            <div class="fw-bold">${route.reliability}%</div>
+                        <div>
+                            <small class="text-gray-500">Reliability</small>
+                            <div class="font-bold">${route.reliability}%</div>
                         </div>
-                        <div class="col-md-4">
-                            <small class="text-muted">Savings</small>
-                            <div class="fw-bold text-success">${route.recommended ? '60%' : '0%'}</div>
+                        <div>
+                            <small class="text-gray-500">Savings</small>
+                            <div class="font-bold text-green-500">${route.recommended ? '60%' : '0%'}</div>
                         </div>
                     </div>
                 </div>
@@ -537,41 +434,39 @@
             if (!recommendedRoute || !directRoute) return;
 
             container.innerHTML = `
-                <div class="row">
-                    <div class="col-md-6">
-                        <div class="border rounded p-3" style="background-color: #fff8e1;">
-                            <h6><i class="fas fa-lightbulb text-warning me-2"></i>Smart Recommendation</h6>
+                <div class="flex flex-wrap -mx-2">
+                    <div class="w-full md:w-1/2 px-2">
+                        <div class="border rounded-lg p-3 bg-yellow-100 border-yellow-200">
+                            <h6 class="font-bold"><i class="fas fa-lightbulb text-yellow-500 mr-2"></i>Smart Recommendation</h6>
                             <p class="mb-2">For sending to <strong>${selectedCountry.flag} ${selectedCountry.name}</strong>:</p>
-                            <div class="d-flex justify-content-between">
+                            <div class="flex justify-between">
                                 <div>
                                     <strong>${recommendedRoute.name}</strong>
-                                    <br><small class="text-muted">${recommendedRoute.description}</small>
+                                    <br><small class="text-gray-500">${recommendedRoute.description}</small>
                                 </div>
-                                <div class="text-end">
-                                    <h5 class="text-success mb-0">$${recommendedRoute.cost.toFixed(3)}</h5>
-                                    <small class="text-success">Save 60%</small>
+                                <div class="text-right">
+                                    <h5 class="text-green-500 font-bold mb-0">$${recommendedRoute.cost.toFixed(3)}</h5>
+                                    <small class="text-green-500">Save 60%</small>
                                 </div>
                             </div>
                         </div>
                     </div>
-                    <div class="col-md-6">
-                        <div class="cost-comparison">
+                    <div class="w-full md:w-1/2 px-2">
+                        <div class="bg-gradient-to-r from-purple-600 to-blue-600 text-white rounded-lg p-4">
                             <h6 class="text-center mb-3">Monthly Savings Estimate</h6>
-                            <div class="row text-center">
-                                <div class="col-6">
-                                    <div class="border-end border-light">
-                                        <h4>$${(directRoute.cost * 100).toFixed(2)}</h4>
-                                        <small>Direct Route</small>
-                                    </div>
+                            <div class="flex text-center">
+                                <div class="w-1/2 border-r border-blue-400">
+                                    <h4 class="text-2xl font-bold">$${(directRoute.cost * 100).toFixed(2)}</h4>
+                                    <small>Direct Route</small>
                                 </div>
-                                <div class="col-6">
-                                    <h4>$${(recommendedRoute.cost * 100).toFixed(2)}</h4>
+                                <div class="w-1/2">
+                                    <h4 class="text-2xl font-bold">$${(recommendedRoute.cost * 100).toFixed(2)}</h4>
                                     <small>Recommended</small>
                                 </div>
                             </div>
-                            <hr class="border-light">
+                            <hr class="border-blue-400 my-3">
                             <div class="text-center">
-                                <h5>Save $${((directRoute.cost - recommendedRoute.cost) * 100).toFixed(2)}/month</h5>
+                                <h5 class="text-xl font-bold">Save $${((directRoute.cost - recommendedRoute.cost) * 100).toFixed(2)}/month</h5>
                                 <small>Based on 100 SMS per month</small>
                             </div>
                         </div>
@@ -586,6 +481,9 @@
                 const badge = document.getElementById('inboxBadge');
                 badge.textContent = '3';
                 badge.style.display = 'inline';
+                const badgeMobile = document.getElementById('inboxBadgeMobile');
+                badgeMobile.textContent = '3';
+                badgeMobile.style.display = 'inline';
             } catch (error) {
                 console.error('Error loading inbox badge:', error);
             }
@@ -605,6 +503,14 @@
             localStorage.removeItem('token');
             localStorage.removeItem('user');
             window.location.href = '/login';
+        }
+
+        function toggleDropdown() {
+            document.getElementById('dropdownMenu').classList.toggle('hidden');
+        }
+
+        function toggleMobileMenu() {
+            document.getElementById('mobileMenu').classList.toggle('hidden');
         }
     </script>
 </body>

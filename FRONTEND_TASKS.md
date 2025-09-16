@@ -65,3 +65,7 @@
 	- Show which service was used for which number.
 - [ ] User dashboard: export history
 	- Export user history and usage data (CSV/JSON).
+
+## ✨ **Improvements**
+
+- [ ] Migrate all pages from Bootstrap to Tailwind CSS for a consistent and maintainable codebase.

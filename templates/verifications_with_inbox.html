@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Verifications & Inbox - CumApp</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     <style>
         .inbox-badge {
@@ -48,54 +48,54 @@
         }
     </style>
 </head>
-<body class="bg-light">
+<body class="bg-gray-100">
     <!-- Enhanced Navigation with Inbox Button -->
-    <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
-        <div class="container">
-            <a class="navbar-brand fw-bold" href="/dashboard">
-                <i class="fas fa-sms me-2"></i>CumApp
+    <nav class="bg-blue-600 text-white shadow-md py-3">
+        <div class="container mx-auto px-4 flex justify-between items-center">
+            <a class="text-xl font-bold" href="/dashboard">
+                <i class="fas fa-sms mr-2"></i>CumApp
             </a>
-            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
-                <span class="navbar-toggler-icon"></span>
+            <button class="lg:hidden text-white focus:outline-none" type="button" onclick="toggleNavbar()">
+                <span class="fas fa-bars"></span>
             </button>
-            <div class="collapse navbar-collapse" id="navbarNav">
-                <ul class="navbar-nav me-auto">
-                    <li class="nav-item">
-                        <a class="nav-link" href="/dashboard">
-                            <i class="fas fa-home me-1"></i>Dashboard
+            <div class="hidden lg:flex items-center space-x-4" id="navbarNav">
+                <ul class="flex items-center space-x-4">
+                    <li>
+                        <a class="px-3 py-2 rounded-md hover:bg-blue-700" href="/dashboard">
+                            <i class="fas fa-home mr-1"></i>Dashboard
                         </a>
                     </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="/services">
-                            <i class="fas fa-list me-1"></i>Services
+                    <li>
+                        <a class="px-3 py-2 rounded-md hover:bg-blue-700" href="/services">
+                            <i class="fas fa-list mr-1"></i>Services
                         </a>
                     </li>
-                    <li class="nav-item">
-                        <a class="nav-link active" href="/verifications">
-                            <i class="fas fa-check-circle me-1"></i>Verifications
+                    <li>
+                        <a class="px-3 py-2 rounded-md bg-blue-700" href="/verifications">
+                            <i class="fas fa-check-circle mr-1"></i>Verifications
                         </a>
                     </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="/numbers">
-                            <i class="fas fa-phone me-1"></i>Numbers
+                    <li>
+                        <a class="px-3 py-2 rounded-md hover:bg-blue-700" href="/numbers">
+                            <i class="fas fa-phone mr-1"></i>Numbers
                         </a>
                     </li>
                     <!-- NEW: Inbox Button with Badge -->
-                    <li class="nav-item position-relative">
-                        <a class="nav-link" href="#" onclick="toggleInbox()" id="inboxButton">
-                            <i class="fas fa-inbox me-1"></i>Inbox
-                            <span class="badge bg-danger inbox-badge" id="inboxBadge" style="display: none;">0</span>
+                    <li class="relative">
+                        <a class="px-3 py-2 rounded-md hover:bg-blue-700" href="#" onclick="toggleInbox()" id="inboxButton">
+                            <i class="fas fa-inbox mr-1"></i>Inbox
+                            <span class="absolute top-0 right-0 -mt-1 -mr-1 px-2 py-1 bg-red-500 text-white rounded-full text-xs" id="inboxBadge" style="display: none;">0</span>
                         </a>
                     </li>
                 </ul>
-                <ul class="navbar-nav">
-                    <li class="nav-item dropdown">
-                        <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown">
-                            <i class="fas fa-user me-1"></i><span id="userEmail">User</span>
-                        </a>
-                        <ul class="dropdown-menu">
-                            <li><a class="dropdown-item" href="#" onclick="logout()">
-                                <i class="fas fa-sign-out-alt me-2"></i>Logout
+                <ul class="flex items-center">
+                    <li class="relative">
+                        <button class="px-3 py-2 rounded-md hover:bg-blue-700 flex items-center" onclick="toggleDropdown()">
+                            <i class="fas fa-user mr-1"></i><span id="userEmail">User</span><i class="fas fa-caret-down ml-2"></i>
+                        </button>
+                        <ul class="absolute right-0 mt-2 w-48 bg-white rounded-md shadow-lg py-1 z-20 hidden" id="userDropdown">
+                            <li><a class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100" href="#" onclick="logout()">
+                                <i class="fas fa-sign-out-alt mr-2"></i>Logout
                             </a></li>
                         </ul>
                     </li>
@@ -104,18 +104,18 @@
         </div>
     </nav>
 
-    <div class="container mt-4">
+    <div class="container mx-auto mt-4 px-4">
         <!-- Page Header -->
-        <div class="row mb-4">
-            <div class="col-12">
-                <div class="d-flex justify-content-between align-items-center">
+        <div class="flex flex-col md:flex-row justify-between items-center mb-4">
+            <div class="w-full md:w-auto mb-4 md:mb-0">
+                <div class="flex justify-between items-center">
                     <div>
-                        <h2><i class="fas fa-check-circle me-2"></i>Verifications & Messages</h2>
-                        <p class="text-muted">Manage your SMS verifications and view received messages</p>
+                        <h2 class="text-2xl font-bold"><i class="fas fa-check-circle mr-2"></i>Verifications & Messages</h2>
+                        <p class="text-gray-500">Manage your SMS verifications and view received messages</p>
                     </div>
                     <div>
-                        <button class="btn btn-primary" onclick="window.location.href='/services'">
-                            <i class="fas fa-plus me-2"></i>New Verification
+                        <button class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-md" onclick="window.location.href='/services'">
+                            <i class="fas fa-plus mr-2"></i>New Verification
                         </button>
                     </div>
                 </div>
@@ -123,53 +123,53 @@
         </div>
 
         <!-- Main Content Area -->
-        <div class="row">
+        <div class="flex flex-wrap -mx-2">
             <!-- Verifications Panel -->
-            <div class="col-lg-8" id="verificationsPanel">
+            <div class="w-full lg:w-2/3 px-2" id="verificationsPanel">
                 <!-- Active Verifications -->
-                <div class="card mb-4">
-                    <div class="card-header d-flex justify-content-between align-items-center">
-                        <h5 class="mb-0">
-                            <i class="fas fa-clock me-2"></i>Active Verifications
+                <div class="bg-white rounded-lg shadow-md mb-4">
+                    <div class="p-4 border-b border-gray-200 flex justify-between items-center">
+                        <h5 class="text-xl font-bold">
+                            <i class="fas fa-clock mr-2"></i>Active Verifications
                         </h5>
-                        <button class="btn btn-sm btn-outline-primary" onclick="refreshVerifications()">
-                            <i class="fas fa-sync-alt me-1"></i>Refresh
+                        <button class="px-3 py-1 text-sm border border-blue-500 text-blue-500 rounded-md hover:bg-blue-500 hover:text-white" onclick="refreshVerifications()">
+                            <i class="fas fa-sync-alt mr-1"></i>Refresh
                         </button>
                     </div>
-                    <div class="card-body">
+                    <div class="p-4">
                         <div id="activeVerifications">
-                            <div class="text-center text-muted py-4">
-                                <i class="fas fa-clock fa-3x mb-3"></i>
+                            <div class="text-center text-gray-500 py-4">
+                                <i class="fas fa-clock text-3xl mb-3"></i>
                                 <p>No active verifications</p>
-                                <a href="/services" class="btn btn-primary">Start New Verification</a>
+                                <a href="/services" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-md mt-2 inline-block">Start New Verification</a>
                             </div>
                         </div>
                     </div>
                 </div>
 
                 <!-- Verification History -->
-                <div class="card">
-                    <div class="card-header">
-                        <h5 class="mb-0">
-                            <i class="fas fa-history me-2"></i>Verification History
+                <div class="bg-white rounded-lg shadow-md">
+                    <div class="p-4 border-b border-gray-200">
+                        <h5 class="text-xl font-bold">
+                            <i class="fas fa-history mr-2"></i>Verification History
                         </h5>
                     </div>
-                    <div class="card-body">
-                        <div class="table-responsive">
-                            <table class="table table-hover">
-                                <thead>
+                    <div class="p-4">
+                        <div class="overflow-x-auto">
+                            <table class="min-w-full divide-y divide-gray-200">
+                                <thead class="bg-gray-50">
                                     <tr>
-                                        <th>Service</th>
-                                        <th>Number</th>
-                                        <th>Status</th>
-                                        <th>Date</th>
-                                        <th>Cost</th>
-                                        <th>Actions</th>
+                                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Service</th>
+                                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Number</th>
+                                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
+                                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Date</th>
+                                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Cost</th>
+                                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
                                     </tr>
                                 </thead>
-                                <tbody id="verificationHistory">
+                                <tbody class="bg-white divide-y divide-gray-200" id="verificationHistory">
                                     <tr>
-                                        <td colspan="6" class="text-center text-muted py-4">
+                                        <td colspan="6" class="text-center text-gray-500 py-4">
                                             Loading verification history...
                                         </td>
                                     </tr>
@@ -181,38 +181,38 @@
             </div>
 
             <!-- Inbox Panel -->
-            <div class="col-lg-4" id="inboxPanel" style="display: none;">
-                <div class="card sticky-top" style="top: 20px;">
-                    <div class="card-header d-flex justify-content-between align-items-center">
-                        <h5 class="mb-0">
-                            <i class="fas fa-inbox me-2"></i>Message Inbox
+            <div class="w-full lg:w-1/3 px-2" id="inboxPanel" style="display: none;">
+                <div class="bg-white rounded-lg shadow-md sticky top-4" style="top: 20px;">
+                    <div class="p-4 border-b border-gray-200 flex justify-between items-center">
+                        <h5 class="text-xl font-bold">
+                            <i class="fas fa-inbox mr-2"></i>Message Inbox
                         </h5>
                         <div>
-                            <button class="btn btn-sm btn-outline-secondary me-2" onclick="markAllAsRead()">
-                                <i class="fas fa-check-double me-1"></i>Mark All Read
+                            <button class="px-3 py-1 text-sm border border-gray-300 text-gray-700 rounded-md hover:bg-gray-100 mr-2" onclick="markAllAsRead()">
+                                <i class="fas fa-check-double mr-1"></i>Mark All Read
                             </button>
-                            <button class="btn btn-sm btn-outline-danger" onclick="toggleInbox()">
+                            <button class="px-3 py-1 text-sm bg-red-500 hover:bg-red-600 text-white rounded-md" onclick="toggleInbox()">
                                 <i class="fas fa-times"></i>
                             </button>
                         </div>
                     </div>
-                    <div class="card-body p-0" style="max-height: 600px; overflow-y: auto;">
+                    <div class="p-0" style="max-height: 600px; overflow-y: auto;">
                         <!-- Message Filter Tabs -->
-                        <div class="border-bottom">
-                            <ul class="nav nav-tabs nav-fill" id="messageFilter">
-                                <li class="nav-item">
-                                    <a class="nav-link active" href="#" onclick="filterMessages('all')">
-                                        All <span class="badge bg-secondary ms-1" id="allCount">0</span>
+                        <div class="border-b border-gray-200">
+                            <ul class="flex justify-around text-center" id="messageFilter">
+                                <li class="flex-1">
+                                    <a class="block px-4 py-2 text-sm font-medium text-blue-600 border-b-2 border-blue-600" href="#" onclick="filterMessages('all')">
+                                        All <span class="ml-1 px-2 py-1 bg-gray-200 text-gray-700 rounded-full text-xs" id="allCount">0</span>
                                     </a>
                                 </li>
-                                <li class="nav-item">
-                                    <a class="nav-link" href="#" onclick="filterMessages('codes')">
-                                        Codes <span class="badge bg-success ms-1" id="codesCount">0</span>
+                                <li class="flex-1">
+                                    <a class="block px-4 py-2 text-sm font-medium text-gray-500 hover:text-gray-700 hover:border-gray-300" href="#" onclick="filterMessages('codes')">
+                                        Codes <span class="ml-1 px-2 py-1 bg-green-500 text-white rounded-full text-xs" id="codesCount">0</span>
                                     </a>
                                 </li>
-                                <li class="nav-item">
-                                    <a class="nav-link" href="#" onclick="filterMessages('conversations')">
-                                        Chats <span class="badge bg-info ms-1" id="chatsCount">0</span>
+                                <li class="flex-1">
+                                    <a class="block px-4 py-2 text-sm font-medium text-gray-500 hover:text-gray-700 hover:border-gray-300" href="#" onclick="filterMessages('conversations')">
+                                        Chats <span class="ml-1 px-2 py-1 bg-blue-400 text-white rounded-full text-xs" id="chatsCount">0</span>
                                     </a>
                                 </li>
                             </ul>
@@ -220,8 +220,8 @@
                         
                         <!-- Messages List -->
                         <div id="messagesList" class="p-3">
-                            <div class="text-center text-muted py-4">
-                                <i class="fas fa-envelope-open fa-3x mb-3"></i>
+                            <div class="text-center text-gray-500 py-4">
+                                <i class="fas fa-envelope-open text-3xl mb-3"></i>
                                 <p>No messages yet</p>
                             </div>
                         </div>
@@ -232,48 +232,56 @@
     </div>
 
     <!-- Message Detail Modal -->
-    <div class="modal fade" id="messageModal" tabindex="-1">
-        <div class="modal-dialog modal-lg">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title">Message Details</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-                </div>
-                <div class="modal-body" id="messageModalBody">
-                    <!-- Message details will be loaded here -->
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                    <button type="button" class="btn btn-primary" onclick="copyMessageCode()">
-                        <i class="fas fa-copy me-1"></i>Copy Code
-                    </button>
-                </div>
+    <div id="messageModal" class="fixed inset-0 bg-gray-800 bg-opacity-50 flex items-center justify-center hidden">
+        <div class="bg-white rounded-lg shadow-lg w-full max-w-3xl">
+            <div class="p-4 border-b border-gray-200 flex justify-between items-center">
+                <h5 class="text-xl font-bold">Message Details</h5>
+                <button type="button" class="text-gray-500 hover:text-gray-800" onclick="closeModal('messageModal')">&times;</button>
+            </div>
+            <div class="p-4" id="messageModalBody">
+                <!-- Message details will be loaded here -->
+            </div>
+            <div class="p-4 border-t border-gray-200 flex justify-end space-x-2">
+                <button type="button" class="px-4 py-2 rounded-md bg-gray-200 hover:bg-gray-300 text-gray-800" onclick="closeModal('messageModal')">Close</button>
+                <button type="button" class="px-4 py-2 rounded-md bg-blue-500 hover:bg-blue-700 text-white" onclick="copyMessageCode()">
+                    <i class="fas fa-copy mr-1"></i>Copy Code
+                </button>
             </div>
         </div>
     </div>
 
     <!-- Verification Detail Modal -->
-    <div class="modal fade" id="verificationModal" tabindex="-1">
-        <div class="modal-dialog modal-lg">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title">Verification Details</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-                </div>
-                <div class="modal-body" id="verificationModalBody">
-                    <!-- Verification details will be loaded here -->
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                    <button type="button" class="btn btn-danger" onclick="cancelVerification()">
-                        <i class="fas fa-times me-1"></i>Cancel Verification
-                    </button>
-                </div>
+    <div id="verificationModal" class="fixed inset-0 bg-gray-800 bg-opacity-50 flex items-center justify-center hidden">
+        <div class="bg-white rounded-lg shadow-lg w-full max-w-3xl">
+            <div class="p-4 border-b border-gray-200 flex justify-between items-center">
+                <h5 class="text-xl font-bold">Verification Details</h5>
+                <button type="button" class="text-gray-500 hover:text-gray-800" onclick="closeModal('verificationModal')">&times;</button>
+            </div>
+            <div class="p-4" id="verificationModalBody">
+                <!-- Verification details will be loaded here -->
+            </div>
+            <div class="p-4 border-t border-gray-200 flex justify-end space-x-2">
+                <button type="button" class="px-4 py-2 rounded-md bg-gray-200 hover:bg-gray-300 text-gray-800" onclick="closeModal('verificationModal')">Close</button>
+                <button type="button" class="px-4 py-2 rounded-md bg-red-500 hover:bg-red-600 text-white" onclick="cancelVerification()">
+                    <i class="fas fa-times mr-1"></i>Cancel Verification
+                </button>
             </div>
         </div>
     </div>
 
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <!-- Export Progress Modal -->
+    <div id="exportModal" class="fixed inset-0 bg-gray-800 bg-opacity-50 flex items-center justify-center hidden">
+        <div class="bg-white rounded-lg shadow-lg w-full max-w-md">
+            <div class="p-4 border-b border-gray-200 flex justify-between items-center">
+                <h5 class="text-xl font-bold">Exporting Data</h5>
+            </div>
+            <div class="p-4 text-center">
+                <div class="animate-spin h-8 w-8 border-4 border-blue-500 border-t-transparent rounded-full mx-auto mb-3"></div>
+                <p>Preparing your verification data for export...</p>
+            </div>
+        </div>
+    </div>
+
     <script>
         // Global variables
         let currentMessages = [];
@@ -335,11 +343,13 @@
             
             if (inboxVisible) {
                 panel.style.display = 'none';
-                verificationsPanel.className = 'col-lg-12';
+                verificationsPanel.classList.remove('lg:w-2/3');
+                verificationsPanel.classList.add('lg:w-full');
                 inboxVisible = false;
             } else {
                 panel.style.display = 'block';
-                verificationsPanel.className = 'col-lg-8';
+                verificationsPanel.classList.remove('lg:w-full');
+                verificationsPanel.classList.add('lg:w-2/3');
                 inboxVisible = true;
                 loadMessages(); // Refresh messages when opening
             }
@@ -384,44 +394,42 @@
             
             if (verifications.length === 0) {
                 container.innerHTML = `
-                    <div class="text-center text-muted py-4">
-                        <i class="fas fa-clock fa-3x mb-3"></i>
+                    <div class="text-center text-gray-500 py-4">
+                        <i class="fas fa-clock text-3xl mb-3"></i>
                         <p>No active verifications</p>
-                        <a href="/services" class="btn btn-primary">Start New Verification</a>
+                        <a href="/services" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-md mt-2 inline-block">Start New Verification</a>
                     </div>
                 `;
                 return;
             }
 
             container.innerHTML = verifications.map(v => `
-                <div class="card verification-card mb-3">
-                    <div class="card-body">
-                        <div class="row align-items-center">
-                            <div class="col-md-3">
-                                <h6 class="mb-1">
-                                    <i class="fas fa-mobile-alt me-2"></i>${v.service}
-                                </h6>
-                                <small class="text-muted">Service</small>
+                <div class="bg-white rounded-lg shadow-md mb-3 p-4 verification-card">
+                    <div class="flex flex-col sm:flex-row items-center">
+                        <div class="w-full sm:w-1/3 mb-2 sm:mb-0">
+                            <h6 class="text-lg font-semibold mb-1">
+                                <i class="fas fa-mobile-alt mr-2"></i>${v.service}
+                            </h6>
+                            <small class="text-gray-500">Service</small>
+                        </div>
+                        <div class="w-full sm:w-1/3 mb-2 sm:mb-0">
+                            <div class="code-display text-center">
+                                ${v.number}
                             </div>
-                            <div class="col-md-3">
-                                <div class="code-display text-center">
-                                    ${v.number}
-                                </div>
-                                <small class="text-muted d-block text-center mt-1">Phone Number</small>
-                            </div>
-                            <div class="col-md-3">
-                                <span class="badge bg-warning fs-6">
-                                    <i class="fas fa-clock me-1"></i>Waiting for SMS
-                                </span>
-                            </div>
-                            <div class="col-md-3 text-end">
-                                <button class="btn btn-sm btn-primary me-2" onclick="viewVerification('${v.id}')">
-                                    <i class="fas fa-eye me-1"></i>Details
-                                </button>
-                                <button class="btn btn-sm btn-outline-danger" onclick="cancelVerification('${v.id}')">
-                                    <i class="fas fa-times me-1"></i>Cancel
-                                </button>
-                            </div>
+                            <small class="text-gray-500 block text-center mt-1">Phone Number</small>
+                        </div>
+                        <div class="w-full sm:w-1/3 mb-2 sm:mb-0">
+                            <span class="px-2 py-1 rounded-full bg-yellow-500 text-white text-xs font-bold">
+                                <i class="fas fa-clock mr-1"></i>Waiting for SMS
+                            </span>
+                        </div>
+                        <div class="w-full sm:w-1/3 text-right">
+                            <button class="px-3 py-1 text-sm bg-blue-500 hover:bg-blue-700 text-white rounded-md mr-2" onclick="viewVerification('${v.id}')">
+                                <i class="fas fa-eye mr-1"></i>Details
+                            </button>
+                            <button class="px-3 py-1 text-sm border border-red-500 text-red-500 rounded-md hover:bg-red-500 hover:text-white" onclick="cancelVerification('${v.id}')">
+                                <i class="fas fa-times mr-1"></i>Cancel
+                            </button>
                         </div>
                     </div>
                 </div>
@@ -435,8 +443,8 @@
             if (verifications.length === 0) {
                 tbody.innerHTML = `
                     <tr>
-                        <td colspan="6" class="text-center text-muted py-4">
-                            No verifications yet. <a href="/services">Start your first verification</a>
+                        <td colspan="6" class="text-center text-gray-500 py-4">
+                            No verifications yet. <a href="/services" class="text-blue-500 hover:underline">Start your first verification</a>
                         </td>
                     </tr>
                 `;
@@ -444,24 +452,24 @@
             }
 
             tbody.innerHTML = verifications.map(v => `
-                <tr>
-                    <td>
-                        <i class="fas fa-mobile-alt me-2"></i>${v.service}
+                <tr class="hover:bg-gray-50">
+                    <td class="px-6 py-4 whitespace-nowrap">
+                        <i class="fas fa-mobile-alt mr-2"></i>${v.service}
                     </td>
-                    <td><code>${v.number}</code></td>
-                    <td>
-                        <span class="badge bg-${getStatusColor(v.status)}">
+                    <td class="px-6 py-4 whitespace-nowrap"><code>${v.number}</code></td>
+                    <td class="px-6 py-4 whitespace-nowrap">
+                        <span class="px-2 py-1 rounded-full text-white text-xs font-bold bg-${getStatusColor(v.status)}-500">
                             ${v.status}
                         </span>
                     </td>
-                    <td>${new Date(v.date).toLocaleDateString()}</td>
-                    <td>$${v.cost.toFixed(2)}</td>
-                    <td>
-                        <button class="btn btn-sm btn-outline-primary me-1" onclick="viewVerification('${v.id}')">
-                            <i class="fas fa-eye me-1"></i>Details
+                    <td class="px-6 py-4 whitespace-nowrap">${new Date(v.date).toLocaleDateString()}</td>
+                    <td class="px-6 py-4 whitespace-nowrap">$${v.cost.toFixed(2)}</td>
+                    <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
+                        <button class="px-3 py-1 text-sm border border-blue-500 text-blue-500 rounded-md hover:bg-blue-500 hover:text-white mr-1" onclick="viewVerification('${v.id}')">
+                            <i class="fas fa-eye mr-1"></i>Details
                         </button>
-                        <button class="btn btn-sm btn-outline-success" onclick="viewMessages('${v.id}')">
-                            <i class="fas fa-envelope me-1"></i>Messages
+                        <button class="px-3 py-1 text-sm border border-green-500 text-green-500 rounded-md hover:bg-green-500 hover:text-white" onclick="viewMessages('${v.id}')">
+                                <i class="fas fa-envelope mr-1"></i>Messages
                         </button>
                     </td>
                 </tr>
@@ -471,11 +479,11 @@
         // Get status color for badges
         function getStatusColor(status) {
             switch(status) {
-                case 'completed': return 'success';
-                case 'active': return 'warning';
-                case 'failed': return 'danger';
-                case 'cancelled': return 'secondary';
-                default: return 'primary';
+                case 'completed': return 'green';
+                case 'active': return 'yellow';
+                case 'failed': return 'red';
+                case 'cancelled': return 'gray';
+                default: return 'blue';
             }
         }
 
@@ -541,8 +549,8 @@
 
             if (filteredMessages.length === 0) {
                 container.innerHTML = `
-                    <div class="text-center text-muted py-4">
-                        <i class="fas fa-envelope-open fa-3x mb-3"></i>
+                    <div class="text-center text-gray-500 py-4">
+                        <i class="fas fa-envelope-open text-3xl mb-3"></i>
                         <p>No messages in this category</p>
                     </div>
                 `;
@@ -550,19 +558,19 @@
             }
 
             container.innerHTML = filteredMessages.map(m => `
-                <div class="message-item p-3 border-bottom ${m.read ? '' : 'message-unread'}" onclick="viewMessage('${m.id}')">
-                    <div class="d-flex justify-content-between align-items-start">
-                        <div class="flex-grow-1">
-                            <div class="d-flex align-items-center mb-1">
-                                <i class="fas fa-${getMessageIcon(m.type)} me-2 text-${getMessageColor(m.type)}"></i>
-                                <strong class="me-2">${m.service}</strong>
-                                ${!m.read ? '<span class="badge bg-primary">New</span>' : ''}
+                <div class="message-item p-3 border-b border-gray-200 ${m.read ? '' : 'bg-blue-50 border-blue-500 border-l-4'}" onclick="viewMessage('${m.id}')">
+                    <div class="flex flex-col sm:flex-row justify-between items-start">
+                        <div class="flex-grow">
+                            <div class="flex items-center mb-1">
+                                <i class="fas fa-${getMessageIcon(m.type)} mr-2 text-${getMessageColor(m.type)}-500"></i>
+                                <strong class="mr-2">${m.service}</strong>
+                                ${!m.read ? '<span class="px-2 py-1 bg-blue-500 text-white rounded-full text-xs font-bold">New</span>' : ''}
                             </div>
-                            <p class="mb-1 text-truncate">${m.content}</p>
-                            <small class="text-muted">${formatTimestamp(m.timestamp)}</small>
+                            <p class="mb-1 text-truncate text-gray-700">${m.content}</p>
+                            <small class="text-gray-500">${formatTimestamp(m.timestamp)}</small>
                         </div>
-                        <div class="ms-2">
-                            <button class="btn btn-sm btn-outline-primary" onclick="event.stopPropagation(); viewMessage('${m.id}')">
+                        <div class="ml-2 mt-2 sm:mt-0">
+                            <button class="px-3 py-1 text-sm border border-blue-500 text-blue-500 rounded-md hover:bg-blue-500 hover:text-white" onclick="event.stopPropagation(); viewMessage('${m.id}')">
                                 <i class="fas fa-eye"></i>
                             </button>
                         </div>
@@ -583,9 +591,9 @@
         // Get message color based on type
         function getMessageColor(type) {
             switch(type) {
-                case 'verification_code': return 'success';
-                case 'conversation': return 'info';
-                default: return 'primary';
+                case 'verification_code': return 'green';
+                case 'conversation': return 'blue';
+                default: return 'blue';
             }
         }
 
@@ -610,10 +618,12 @@
             currentFilter = filter;
             
             // Update active tab
-            document.querySelectorAll('#messageFilter .nav-link').forEach(link => {
-                link.classList.remove('active');
+            document.querySelectorAll('#messageFilter a').forEach(link => {
+                link.classList.remove('text-blue-600', 'border-blue-600');
+                link.classList.add('text-gray-500', 'hover:text-gray-700', 'hover:border-gray-300');
             });
-            event.target.classList.add('active');
+            event.target.classList.remove('text-gray-500', 'hover:text-gray-700', 'hover:border-gray-300');
+            event.target.classList.add('text-blue-600', 'border-blue-600');
             
             displayMessages();
         }
@@ -632,26 +642,28 @@
 
             const modalBody = document.getElementById('messageModalBody');
             modalBody.innerHTML = `
-                <div class="row">
-                    <div class="col-md-6">
-                        <h6>Message Details</h6>
-                        <table class="table table-sm">
-                            <tr><td><strong>Service:</strong></td><td>${message.service}</td></tr>
-                            <tr><td><strong>Type:</strong></td><td>${message.type.replace('_', ' ').toUpperCase()}</td></tr>
-                            <tr><td><strong>Received:</strong></td><td>${new Date(message.timestamp).toLocaleString()}</td></tr>
-                            ${message.from ? `<tr><td><strong>From:</strong></td><td>${message.from}</td></tr>` : ''}
-                            ${message.verificationId ? `<tr><td><strong>Verification:</strong></td><td>${message.verificationId}</td></tr>` : ''}
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                        <h6 class="text-lg font-bold mb-2">Message Details</h6>
+                        <table class="min-w-full divide-y divide-gray-200">
+                            <tbody class="bg-white divide-y divide-gray-200">
+                                <tr><td class="px-6 py-3 whitespace-nowrap text-sm font-medium text-gray-900"><strong>Service:</strong></td><td class="px-6 py-3 whitespace-nowrap text-sm text-gray-500">${message.service}</td></tr>
+                                <tr><td class="px-6 py-3 whitespace-nowrap text-sm font-medium text-gray-900"><strong>Type:</strong></td><td class="px-6 py-3 whitespace-nowrap text-sm text-gray-500">${message.type.replace('_', ' ').toUpperCase()}</td></tr>
+                                <tr><td class="px-6 py-3 whitespace-nowrap text-sm font-medium text-gray-900"><strong>Received:</strong></td><td class="px-6 py-3 whitespace-nowrap text-sm text-gray-500">${new Date(message.timestamp).toLocaleString()}</td></tr>
+                                ${message.from ? `<tr><td class="px-6 py-3 whitespace-nowrap text-sm font-medium text-gray-900"><strong>From:</strong></td><td class="px-6 py-3 whitespace-nowrap text-sm text-gray-500">${message.from}</td></tr>` : ''}
+                                ${message.verificationId ? `<tr><td class="px-6 py-3 whitespace-nowrap text-sm font-medium text-gray-900"><strong>Verification:</strong></td><td class="px-6 py-3 whitespace-nowrap text-sm text-gray-500">${message.verificationId}</td></tr>` : ''}
+                            </tbody>
                         </table>
                     </div>
-                    <div class="col-md-6">
-                        <h6>Message Content</h6>
-                        <div class="code-display">
+                    <div>
+                        <h6 class="text-lg font-bold mb-2">Message Content</h6>
+                        <div class="code-display bg-gray-50 p-4 rounded-md border border-gray-200">
                             ${message.content}
                         </div>
                         ${message.type === 'verification_code' ? `
-                            <div class="mt-3">
-                                <button class="btn btn-success btn-sm" onclick="copyMessageCode()">
-                                    <i class="fas fa-copy me-1"></i>Copy Code
+                            <div class="mt-4">
+                                <button class="bg-green-500 hover:bg-green-600 text-white font-bold py-2 px-4 rounded-md" onclick="copyMessageCode()">
+                                    <i class="fas fa-copy mr-1"></i>Copy Code
                                 </button>
                             </div>
                         ` : ''}
@@ -659,7 +671,7 @@
                 </div>
             `;
 
-            new bootstrap.Modal(document.getElementById('messageModal')).show();
+            document.getElementById('messageModal').classList.remove('hidden');
         }
 
         // Copy message code
@@ -734,11 +746,12 @@
         function showToast(message, type = 'info') {
             // Simple toast implementation
             const toast = document.createElement('div');
-            toast.className = `alert alert-${type === 'error' ? 'danger' : type} position-fixed`;
-            toast.style.cssText = 'top: 20px; right: 20px; z-index: 9999; min-width: 300px;';
+            toast.className = `fixed top-4 right-4 z-50 p-4 rounded-md shadow-lg text-white ${type === 'success' ? 'bg-green-500' : type === 'error' ? 'bg-red-500' : 'bg-blue-500'}`;
             toast.innerHTML = `
-                ${message}
-                <button type="button" class="btn-close" onclick="this.parentElement.remove()"></button>
+                <div class="flex justify-between items-center">
+                    <span>${message}</span>
+                    <button class="text-white ml-4" onclick="this.parentElement.parentElement.remove()">&times;</button>
+                </div>
             `;
             document.body.appendChild(toast);
             
@@ -765,6 +778,17 @@
                 clearInterval(refreshInterval);
             }
         });
+
+        function toggleNavbar() {
+            const navbarNav = document.getElementById('navbarNav');
+            navbarNav.classList.toggle('hidden');
+            navbarNav.classList.toggle('flex');
+            navbarNav.classList.toggle('flex-col');
+            navbarNav.classList.toggle('w-full');
+            navbarNav.classList.toggle('items-start');
+            navbarNav.classList.toggle('space-x-0');
+            navbarNav.classList.toggle('space-y-2');
+        }
     </script>
 </body>
 </html>

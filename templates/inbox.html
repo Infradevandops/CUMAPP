@@ -4,184 +4,82 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Inbox - CumApp</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="styl
-    <li
-    tyle>
-        .inbox-badge {
-            position: absolute;
-            top: -5px;
-            right: -5px;
-
-       }
-        .message-item {
-            transition: al;
-            cursor: pointer;
-        }
-        .message-item:hover {
-            background-color: #f8f9fa;
-            transform: translx);
-        }
-
-bff;
-            backgro
-        }
-        .code-display {
-            font-family: 'Courier New',ace;
-            font-size: 1.2rem;
-     d;
-            color: #28a745;
-            back;
-            padding: 10px;
-            border-radius: 5px;
-            border: 2px dashed #a745;
-        }
-        .nav-link.active {
-            background-color: rgba(255,255,255,0.1) !impnt;
-            border-radius: 5px;
-        }
-    </style>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
 </head>
-<body class="bg-light">
-    <!-- Enhanced Navigation with Inbox Button -->
-    <nav class="navbar navbar-expand-l
-        <div class="container">
-            <a class="n>
+<body class="bg-gray-100">
+    <!-- Navigation -->
+    <nav class="bg-blue-600 text-white shadow-md">
+        <div class="container mx-auto px-4">
+            <div class="flex justify-between items-center py-3">
+                <a class="text-xl font-bold" href="/dashboard">
+                    <i class="fas fa-sms mr-2"></i>CumApp
+                </a>
+                <div class="hidden md:flex items-center space-x-4">
+                    <a class="px-3 py-2 rounded-md hover:bg-blue-700" href="/dashboard"><i class="fas fa-home mr-1"></i>Dashboard</a>
+                    <a class="px-3 py-2 rounded-md hover:bg-blue-700" href="/services"><i class="fas fa-list mr-1"></i>Services</a>
+                    <a class="px-3 py-2 rounded-md hover:bg-blue-700" href="/verifications"><i class="fas fa-check-circle mr-1"></i>Verifications</a>
+                    <a class="px-3 py-2 rounded-md hover:bg-blue-700" href="/numbers"><i class="fas fa-phone mr-1"></i>Numbers</a>
+                    <a class="px-3 py-2 rounded-md hover:bg-blue-700" href="/communication"><i class="fas fa-comments mr-1"></i>Communication</a>
+                    <a class="px-3 py-2 rounded-md bg-blue-700 relative" href="/inbox">
+                        <i class="fas fa-inbox mr-1"></i>Inbox
+                        <span class="absolute top-0 right-0 -mt-1 -mr-1 px-2 py-1 bg-red-500 text-white rounded-full text-xs" id="inboxBadge" style="display: none;">0</span>
+                    </a>
+                </div>
+                <div class="hidden md:flex items-center">
+                    <div class="relative">
+                        <button class="px-3 py-2 rounded-md hover:bg-blue-700 flex items-center" onclick="toggleDropdown()"><i class="fas fa-user mr-1"></i><span id="userEmail">User</span><i class="fas fa-caret-down ml-2"></i></button>
+                        <div id="dropdownMenu" class="absolute right-0 mt-2 w-48 bg-white rounded-md shadow-lg py-1 z-20 hidden">
+                            <a href="#" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100" onclick="logout()"><i class="fas fa-sign-out-alt mr-2"></i>Logout</a>
+                        </div>
+                    </div>
+                </div>
+                <div class="md:hidden">
+                    <button onclick="toggleMobileMenu()"><i class="fas fa-bars"></i></button>
+                </div>
+            </div>
+            <div id="mobileMenu" class="hidden md:hidden">
+                <a class="block px-3 py-2 rounded-md hover:bg-blue-700" href="/dashboard"><i class="fas fa-home mr-1"></i>Dashboard</a>
+                <a class="block px-3 py-2 rounded-md hover:bg-blue-700" href="/services"><i class="fas fa-list mr-1"></i>Services</a>
+                <a class="block px-3 py-2 rounded-md hover:bg-blue-700" href="/verifications"><i class="fas fa-check-circle mr-1"></i>Verifications</a>
+                <a class="block px-3 py-2 rounded-md hover:bg-blue-700" href="/numbers"><i class="fas fa-phone mr-1"></i>Numbers</a>
+                <a class="block px-3 py-2 rounded-md hover:bg-blue-700" href="/communication"><i class="fas fa-comments mr-1"></i>Communication</a>
+                <a class="block px-3 py-2 rounded-md bg-blue-700 relative" href="/inbox">
+                    <i class="fas fa-inbox mr-1"></i>Inbox
+                    <span class="absolute top-0 left-0 ml-6 -mt-1 px-2 py-1 bg-red-500 text-white rounded-full text-xs" id="inboxBadgeMobile" style="display: none;">0</span>
+                </a>
+                <a href="#" class="block px-3 py-2 rounded-md hover:bg-blue-700" onclick="logout()"><i class="fas fa-sign-out-alt mr-2"></i>Logout</a>
+            </div>
+        </div>
+    </nav>
 
-            <
-            <button class="navbar-toggler" type="rNav">
-                <span class="navbar-toggler-icon"><
-            </button>
-            <div class="collapse navbar-collapse" id="navbar">
-                <ul class="navbar-nav me-auto">
-
-                        <a class="nav-link" hr">
-                            <i class="fas fa-home me-1"></i>Dashboard
-                        </a>
-                    </li>
-                    <li 
-                        <a class="nav-link" href="/sces">
-                            <i class="fas fces
-
-      i>
-      m">
-                        <a class="nav-link" href=">
-                            <i class="fas fa-check-
-                        </a>
-                /li>
-                    <li class="navtem">
-ers">
-                        
-      </a>
-                    </li>
-                    <!-- Inbox Button - Active -->
-                    <li class="nav-item position-re>
-                        <a class="n>
-                            <i class=">Inbox
-                 
-            </a>
-  </li>
-                </u
-                <ul class="navbar-nav">
-                    <li class="nav-item dropdown">
-               
-                            <i class="fas fa-us
-                    a>
-                        <ul class="dropd
-                            <li><a class="dropdown-item" href="#" onclick="logout()">
-                                <i class="fas fa-sign-out-alt me-2"></i>Logout
-                            </a></li>
-
-       
-                </ul>
+    <div class="container mx-auto mt-4 px-4">
+        <div class="flex justify-between items-center mb-4">
+            <div>
+                <h2 class="text-2xl font-bold"><i class="fas fa-inbox mr-2"></i>Inbox</h2>
+                <p class="text-gray-500">Manage your messages and verification codes</p>
+            </div>
+            <div>
+                <button class="px-4 py-2 rounded-md bg-blue-500 text-white mr-2" onclick="markAllAsRead()">
+                    <i class="fas fa-check-double mr-1"></i>Mark all as read
+                </button>
+                <button class="px-4 py-2 rounded-md border border-blue-500 text-blue-500" onclick="refreshMessages()">
+                    <i class="fas fa-sync-alt mr-1"></i>Refresh
+                </button>
             </div>
         </div>
 
-
-    <div class="container mt-4">
-        <!-- Page Header -->
-        <div class="row mb-4">
-            <div class=>
-                <div class=>
-                    <div>
-        2>
-                        <p class="text-muted">Manags</p>
-                    </div>
-                    <div>
-                        <button class=()">
-              
-utton>
-     es()">
-                            <i class="fas fa-sync-alt me-1"></i>Refresh
-                     </button>
-                    </div>
-                </div>
-</div>
-        </div
-
-        <!-- Message St
-        <div class="row mb-4">
-            <div class="col-md-3">
-                <div class="card bg-primarite">
-                    <div class="card-body text-center">
-                  "></i>
-
-       l>
-                    </div>
-                </div>
-            </div>
-
-         >
-                    <div class="card-body text-center">
-                        <i class="fas fa-key fa-2x mb
-                        <h4 id="ve>
-
-    
-              </div>
-            </div>
-            <div class="col-m
-                <div class="card bg-info text-white">
-                    <div class="card-body text-center">
-i>
-                        <
-                        <small>Conversations</small>
-                    </div>
-                </div>
-iv>
-  >
-                <ite">
-                    <div class="card-body text-center">
-                        <i class="f"></i>
-                        <h4 id="unreadMessages">0</h4>
-                        <small>Unread Messages</small>
-
-                </div>
-            </div>
-        </div>
-
-        <!-- Main Content -->
-        <div class="row">
+        <div class="flex flex-wrap -mx-2">
             <!-- Message List -->
-            <div class="col-lg-4">
-ard">
-   
-                       ter">
-                            <h5 class="mb-0>
-          ">
-                                <input type="radio" cked>
-                                <label class="btn bt>
-                                
-        
-                                <label class="btn btn-outline-s/label>
-                                
-                    "off">
-                                <label</label>
-
-   >
+            <div class="w-full lg:w-1/3 px-2">
+                <div class="bg-white rounded-lg shadow-md">
+                    <div class="p-4 border-b">
+                        <h5 class="font-bold mb-0">Messages</h5>
                     </div>
-                    <div class="card-body p-0" style="max-height: 600px; overflow-y: auto;">
+                    <div class="p-0" style="max-height: 600px; overflow-y: auto;">
                         <div id="messagesList">
-                            <div class="text-center text-muted py-4">
-
+                            <div class="text-center text-gray-500 py-4">
+                                <i class="fas fa-spinner fa-spin fa-2x"></i>
                                 <p>Loading messages...</p>
                             </div>
                         </div>
@@ -189,448 +87,107 @@ ard">
                 </div>
             </div>
 
- -->
-            <div class="col-lg-8">
-                <div class="card">
-                    <div clas">
-                       ">
-          ls
- 
+            <!-- Message Details -->
+            <div class="w-full lg:w-2/3 px-2">
+                <div class="bg-white rounded-lg shadow-md">
+                    <div class="p-4 border-b">
+                        <h5 class="font-bold mb-0" id="messageDetailTitle">Message Details</h5>
                     </div>
-               ody">
-                        <div class="text-cen>
-                        </i>
-                            <p>Click on a message from p>
-                      iv>
+                    <div class="p-4" id="messageDetailBody">
+                        <div class="text-center text-gray-500 py-20">
+                            <i class="fas fa-mouse-pointer fa-3x mb-3"></i>
+                            <p>Click on a message from the list to view its details</p>
+                        </div>
                     </div>
                 </div>
             </div>
-  </div>
-   iv>
+        </div>
+    </div>
 
-    <script ipt>
     <script>
-        // Global variables
-        let currentMessages = [];
-        let currentFilter = ';
-        let selectedMessageId = null;
-        let refreshInterval = null;
-
-        // Initialize page
-        document.addEventListener('DOMContentL{
-            checkAuth();
-            loadUserData();
-            loadMessages();
-            startAutoRefresh();
-        });
-
-        // Authentication check
-        function checkAuth() {
-            const token = localStorage.getItem('token');
-            if (!token) {
-                window.location.href = '/login';
-                return false;
+        // Mock data
+        let currentMessages = [
+            {
+                id: 'm1',
+                type: 'verification_code',
+                service: 'WhatsApp',
+                content: 'Your WhatsApp code is: 123456',
+                timestamp: new Date().toISOString(),
+                read: false,
+                from: '+1234567890'
+            },
+            {
+                id: 'm2',
+                type: 'conversation',
+                service: 'Conversation',
+                content: 'Hello, how are you?',
+                timestamp: new Date().toISOString(),
+                read: true,
+                from: '+1234567891'
             }
-            return true;
-        }
+        ];
 
-        // Load ua
-        async function loadUserData() {
-            try {
-                cons);
-                if (demoUs{
-                    c);
-                    document.getElementById('userEail;
-                    return;
-                }
-                
-                const token = localStorage.getItem('token');
-                const response = awaituth/me', {
-                    headers: { 'Authorization': `Bearer ${token}` }
-                });
-                
-                if (response.ok) {
-                    const user = await response.json();
-                    document.getElementById('userEmail').textContent = user.email;
-                } else {
-                    logout();
-                }
-            } catch (error) {
-                console.error('Error loading user data:', error
-            }
-        }
-
-        // Load messages
-        async function loadMessages() {
-            try {
-                // Mock messages for demotion
-                const mockMessages = [
-                    {
-                        id: 'm1',
-                        type: 'verification_code',
-                        service: 'WhatsApp',
-                        content: 'Your WhatsApp code is: 123456',
-                        timestamp: new Date().toISOString(),
-                        read: false,
-                        verificationId: '1',
-                        from: '+123'
-                    },
-                    {
-m2',
-                 ode',
-                        service: 'Google',
-                        content: 'Google verification code: 789012',
-                        timestamp: new ring(),
-         ,
-                        verificationId: 'v2',
-                        from: '+1234567891'
-                    },
-      {
-           
-                        type: 'conversation',
-                      
-                        conte',
-                        timestamp: ),
-                        read: false,
-                      67892'
-      }
-                ];
-
-                currentMessages = mockMessages
-                displayMessages();
-                updateStats();
-                updateInboxBadge();
-  
-     ror) {
-                console.error
-            }
-        }
-
-        // Display messag
-        function displayMessages() {
-            const container = document.getElementById('messagesList');
-            let filteredMessages = currentMessages;
-
-            // Apply filter
-            if (currentFilter === 'codes') {
-                filteredMessages = currentMessages.filter(m => m.type e');
-            } else if (currentFilter === 'conversations') {
-                filteredMessages = currentMessages.filter(m => m.type === 'con
-            }
-
-            if (filteredMessages.length === 0) {
-                container.innerHTML = `
-                    <div class="text-center tepy-4">
-                        <i class="fas fa-envelope-open fa-3x m></i>
-                        <p>No messages in this cap>
+        function renderMessages() {
+            const messagesList = document.getElementById('messagesList');
+            messagesList.innerHTML = currentMessages.map(message => `
+                <div class="p-4 border-b cursor-pointer hover:bg-gray-100 ${!message.read ? 'font-bold' : ''}" onclick="showMessageDetail('${message.id}')">
+                    <div class="flex justify-between">
+                        <p class="truncate">${message.content}</p>
+                        <span class="text-xs text-gray-500">${new Date(message.timestamp).toLocaleTimeString()}</span>
                     </div>
-                `;
-     
-        }
-
-            container.inner`
-                <div class
-                    <div class="d-flex align-items-s">
-                        <div class="flex-grow-1">
-                            <div class="d-flex align-items--1">
-                                <i class="fas fa-${getMi>
-                                <strong class="mrong>
-' : ''}
-</div>
-                            <p class="mb-1 text-truncate">${m.content}</p>
-                            <div class="d-flex justify-center">
-                                <small class="text-muted">From: ${m.from}</small>
-                                <small class=">
-            >
-
+                    <div class="text-xs text-gray-500">
+                        <span>From: ${message.from}</span>
+                        <span class="ml-2 px-2 py-1 bg-gray-200 rounded-full text-xs">${message.service}</span>
                     </div>
                 </div>
             `).join('');
         }
 
- etail view
-        funcsageId) {
-            const message = currentMessages.find(m => m.id ===eId);
+        function showMessageDetail(messageId) {
+            const message = currentMessages.find(m => m.id === messageId);
             if (!message) return;
 
-           d;
-            
-            // Mark as read
-            if (!messa{
-                message.read = true;
-ssages();
-                updateStats();
-          ;
-            }
+            message.read = true;
+            renderMessages();
 
-            // Update detail view
-            const titleElement = document.getElementById('messageDe
-            const bodyElement = document.lBody');
+            const messageDetailTitle = document.getElementById('messageDetailTitle');
+            const messageDetailBody = document.getElementById('messageDetailBody');
 
-            titleElement.inner
-                <i class="fas fa-$)}"></i>
-              ()}
-            `;
-
-            bodyElement.innerHTML = `
-                <div class="row">
-                    <div class="col-md-6">
-                        <h6>Message Info6>
-                        <table class="table ">
-                            <tr><td><strong>>
-                 
-                  </tr>
-                            <tr><td><strong>Received:</s
-                            <tr><tdtd><td>
-                                <span class="badge bg-${message.read ? 'success' : 
-                                    ${message.read ? '
-                                </span>
-                            </td></tr>
-                            ${me
-                     
-                 v>
-                    <div class="col-md-6">
-                        <h6>Message 
-                        <div class="code-di mb-3">
-                            ${message.content}
-                        </div>
-                        <div class="d-f>
-                            ${message.type === 'verifi`
-                                <button ">
-           e
-                  tton>
-                            ` : ''}
-                            <button class="btn btn-pr">
-                                <issage
-                            </button>
-                        </div>
-                    </div>
+            messageDetailTitle.innerText = `Message from ${message.from}`;
+            messageDetailBody.innerHTML = `
+                <div>
+                    <p class="text-gray-500 text-sm">${new Date(message.timestamp).toLocaleString()}</p>
+                    <p class="mt-4">${message.content}</p>
                 </div>
             `;
         }
 
-        // Filter messages
-        function filterM
-            currentFilter = filter;
-           es();
- }
-
-        // Update 
-        function updateStats() {
-            constngth;
-            const codes 
-            const conversations gth;
-            const unread = c
-
-            document.getElementById('totalMe= total;
-            document.getElementById('verificat
-            docu
-            dread;
-        }
-
-        // Update inbox badge
-        function  {
-            coth;
-            const badge = ');
-            
-            if (unreadCount > 0) {
-                badge.textC;
-                badge.style.display = 'inline';
-            }{
-                badge.style.display = 'none';
-            }
-      }
-
-        // Copy verificat
-        functio
-            const message = cur
-            if (!message) return;
-
-            const codeMatch = message.content.matchb/);
-            const code = codeMt;
-
- {
-       ss');
-            });
-        }
-
-        // Copy full mess
-        function copyFullMessage() {
-            const message geId);
-            i
-
-            navigator.clipboard.> {
-                showToast('Message copie;
-            });
-        }
-
-        // Mark all  read
         function markAllAsRead() {
-
-            di;
-            updateSt
- );
-            showToast('All messs');
+            currentMessages.forEach(m => m.read = true);
+            renderMessages();
         }
 
-        // Refresh messages
         function refreshMessages() {
-            loadMessages();
-            showToast('Messages refreshed', 'success');
+            // Here you would fetch new messages from the server
+            renderMessages();
         }
 
-        // Utility functions
-        function getMessageIcon(type) {
-            switch(type) {
-                case 'verification_code': return 'key';
-                case 'conversation'ment';
-                default: retvelope';
-            }
+        function toggleDropdown() {
+            document.getElementById('dropdownMenu').classList.toggle('hidden');
         }
 
-        function getMessageColor(type
-            switch(type) {
-                case 'verification_code': return 'success';
-                case 'conversation
-';
-       
+        function toggleMobileMenu() {
+            document.getElementById('mobileMenu').classList.toggle('hidden');
         }
-
-        function f {
-            const date =
-            const now = newte();
-            const diffMs = now - date;
-            const diffMins = Math.floor(diffMs / 60000);
-            const diffHours = Math.floor(diffMs / 3600000);
-            const diffDays = Math.floor(diffMs / 86400000);
-
-            if (diffMins < 1) ret;
-            if (diffMins < 60) return `${diffMins}m ago`;
-            if (diffHours < 24) return `${diffHours}h ago`;
-            if (diffDays < 7) return `${di ago`;
-            return date.toLocaleDateStri);
-        }
-
-esh
-        funcresh() {
-            refreshInterval = setI> {
-              sages();
-            }, 30000);
-        }
-
-        // Show toast notification
-        function showToast(message, type = 'info') {
-            const toast = document.createElv');
-            toast.className = `alert alert-${type === 'error' ? 'danger' : type};
-            toast.style.cssText =300px;';
-            toast.innerHTML = utton>`;
-            document.body.appendChit);
-            
-            setTimeout(() => {
-                if (toast.pare {
-                    toast.remove();
-                }
-            }, 5000);
-        }
-
-        // Logout function
+        
         function logout() {
             localStorage.removeItem('token');
-            localStorage.removeItem('user');
-            if (refreshInterval) {
-                clearInterval(refres
-            }
-            window.location.href = '/
+            window.location.href = '/login';
         }
 
- unload
-        window.addEventLi=> {
-            if (r) {
-                clearInterval(referval);
-            }
+        document.addEventListener('DOMContentLoaded', () => {
+            renderMessages();
         });
-    </script>
-</body>
-</html>   
-     // Update stats from API response
-        function updateStatsFromAPI(stats) {
-            document.getElementById('totalMessages').textContent = stats.total_messages;
-            document.getElementById('verificationCodes').textContent = stats.verification_codes;
-            document.getElementById('conversations').textContent = stats.conversations;
-            document.getElementById('unreadMessages').textContent = stats.unread_messages;
-        }
-
-        // Enhanced mark all as read with API call
-        async function markAllAsReadAPI() {
-            try {
-                const token = localStorage.getItem('token');
-                const response = await fetch('/api/inbox/messages/mark-all-read', {
-                    method: 'POST',
-                    headers: token ? { 'Authorization': `Bearer ${token}` } : {}
-                });
-                
-                if (response.ok) {
-                    currentMessages.forEach(m => m.read = true);
-                    displayMessages();
-                    updateStats();
-                    updateInboxBadge();
-                    showToast('All messages marked as read', 'success');
-                } else {
-                    showToast('Failed to mark messages as read', 'error');
-                }
-            } catch (error) {
-                console.error('Error marking messages as read:', error);
-                // Fallback to local update
-                currentMessages.forEach(m => m.read = true);
-                displayMessages();
-                updateStats();
-                updateInboxBadge();
-                showToast('All messages marked as read (offline)', 'success');
-            }
-        }
-
-        // Enhanced load messages with API integration
-        async function loadMessagesFromAPI() {
-            try {
-                const token = localStorage.getItem('token');
-                const response = await fetch('/api/inbox/messages', {
-                    headers: token ? { 'Authorization': `Bearer ${token}` } : {}
-                });
-                
-                if (response.ok) {
-                    const data = await response.json();
-                    currentMessages = data.messages.map(m => ({
-                        id: m.id,
-                        type: m.type,
-                        service: m.service,
-                        content: m.content,
-                        timestamp: m.timestamp,
-                        read: m.read,
-                        verificationId: m.verification_id,
-                        from: m.from_number
-                    }));
-                    
-                    displayMessages();
-                    updateStatsFromAPI(data.stats);
-                    updateInboxBadge();
-                } else {
-                    console.warn('API failed, using existing loadMessages function');
-                    loadMessages();
-                }
-                
-            } catch (error) {
-                console.error('Error loading messages from API:', error);
-                loadMessages(); // Fallback to existing function
-            }
-        }
-
-        // Override the loadMessages function to use API
-        const originalLoadMessages = loadMessages;
-        loadMessages = loadMessagesFromAPI;
-
-        // Override markAllAsRead to use API
-        const originalMarkAllAsRead = markAllAsRead;
-        markAllAsRead = markAllAsReadAPI;
     </script>
 </body>
 </html>
