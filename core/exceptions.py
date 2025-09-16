@@ -83,8 +83,9 @@ class BaseServiceException(Exception):
 class TextVerifiedException(BaseServiceException):
     """Base exception for TextVerified API errors"""
 
-    def __init__(self, message: str, **kwargs):
-        super().__init__(message, category=ErrorCategory.EXTERNAL_API, **kwargs)
+    def __init__(self, message: str, status_code: Optional[int] = None, **kwargs):
+        super().__init__(message, **kwargs)
+        self.status_code = status_code
 
 
 class TextVerifiedAuthenticationError(TextVerifiedException):
@@ -132,15 +133,16 @@ class TextVerifiedServiceUnavailableError(TextVerifiedException):
 
 class TextVerifiedRateLimitError(TextVerifiedException):
     """TextVerified rate limit exceeded error"""
-
-    def __init__(self, message: str = "TextVerified rate limit exceeded", **kwargs):
+    
+    def __init__(self, message: str = "TextVerified rate limit exceeded", retry_after: Optional[int] = None, **kwargs):
         super().__init__(
             message,
+            status_code=429,
             error_code="TV_RATE_LIMIT",
             severity=ErrorSeverity.MEDIUM,
             category=ErrorCategory.RATE_LIMIT,
             is_retryable=True,
-            retry_after=kwargs.get("retry_after", 300),
+            retry_after=retry_after or 300,
             **kwargs,
         )
 
@@ -180,9 +182,10 @@ class TextVerifiedServiceNotSupportedError(TextVerifiedException):
 # Twilio-specific exceptions
 class TwilioException(BaseServiceException):
     """Base exception for Twilio API errors"""
-
-    def __init__(self, message: str, **kwargs):
-        super().__init__(message, category=ErrorCategory.EXTERNAL_API, **kwargs)
+    
+    def __init__(self, message: str, code: Optional[str] = None, **kwargs):
+        super().__init__(message, **kwargs)
+        self.code = code
 
 
 class TwilioAuthenticationError(TwilioException):
@@ -215,15 +218,16 @@ class TwilioInsufficientFundsError(TwilioException):
 
 class TwilioRateLimitError(TwilioException):
     """Twilio rate limit exceeded error"""
-
-    def __init__(self, message: str = "Twilio rate limit exceeded", **kwargs):
+    
+    def __init__(self, message: str = "Twilio rate limit exceeded", retry_after: Optional[int] = None, **kwargs):
         super().__init__(
             message,
+            code="20429",
             error_code="TW_RATE_LIMIT",
             severity=ErrorSeverity.MEDIUM,
             category=ErrorCategory.RATE_LIMIT,
             is_retryable=True,
-            retry_after=kwargs.get("retry_after", 60),
+            retry_after=retry_after or 60,
             **kwargs,
         )
 
