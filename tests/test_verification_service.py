@@ -10,8 +10,8 @@ import pytest
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 
-from models.user_models import (Base, SubscriptionPlan, User,
-                                VerificationRequest)
+from models.user_models import (Base, SubscriptionPlan, User)
+from models.verification_models import VerificationRequest
 from services.verification_service import (CodeExtractionService,
                                            VerificationService)
 from textverified_client import TextVerifiedClient
