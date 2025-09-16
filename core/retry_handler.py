@@ -305,6 +305,18 @@ class ServiceRetryConfigs:
     """Predefined retry configurations for different services"""
 
     @staticmethod
+    def database() -> RetryConfig:
+        """Retry configuration for database operations"""
+        return RetryConfig(
+            max_attempts=3,
+            base_delay=0.5,
+            max_delay=5.0,
+            strategy=RetryStrategy.EXPONENTIAL_BACKOFF,
+            retryable_exceptions=[],
+            non_retryable_exceptions=[],
+        )
+
+    @staticmethod
     def textverified() -> RetryConfig:
         """Retry configuration for TextVerified API"""
         return RetryConfig(
