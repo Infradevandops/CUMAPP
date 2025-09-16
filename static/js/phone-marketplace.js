@@ -379,27 +379,27 @@ class PhoneMarketplace {
         
         document.getElementById('purchase-details').innerHTML = `
             <div class="text-center mb-3">
-                <h4 class="text-primary">${number.phone_number} ${flag}</h4>
-                <p class="text-muted">${number.region} • ${this.capitalizeFirst(number.provider)}</p>
+                <h4 class="text-blue-600">${number.phone_number} ${flag}</h4>
+                <p class="text-gray-500">${number.region} • ${this.capitalizeFirst(number.provider)}</p>
             </div>
             
-            <div class="row">
-                <div class="col-md-6">
-                    <h6>Capabilities</h6>
-                    <div class="capabilities mb-3">
+            <div class="grid grid-cols-2 gap-4">
+                <div>
+                    <h6 class="font-bold">Capabilities</h6>
+                    <div class="flex flex-wrap gap-2 mb-3">
                         ${number.capabilities.map(cap => 
-                            `<span class="capability-badge ${cap}">${cap.toUpperCase()}</span>`
+                            `<span class="px-2 py-1 rounded-full bg-blue-500 text-white text-xs font-bold">${cap.toUpperCase()}</span>`
                         ).join('')}
                     </div>
                 </div>
-                <div class="col-md-6">
-                    <h6>Pricing</h6>
-                    <div class="pricing-section">
-                        <div class="monthly-cost">$${number.monthly_cost}/month</div>
-                        <div class="usage-costs">
-                            SMS: $${number.sms_cost_per_message} per message<br>
-                            ${number.voice_cost_per_minute ? `Voice: $${number.voice_cost_per_minute} per minute<br>` : ''}
-                            Setup Fee: $${number.setup_fee}
+                <div>
+                    <h6 class="font-bold">Pricing</h6>
+                    <div class="text-sm">
+                        <div class="font-bold">${number.monthly_cost}/month</div>
+                        <div class="text-gray-600">
+                            SMS: ${number.sms_cost_per_message} per message<br>
+                            ${number.voice_cost_per_minute ? `Voice: ${number.voice_cost_per_minute} per minute<br>` : ''}
+                            Setup Fee: ${number.setup_fee}
                         </div>
                     </div>
                 </div>
@@ -409,8 +409,7 @@ class PhoneMarketplace {
         // Store selected number for purchase
         this.selectedNumber = number;
         
-        const modal = new bootstrap.Modal(document.getElementById('purchaseModal'));
-        modal.show();
+        document.getElementById('purchaseModal').classList.remove('hidden');
     }
 
     async confirmPurchase() {
@@ -441,7 +440,7 @@ class PhoneMarketplace {
                 this.showSuccess(`Successfully purchased ${this.selectedNumber.phone_number}!`);
                 
                 // Close modal
-                bootstrap.Modal.getInstance(document.getElementById('purchaseModal')).hide();
+                document.getElementById('purchaseModal').classList.add('hidden');
                 
                 // Refresh subscription info
                 await this.loadSubscriptionInfo();
@@ -478,8 +477,7 @@ class PhoneMarketplace {
                 this.ownedNumbers = data.numbers;
                 this.displayOwnedNumbers();
                 
-                const modal = new bootstrap.Modal(document.getElementById('myNumbersModal'));
-                modal.show();
+                document.getElementById('myNumbersModal').classList.remove('hidden');
             } else {
                 throw new Error('Failed to load owned numbers');
             }
@@ -577,8 +575,7 @@ class PhoneMarketplace {
                 const data = await response.json();
                 this.displayNumberDetails(data);
                 
-                const modal = new bootstrap.Modal(document.getElementById('numberDetailsModal'));
-                modal.show();
+                document.getElementById('numberDetailsModal').classList.remove('hidden');
             } else {
                 throw new Error('Failed to load number details');
             }
@@ -762,11 +759,10 @@ class PhoneMarketplace {
     showNotification(message, type) {
         // Simple notification implementation
         const notification = document.createElement('div');
-        notification.className = `alert alert-${type === 'success' ? 'success' : 'danger'} alert-dismissible fade show position-fixed`;
-        notification.style.cssText = 'top: 20px; right: 20px; z-index: 9999; min-width: 300px;';
+        notification.className = `fixed top-5 right-5 z-[9999] p-4 rounded-lg shadow-lg text-white text-sm font-semibold ${type === 'success' ? 'bg-green-500' : 'bg-red-500'}`;
         notification.innerHTML = `
             ${message}
-            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+            <button type="button" class="ml-2 text-white opacity-75 hover:opacity-100" onclick="this.parentNode.remove()">&times;</button>
         `;
         
         document.body.appendChild(notification);

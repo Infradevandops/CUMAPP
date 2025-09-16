@@ -312,7 +312,7 @@ CREATE TABLE messages (
 - **Authentication**: JWT + bcrypt
 - **SMS Providers**: Twilio + Vonage + Mock
 - **AI**: Groq for conversation assistance
-- **Frontend**: Bootstrap + WebSocket client
+
 - **Deployment**: Docker + Docker Compose
 
 ---

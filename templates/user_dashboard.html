@@ -34,7 +34,12 @@
                 </li>
                 <li class="mb-4">
                     <a href="/verifications" class="flex items-center text-gray-100 hover:bg-gray-700 px-4 py-2 rounded-md">
-                        <i class="fas fa-list mr-3"></i>History
+                        <i class="fas fa-list mr-3"></i>Verification History
+                    </a>
+                </li>
+                <li class="mb-4">
+                    <a href="/user/history" class="flex items-center text-gray-100 hover:bg-gray-700 px-4 py-2 rounded-md">
+                        <i class="fas fa-history mr-3"></i>Usage History
                     </a>
                 </li>
                 <li class="mb-4">
@@ -142,7 +147,7 @@
             </div>
 
             <!-- Recent Activity -->
-            <div>
+            <div class="mb-6">
                 <div class="bg-gray-800 text-gray-100 rounded-lg shadow-lg">
                     <div class="p-4 border-b border-red-600">
                         <h5 class="text-xl font-bold text-red-500">Recent Activity</h5>
@@ -157,6 +162,50 @@
                     </div>
                 </div>
             </div>
+
+            <!-- Number & Service Mapping -->
+            <div class="mb-6">
+                <div class="bg-gray-800 text-gray-100 rounded-lg shadow-lg">
+                    <div class="p-4 border-b border-red-600">
+                        <h5 class="text-xl font-bold text-red-500">Number & Service Mapping</h5>
+                    </div>
+                    <div class="p-4 grid grid-cols-1 lg:grid-cols-2 gap-6">
+                        <div>
+                            <h6 class="text-lg font-semibold mb-3">Numbers Used Per Service</h6>
+                            <div id="serviceNumberMapping">
+                                <p class="text-gray-500">Loading data...</p>
+                            </div>
+                        </div>
+                        <div>
+                            <h6 class="text-lg font-semibold mb-3">Services Used Per Number</h6>
+                            <div id="numberServiceMapping">
+                                <p class="text-gray-500">Loading data...</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Export History -->
+            <div class="mb-6">
+                <div class="bg-gray-800 text-gray-100 rounded-lg shadow-lg">
+                    <div class="p-4 border-b border-red-600">
+                        <h5 class="text-xl font-bold text-red-500">Export History</h5>
+                    </div>
+                    <div class="p-4">
+                        <p class="text-gray-400 mb-4">Export your verification and usage history for record keeping.</p>
+                        <div class="flex flex-col sm:flex-row space-y-2 sm:space-y-0 sm:space-x-4">
+                            <button class="bg-green-600 hover:bg-green-700 text-white font-bold py-3 px-4 rounded-md flex-1" onclick="exportHistory('json')">
+                                <i class="fas fa-download mr-2"></i>Export as JSON
+                            </button>
+                            <button class="bg-green-600 hover:bg-green-700 text-white font-bold py-3 px-4 rounded-md flex-1" onclick="exportHistory('csv')">
+                                <i class="fas fa-file-csv mr-2"></i>Export as CSV
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
         </div>
 
     <script>
@@ -180,6 +229,7 @@
                     document.getElementById('totalVerifications').textContent = '15'; // Example mock
                     document.getElementById('successRate').textContent = '95%'; // Example mock
                     loadRecentActivity(true); // Load mock recent activity
+                    loadNumberServiceMapping(true); // Load mock number/service mapping
                     return;
                 }
                 const response = await fetch('/api/auth/me', {
@@ -191,6 +241,7 @@
                     // Fetch and display real data
                     loadStatistics();
                     loadRecentActivity();
+                    loadNumberServiceMapping();
                 } else {
                     logout();
                 }
@@ -289,6 +340,68 @@
             }
         }
 
+        async function loadNumberServiceMapping(useMock = false) {
+            const numberServiceMappingDiv = document.getElementById('numberServiceMapping');
+            const serviceNumberMappingDiv = document.getElementById('serviceNumberMapping');
+
+            let numberMapData = [];
+            let serviceMapData = [];
+
+            if (useMock) {
+                numberMapData = [
+                    { phone_number: '+1234567890', services_used: ['WhatsApp', 'Google', 'Telegram'] },
+                    { phone_number: '+1987654321', services_used: ['Facebook', 'Instagram'] },
+                ];
+                serviceMapData = [
+                    { service: 'WhatsApp', numbers_used: ['1234567890'] },
+                    { service: 'Google', numbers_used: ['1234567890'] },
+                    { service: 'Telegram', numbers_used: ['1234567890'] },
+                    { service: 'Facebook', numbers_used: ['1987654321'] },
+                    { service: 'Instagram', numbers_used: ['1987654321'] },
+                ];
+            } else {
+                // In a real scenario, you would fetch this data from a backend API.
+                // For example, an endpoint like /api/user/number-service-mapping
+                // For now, we'll use mock data if not in demo mode.
+                console.warn("API for number/service mapping not implemented. Using mock data.");
+                numberMapData = [
+                    { phone_number: '+1234567890', services_used: ['WhatsApp', 'Google', 'Telegram'] },
+                    { phone_number: '+1987654321', services_used: ['Facebook', 'Instagram'] },
+                ];
+                serviceMapData = [
+                    { service: 'WhatsApp', numbers_used: ['1234567890'] },
+                    { service: 'Google', numbers_used: ['1234567890'] },
+                    { service: 'Telegram', numbers_used: ['1234567890'] },
+                    { service: 'Facebook', numbers_used: ['1987654321'] },
+                    { service: 'Instagram', numbers_used: ['1987654321'] },
+                ];
+            }
+
+            // Render Numbers Used Per Service
+            if (serviceMapData.length === 0) {
+                serviceNumberMappingDiv.innerHTML = '<p class="text-gray-500">No service mapping data available.</p>';
+            } else {
+                serviceNumberMappingDiv.innerHTML = serviceMapData.map(item => `
+                    <div class="mb-2">
+                        <strong class="text-gray-300">${item.service}:</strong>
+                        <span class="text-gray-400">${item.numbers_used.join(', ')}</span>
+                    </div>
+                `).join('');
+            }
+
+            // Render Services Used Per Number
+            if (numberMapData.length === 0) {
+                numberServiceMappingDiv.innerHTML = '<p class="text-gray-500">No number mapping data available.</p>';
+            } else {
+                numberServiceMappingDiv.innerHTML = numberMapData.map(item => `
+                    <div class="mb-2">
+                        <strong class="text-gray-300">${item.phone_number}:</strong>
+                        <span class="text-gray-400">${item.services_used.join(', ')}</span>
+                    </div>
+                `).join('');
+            }
+        }
+
         function getActivityIcon(type) {
             switch(type) {
                 case 'verification': return 'fas fa-check-circle';
@@ -340,6 +453,39 @@
             const overlay = document.getElementById('sidebar-overlay');
             sidebar.classList.toggle('-translate-x-full');
             overlay.classList.toggle('hidden');
+        }
+
+        async function exportHistory(format) {
+            const token = localStorage.getItem('token');
+            if (!token) {
+                alert('You must be logged in to export data.');
+                return;
+            }
+
+            try {
+                const response = await fetch(`/api/enhanced-verification/export-data?format=${format}`, {
+                    headers: { 'Authorization': `Bearer ${token}` }
+                });
+
+                if (response.ok) {
+                    const blob = await response.blob();
+                    const url = window.URL.createObjectURL(blob);
+                    const a = document.createElement('a');
+                    a.style.display = 'none';
+                    a.href = url;
+                    a.download = `verification_history.${format}`;
+                    document.body.appendChild(a);
+                    a.click();
+                    window.URL.revokeObjectURL(url);
+                    alert(`History exported as ${format.toUpperCase()}!`);
+                } else {
+                    const errorData = await response.json();
+                    alert(`Failed to export history: ${errorData.detail || response.statusText}`);
+                }
+            } catch (error) {
+                console.error('Error exporting history:', error);
+                alert('Network error during export.');
+            }
         }
 
         // Load dashboard data

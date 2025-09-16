@@ -721,8 +721,7 @@ class EnhancedChatInterface {
 
     // Modal and UI functions
     showNewConversationModal() {
-        const modal = new bootstrap.Modal(document.getElementById('newConversationModal'));
-        modal.show();
+        document.getElementById('newConversationModal').classList.remove('hidden');
     }
 
     showSettings() {
@@ -733,8 +732,7 @@ class EnhancedChatInterface {
         document.getElementById('show-read-receipts').checked = this.settings.showReadReceipts;
         document.getElementById('auto-scroll').checked = this.settings.autoScroll;
         
-        const modal = new bootstrap.Modal(document.getElementById('settingsModal'));
-        modal.show();
+        document.getElementById('settingsModal').classList.remove('hidden');
     }
 
     updateNotificationSettings() {

@@ -353,59 +353,59 @@ class VerificationHistoryManager {
         
         const modalBody = document.getElementById('verificationModalBody');
         modalBody.innerHTML = `
-            <div class="row">
-                <div class="col-md-6">
-                    <div class="verification-detail-item">
-                        <div class="verification-detail-label">Service</div>
-                        <div class="verification-detail-value">
-                            <span class="service-icon service-${verification.service_name.toLowerCase()}">
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                    <div class="p-3 bg-gray-100 rounded-md mb-2">
+                        <div class="text-sm font-semibold text-gray-600">Service</div>
+                        <div class="text-gray-800 font-medium flex items-center mt-1">
+                            <span class="w-6 h-6 rounded-full flex items-center justify-center text-white text-xs font-bold mr-2 bg-blue-500">
                                 ${this.getServiceIcon(verification.service_name)}
                             </span>
                             ${this.capitalizeFirst(verification.service_name)}
                         </div>
                     </div>
                 </div>
-                <div class="col-md-6">
-                    <div class="verification-detail-item">
-                        <div class="verification-detail-label">Status</div>
-                        <div class="verification-detail-value">
-                            <span class="status-badge status-${verification.status}">
+                <div>
+                    <div class="p-3 bg-gray-100 rounded-md mb-2">
+                        <div class="text-sm font-semibold text-gray-600">Status</div>
+                        <div class="text-gray-800 font-medium mt-1">
+                            <span class="px-2 py-1 rounded-full text-xs font-bold ${this.getStatusBadgeClass(verification.status)}">
                                 ${this.capitalizeFirst(verification.status)}
                             </span>
                         </div>
                     </div>
                 </div>
-                <div class="col-md-6">
-                    <div class="verification-detail-item">
-                        <div class="verification-detail-label">Phone Number</div>
-                        <div class="verification-detail-value text-monospace">
-                            ${verification.phone_number || 'Not assigned'}
+                <div>
+                    <div class="p-3 bg-gray-100 rounded-md mb-2">
+                        <div class="text-sm font-semibold text-gray-600">Phone Number</div>
+                        <div class="text-gray-800 font-medium mt-1 font-mono">
+                            ${verification.phone_number || '-'}
                         </div>
                     </div>
                 </div>
-                <div class="col-md-6">
-                    <div class="verification-detail-item">
-                        <div class="verification-detail-label">Verification Code</div>
-                        <div class="verification-detail-value">
+                <div>
+                    <div class="p-3 bg-gray-100 rounded-md mb-2">
+                        <div class="text-sm font-semibold text-gray-600">Verification Code</div>
+                        <div class="text-gray-800 font-medium mt-1">
                             ${verification.verification_code ? 
-                                `<span class="verification-code">${verification.verification_code}</span>` : 
+                                `<span class="bg-gray-200 px-2 py-1 rounded-md font-mono text-sm">${verification.verification_code}</span>` : 
                                 'Not received'
                             }
                         </div>
                     </div>
                 </div>
-                <div class="col-md-6">
-                    <div class="verification-detail-item">
-                        <div class="verification-detail-label">Created At</div>
-                        <div class="verification-detail-value">
+                <div>
+                    <div class="p-3 bg-gray-100 rounded-md mb-2">
+                        <div class="text-sm font-semibold text-gray-600">Created At</div>
+                        <div class="text-gray-800 font-medium mt-1">
                             ${this.formatDateTime(verification.created_at)}
                         </div>
                     </div>
                 </div>
-                <div class="col-md-6">
-                    <div class="verification-detail-item">
-                        <div class="verification-detail-label">Completed At</div>
-                        <div class="verification-detail-value">
+                <div>
+                    <div class="p-3 bg-gray-100 rounded-md mb-2">
+                        <div class="text-sm font-semibold text-gray-600">Completed At</div>
+                        <div class="text-gray-800 font-medium mt-1">
                             ${verification.completed_at ? 
                                 this.formatDateTime(verification.completed_at) : 
                                 'Not completed'
@@ -413,10 +413,10 @@ class VerificationHistoryManager {
                         </div>
                     </div>
                 </div>
-                <div class="col-12">
-                    <div class="verification-detail-item">
-                        <div class="verification-detail-label">Verification ID</div>
-                        <div class="verification-detail-value text-monospace">
+                <div class="col-span-full">
+                    <div class="p-3 bg-gray-100 rounded-md mb-2">
+                        <div class="text-sm font-semibold text-gray-600">Verification ID</div>
+                        <div class="text-gray-800 font-medium mt-1 font-mono">
                             ${verification.id}
                         </div>
                     </div>
@@ -432,8 +432,7 @@ class VerificationHistoryManager {
             cancelBtn.style.display = 'none';
         }
         
-        const modal = new bootstrap.Modal(document.getElementById('verificationModal'));
-        modal.show();
+        document.getElementById('verificationModal').classList.remove('hidden');
     }
     
     async cancelVerification(verificationId = null) {
@@ -462,10 +461,7 @@ class VerificationHistoryManager {
             this.loadStatistics();
             
             // Close modal if open
-            const modal = bootstrap.Modal.getInstance(document.getElementById('verificationModal'));
-            if (modal) {
-                modal.hide();
-            }
+            document.getElementById('verificationModal').classList.add('hidden');
             
         } catch (error) {
             console.error('Error cancelling verification:', error);
@@ -475,8 +471,7 @@ class VerificationHistoryManager {
     
     async exportData(format) {
         try {
-            const modal = new bootstrap.Modal(document.getElementById('exportModal'));
-            modal.show();
+            document.getElementById('exportModal').classList.remove('hidden');
             
             const params = new URLSearchParams({
                 format_type: format,
@@ -508,10 +503,7 @@ class VerificationHistoryManager {
             console.error('Error exporting data:', error);
             this.showError('Failed to export data');
         } finally {
-            const modal = bootstrap.Modal.getInstance(document.getElementById('exportModal'));
-            if (modal) {
-                modal.hide();
-            }
+            document.getElementById('exportModal').classList.add('hidden');
         }
     }
     
@@ -537,8 +529,8 @@ class VerificationHistoryManager {
             tbody.innerHTML = `
                 <tr>
                     <td colspan="7" class="text-center py-4">
-                        <div class="spinner-border text-primary" role="status">
-                            <span class="visually-hidden">Loading...</span>
+                        <div class="inline-block animate-spin w-8 h-8 border-4 border-blue-500 border-t-transparent rounded-full" role="status">
+                            <span class="sr-only">Loading...</span>
                         </div>
                     </td>
                 </tr>
@@ -556,22 +548,19 @@ class VerificationHistoryManager {
     
     showAlert(message, type) {
         const alertHTML = `
-            <div class="alert alert-${type} alert-dismissible fade show" role="alert">
+            <div class="fixed top-5 right-5 z-[9999] p-4 rounded-lg shadow-lg text-white text-sm font-semibold ${type === 'success' ? 'bg-green-500' : 'bg-red-500'}">
                 ${message}
-                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                <button type="button" class="ml-2 text-white opacity-75 hover:opacity-100" onclick="this.parentNode.remove()">&times;</button>
             </div>
         `;
         
-        const container = document.querySelector('.container');
-        const firstChild = container.firstElementChild;
-        firstChild.insertAdjacentHTML('beforebegin', alertHTML);
+        document.body.insertAdjacentHTML('beforeend', alertHTML);
         
         // Auto-dismiss after 5 seconds
         setTimeout(() => {
-            const alert = document.querySelector('.alert');
+            const alert = document.querySelector('.fixed.top-5.right-5');
             if (alert) {
-                const bsAlert = new bootstrap.Alert(alert);
-                bsAlert.close();
+                alert.remove();
             }
         }, 5000);
     }

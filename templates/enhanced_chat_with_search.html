@@ -7,326 +7,38 @@
     
     <!-- CSS Dependencies -->
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
-    <link href="/static/css/enhanced-chat-search.css" rel="stylesheet">
-    
-    <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-        
-        body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            min-height: 100vh;
-            padding: 20px;
-        }
-        
-        .chat-container {
-            max-width: 1200px;
-            margin: 0 auto;
-            background: white;
-            border-radius: 16px;
-            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
-            overflow: hidden;
-            height: calc(100vh - 40px);
-            display: flex;
-        }
-        
-        .sidebar {
-            width: 300px;
-            background: #f8fafc;
-            border-right: 1px solid #e5e7eb;
-            display: flex;
-            flex-direction: column;
-        }
-        
-        .main-chat {
-            flex: 1;
-            display: flex;
-            flex-direction: column;
-        }
-        
-        .chat-header {
-            background: white;
-            padding: 16px 20px;
-            border-bottom: 1px solid #e5e7eb;
-            display: flex;
-            align-items: center;
-            justify-content: between;
-        }
-        
-        .chat-title {
-            font-size: 18px;
-            font-weight: 600;
-            color: #1f2937;
-        }
-        
-        .chat-actions {
-            display: flex;
-            gap: 8px;
-        }
-        
-        .action-btn {
-            padding: 8px 12px;
-            background: #f3f4f6;
-            border: none;
-            border-radius: 6px;
-            cursor: pointer;
-            transition: all 0.2s ease;
-            color: #6b7280;
-        }
-        
-        .action-btn:hover {
-            background: #e5e7eb;
-            color: #374151;
-        }
-        
-        .action-btn.active {
-            background: #667eea;
-            color: white;
-        }
-        
-        .messages-container {
-            flex: 1;
-            overflow-y: auto;
-            padding: 20px;
-            background: #f9fafb;
-        }
-        
-        .message-input-container {
-            padding: 20px;
-            background: white;
-            border-top: 1px solid #e5e7eb;
-        }
-        
-        .message-input-wrapper {
-            display: flex;
-            gap: 12px;
-            align-items: flex-end;
-        }
-        
-        .message-input {
-            flex: 1;
-            padding: 12px 16px;
-            border: 2px solid #e5e7eb;
-            border-radius: 24px;
-            font-size: 16px;
-            resize: none;
-            max-height: 120px;
-            transition: border-color 0.2s ease;
-        }
-        
-        .message-input:focus {
-            outline: none;
-            border-color: #667eea;
-        }
-        
-        .send-btn {
-            padding: 12px 16px;
-            background: #667eea;
-            color: white;
-            border: none;
-            border-radius: 50%;
-            cursor: pointer;
-            transition: all 0.2s ease;
-            width: 48px;
-            height: 48px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-        
-        .send-btn:hover {
-            background: #5a67d8;
-            transform: scale(1.05);
-        }
-        
-        .send-btn:disabled {
-            background: #d1d5db;
-            cursor: not-allowed;
-            transform: none;
-        }
-        
-        .search-panel {
-            display: none;
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background: rgba(0, 0, 0, 0.5);
-            z-index: 1000;
-        }
-        
-        .search-panel.active {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-        
-        .search-modal {
-            background: white;
-            border-radius: 16px;
-            width: 90%;
-            max-width: 800px;
-            max-height: 80vh;
-            overflow: hidden;
-            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2);
-        }
-        
-        .search-modal-header {
-            padding: 20px;
-            border-bottom: 1px solid #e5e7eb;
-            display: flex;
-            align-items: center;
-            justify-content: between;
-        }
-        
-        .search-modal-title {
-            font-size: 18px;
-            font-weight: 600;
-            color: #1f2937;
-        }
-        
-        .close-search-btn {
-            background: none;
-            border: none;
-            font-size: 20px;
-            color: #6b7280;
-            cursor: pointer;
-            padding: 4px;
-            border-radius: 4px;
-            transition: all 0.2s ease;
-        }
-        
-        .close-search-btn:hover {
-            background: #f3f4f6;
-            color: #374151;
-        }
-        
-        .search-modal-body {
-            max-height: calc(80vh - 80px);
-            overflow-y: auto;
-        }
-        
-        .conversation-list {
-            flex: 1;
-            overflow-y: auto;
-            padding: 16px;
-        }
-        
-        .conversation-item {
-            padding: 12px 16px;
-            border-radius: 8px;
-            cursor: pointer;
-            transition: all 0.2s ease;
-            margin-bottom: 8px;
-            border: 1px solid transparent;
-        }
-        
-        .conversation-item:hover {
-            background: #f3f4f6;
-        }
-        
-        .conversation-item.active {
-            background: #eff6ff;
-            border-color: #3b82f6;
-        }
-        
-        .conversation-title {
-            font-weight: 500;
-            color: #1f2937;
-            margin-bottom: 4px;
-        }
-        
-        .conversation-preview {
-            font-size: 14px;
-            color: #6b7280;
-            display: flex;
-            align-items: center;
-            justify-content: between;
-        }
-        
-        .typing-indicator {
-            display: none;
-            padding: 8px 16px;
-            color: #6b7280;
-            font-style: italic;
-            font-size: 14px;
-        }
-        
-        .typing-indicator.active {
-            display: block;
-        }
-        
-        .scroll-progress {
-            position: sticky;
-            top: 0;
-            background: rgba(255, 255, 255, 0.95);
-            padding: 8px 16px;
-            text-align: center;
-            font-size: 12px;
-            color: #6b7280;
-            border-bottom: 1px solid #e5e7eb;
-            backdrop-filter: blur(4px);
-            display: none;
-        }
-        
-        .scroll-progress.active {
-            display: block;
-        }
-        
-        @media (max-width: 768px) {
-            .chat-container {
-                height: 100vh;
-                margin: 0;
-                border-radius: 0;
-            }
-            
-            .sidebar {
-                display: none;
-            }
-            
-            .search-modal {
-                width: 95%;
-                max-height: 90vh;
-            }
-        }
-    </style>
+    <script src="https://cdn.tailwindcss.com"></script>
 </head>
-<body>
-    <div class="chat-container">
+<body class="font-sans bg-gradient-to-r from-purple-600 to-blue-600 min-h-screen p-5">
+    <div class="max-w-6xl mx-auto bg-white rounded-2xl shadow-2xl overflow-hidden h-[calc(100vh-40px)] flex">
         <!-- Sidebar -->
-        <div class="sidebar">
-            <div class="search-container">
-                <div class="search-header">
-                    <i class="fas fa-comments"></i>
-                    <h3>Conversations</h3>
+        <div class="w-[300px] bg-gray-50 border-r border-gray-200 flex flex-col">
+            <div class="p-4 border-b border-gray-200">
+                <div class="flex items-center justify-between">
+                    <h3 class="text-lg font-semibold text-gray-800"><i class="fas fa-comments mr-2"></i>Conversations</h3>
                 </div>
-                <div class="search-input-container">
-                    <i class="fas fa-search search-input-icon"></i>
-                    <input type="text" id="conversation-search-input" class="search-input" placeholder="Search conversations...">
-                    <button class="clear-search-btn" id="clear-conversation-search">
+                <div class="relative mt-2">
+                    <i class="fas fa-search absolute left-3 top-1/2 -translate-y-1/2 text-gray-400"></i>
+                    <input type="text" id="conversation-search-input" class="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-full text-sm focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder="Search conversations...">
+                    <button class="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600" id="clear-conversation-search">
                         <i class="fas fa-times"></i>
                     </button>
                 </div>
-                <div id="conversation-search-results" class="conversation-search-results"></div>
+                <div id="conversation-search-results" class="mt-2"></div>
             </div>
             
-            <div class="conversation-list" id="conversation-list">
+            <div class="flex-1 overflow-y-auto p-2" id="conversation-list">
                 <!-- Conversations will be loaded here -->
-                <div class="conversation-item active">
-                    <div class="conversation-title">General Chat</div>
-                    <div class="conversation-preview">
+                <div class="p-3 rounded-lg cursor-pointer mb-2 transition-all duration-200 hover:bg-gray-100 bg-blue-50 border-l-4 border-blue-500">
+                    <div class="font-semibold text-gray-800">General Chat</div>
+                    <div class="text-sm text-gray-500 flex items-center justify-between">
                         <span>Last message preview...</span>
-                        <span class="unread-badge">3</span>
+                        <span class="w-5 h-5 flex items-center justify-center rounded-full bg-red-500 text-white text-xs">3</span>
                     </div>
                 </div>
-                <div class="conversation-item">
-                    <div class="conversation-title">Project Discussion</div>
-                    <div class="conversation-preview">
+                <div class="p-3 rounded-lg cursor-pointer mb-2 transition-all duration-200 hover:bg-gray-100">
+                    <div class="font-semibold text-gray-800">Project Discussion</div>
+                    <div class="text-sm text-gray-500 flex items-center justify-between">
                         <span>Another message preview...</span>
                         <span>2h ago</span>
                     </div>
@@ -335,80 +47,71 @@
         </div>
         
         <!-- Main Chat Area -->
-        <div class="main-chat">
-            <div class="chat-header">
-                <div class="chat-title">General Chat</div>
-                <div class="chat-actions">
-                    <button class="action-btn" id="search-toggle-btn" title="Search Messages">
+        <div class="flex-1 flex flex-col">
+            <div class="bg-white p-4 border-b border-gray-200 flex items-center justify-between">
+                <div class="text-lg font-semibold text-gray-800">General Chat</div>
+                <div class="flex gap-2">
+                    <button class="px-3 py-2 bg-gray-100 border-none rounded-md cursor-pointer transition-all duration-200 text-gray-500 hover:bg-gray-200 hover:text-gray-700" id="search-toggle-btn" title="Search Messages">
                         <i class="fas fa-search"></i>
                     </button>
-                    <button class="action-btn" id="info-btn" title="Conversation Info">
+                    <button class="px-3 py-2 bg-gray-100 border-none rounded-md cursor-pointer transition-all duration-200 text-gray-500 hover:bg-gray-200 hover:text-gray-700" id="info-btn" title="Conversation Info">
                         <i class="fas fa-info-circle"></i>
                     </button>
                 </div>
             </div>
             
-            <div id="scroll-progress" class="scroll-progress"></div>
+            <div id="scroll-progress" class="sticky top-0 bg-white/95 p-2 text-center text-xs text-gray-500 border-b border-gray-200 backdrop-blur-sm hidden"></div>
             
-            <div class="messages-container" id="messages-container" data-conversation-id="demo-conversation">
-                <div id="infinite-scroll-loading" class="loading-indicator" style="display: none;">
-                    <div class="loading-spinner">
-                        <i class="fas fa-spinner fa-spin"></i>
+            <div class="flex-1 overflow-y-auto p-5 bg-gray-100" id="messages-container" data-conversation-id="demo-conversation">
+                <div id="infinite-scroll-loading" class="hidden text-center p-4">
+                    <div class="inline-flex items-center text-gray-500">
+                        <i class="fas fa-spinner fa-spin mr-2"></i>
                         <span>Loading messages...</span>
                     </div>
                 </div>
                 
-                <div class="messages-list" id="messages-list">
+                <div class="space-y-4" id="messages-list">
                     <!-- Messages will be loaded here via infinite scroll -->
-                    <div class="message received" data-message-id="demo-1">
-                        <div class="message-header">
-                            <span class="sender-name">Alice</span>
-                            <span class="message-time">10:30 AM</span>
-                        </div>
-                        <div class="message-content">Hey everyone! How's the project going?</div>
-                        <div class="message-footer">
-                            <span class="message-type CHAT">CHAT</span>
-                            <i class="fas fa-check delivery-status delivered"></i>
-                            <i class="fas fa-check-double read-status read"></i>
+                    <div class="flex justify-start" data-message-id="demo-1">
+                        <div class="max-w-lg">
+                            <div class="text-xs text-gray-500 mb-1">Alice</div>
+                            <div class="bg-white p-3 rounded-lg shadow-sm">
+                                <p class="text-gray-800">Hey everyone! How's the project going?</p>
+                                <div class="text-xs text-gray-400 mt-1 text-right">10:30 AM</div>
+                            </div>
                         </div>
                     </div>
                     
-                    <div class="message sent" data-message-id="demo-2">
-                        <div class="message-header">
-                            <span class="sender-name">You</span>
-                            <span class="message-time">10:32 AM</span>
-                        </div>
-                        <div class="message-content">Going well! Just finished the <span class="mention">@bob</span> integration part.</div>
-                        <div class="message-footer">
-                            <span class="message-type CHAT">CHAT</span>
-                            <i class="fas fa-check delivery-status delivered"></i>
-                            <i class="fas fa-check-double read-status read"></i>
+                    <div class="flex justify-end" data-message-id="demo-2">
+                        <div class="max-w-lg">
+                            <div class="bg-blue-500 text-white p-3 rounded-lg shadow-sm">
+                                <p>Going well! Just finished the <span class="font-semibold">@bob</span> integration part.</p>
+                                <div class="text-xs text-blue-200 mt-1 text-right">10:32 AM</div>
+                            </div>
                         </div>
                     </div>
                     
-                    <div class="message received" data-message-id="demo-3">
-                        <div class="message-header">
-                            <span class="sender-name">Bob</span>
-                            <span class="message-time">10:35 AM</span>
-                        </div>
-                        <div class="message-content">Thanks for mentioning me! The integration looks great. Check out this link: <a href="https://example.com" target="_blank">https://example.com</a></div>
-                        <div class="message-footer">
-                            <span class="message-type CHAT">CHAT</span>
-                            <i class="fas fa-check delivery-status delivered"></i>
+                    <div class="flex justify-start" data-message-id="demo-3">
+                        <div class="max-w-lg">
+                            <div class="text-xs text-gray-500 mb-1">Bob</div>
+                            <div class="bg-white p-3 rounded-lg shadow-sm">
+                                <p class="text-gray-800">Thanks for mentioning me! The integration looks great. Check out this link: <a href="https://example.com" target="_blank" class="text-blue-500 hover:underline">https://example.com</a></p>
+                                <div class="text-xs text-gray-400 mt-1 text-right">10:35 AM</div>
+                            </div>
                         </div>
                     </div>
                 </div>
             </div>
             
-            <div class="typing-indicator" id="typing-indicator">
+            <div class="hidden p-2 text-gray-500 italic text-sm" id="typing-indicator">
                 <i class="fas fa-ellipsis-h"></i>
                 <span>Someone is typing...</span>
             </div>
             
-            <div class="message-input-container">
-                <div class="message-input-wrapper">
-                    <textarea id="message-input" class="message-input" placeholder="Type a message... (use @ to mention users)" rows="1"></textarea>
-                    <button id="send-btn" class="send-btn" disabled>
+            <div class="p-5 bg-white border-t border-gray-200">
+                <div class="flex items-end gap-3">
+                    <textarea id="message-input" class="flex-1 p-3 border-2 border-gray-200 rounded-full text-base resize-none max-h-32 transition-colors duration-200 focus:outline-none focus:border-blue-500" placeholder="Type a message... (use @ to mention users)" rows="1"></textarea>
+                    <button id="send-btn" class="w-12 h-12 flex items-center justify-center bg-blue-500 text-white rounded-full cursor-pointer transition-all duration-200 hover:bg-blue-600 hover:scale-105 disabled:bg-gray-300 disabled:cursor-not-allowed disabled:scale-100" disabled>
                         <i class="fas fa-paper-plane"></i>
                     </button>
                 </div>
@@ -417,71 +120,69 @@
     </div>
     
     <!-- Search Panel -->
-    <div class="search-panel" id="search-panel">
-        <div class="search-modal">
-            <div class="search-modal-header">
-                <h3 class="search-modal-title">Search Messages</h3>
-                <button class="close-search-btn" id="close-search-btn">
+    <div class="fixed inset-0 bg-gray-800/50 flex items-center justify-center z-50 hidden" id="search-panel">
+        <div class="bg-white rounded-2xl shadow-2xl w-11/12 max-w-3xl max-h-[80vh] overflow-hidden">
+            <div class="p-5 border-b border-gray-200 flex items-center justify-between">
+                <h3 class="text-lg font-semibold text-gray-800">Search Messages</h3>
+                <button class="text-gray-500 hover:text-gray-700" id="close-search-btn">
                     <i class="fas fa-times"></i>
                 </button>
             </div>
-            <div class="search-modal-body">
-                <div class="search-container">
-                    <div class="search-input-container">
-                        <i class="fas fa-search search-input-icon"></i>
-                        <input type="text" id="message-search-input" class="search-input" placeholder="Search messages...">
-                        <button class="clear-search-btn" id="clear-search-btn">
-                            <i class="fas fa-times"></i>
-                        </button>
+            <div class="max-h-[calc(80vh-80px)] overflow-y-auto p-5">
+                <div class="relative">
+                    <i class="fas fa-search absolute left-4 top-1/2 -translate-y-1/2 text-gray-400"></i>
+                    <input type="text" id="message-search-input" class="w-full pl-12 pr-4 py-3 border-2 border-gray-200 rounded-full text-base focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder="Search messages...">
+                    <button class="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600" id="clear-search-btn">
+                        <i class="fas fa-times"></i>
+                    </button>
+                </div>
+                
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mt-4">
+                    <div>
+                        <label class="text-sm font-medium text-gray-700">Message Type</label>
+                        <select id="message-type-filter" class="w-full mt-1 p-2 border border-gray-300 rounded-md text-sm focus:outline-none focus:ring-1 focus:ring-blue-500">
+                            <option value="">All Types</option>
+                            <option value="CHAT">Chat</option>
+                            <option value="SMS_OUTBOUND">SMS Sent</option>
+                            <option value="SMS_INBOUND">SMS Received</option>
+                        </select>
                     </div>
                     
-                    <div class="search-filters">
-                        <div class="filter-group">
-                            <label class="filter-label">Message Type</label>
-                            <select id="message-type-filter" class="filter-select search-filter">
-                                <option value="">All Types</option>
-                                <option value="CHAT">Chat</option>
-                                <option value="SMS_OUTBOUND">SMS Sent</option>
-                                <option value="SMS_INBOUND">SMS Received</option>
-                            </select>
-                        </div>
-                        
-                        <div class="filter-group">
-                            <label class="filter-label">Sender</label>
-                            <select id="sender-filter" class="filter-select search-filter">
-                                <option value="">All Senders</option>
-                                <!-- Options will be populated dynamically -->
-                            </select>
-                        </div>
-                        
-                        <div class="filter-group">
-                            <label class="filter-label">Conversation</label>
-                            <select id="conversation-filter" class="filter-select search-filter">
-                                <option value="">All Conversations</option>
-                                <!-- Options will be populated dynamically -->
-                            </select>
-                        </div>
-                        
-                        <div class="filter-group">
-                            <label class="filter-label">Date From</label>
-                            <input type="date" id="date-after-filter" class="filter-input search-filter">
-                        </div>
-                        
-                        <div class="filter-group">
-                            <label class="filter-label">Date To</label>
-                            <input type="date" id="date-before-filter" class="filter-input search-filter">
-                        </div>
+                    <div>
+                        <label class="text-sm font-medium text-gray-700">Sender</label>
+                        <select id="sender-filter" class="w-full mt-1 p-2 border border-gray-300 rounded-md text-sm focus:outline-none focus:ring-1 focus:ring-blue-500">
+                            <option value="">All Senders</option>
+                            <!-- Options will be populated dynamically -->
+                        </select>
+                    </div>
+                    
+                    <div>
+                        <label class="text-sm font-medium text-gray-700">Conversation</label>
+                        <select id="conversation-filter" class="w-full mt-1 p-2 border border-gray-300 rounded-md text-sm focus:outline-none focus:ring-1 focus:ring-blue-500">
+                            <option value="">All Conversations</option>
+                            <!-- Options will be populated dynamically -->
+                        </select>
+                    </div>
+                    
+                    <div>
+                        <label class="text-sm font-medium text-gray-700">Date From</label>
+                        <input type="date" id="date-after-filter" class="w-full mt-1 p-2 border border-gray-300 rounded-md text-sm focus:outline-none focus:ring-1 focus:ring-blue-500">
+                    </div>
+                    
+                    <div>
+                        <label class="text-sm font-medium text-gray-700">Date To</label>
+                        <input type="date" id="date-before-filter" class="w-full mt-1 p-2 border border-gray-300 rounded-md text-sm focus:outline-none focus:ring-1 focus:ring-blue-500">
                     </div>
                 </div>
                 
-                <div id="search-loading" class="search-loading">
-                    <i class="fas fa-spinner fa-spin"></i>
-                    Searching messages...
+                <div id="search-loading" class="text-center p-6 text-gray-500 hidden">
+                    <i class="fas fa-spinner fa-spin text-2xl"></i>
+                    <p class="mt-2">Searching messages...</p>
                 </div>
                 
-                <div id="search-error" class="search-error"></div>
+                <div id="search-error" class="text-center p-6 text-red-500 hidden"></div>
                 
-                <div id="search-results-container" class="search-results-container"></div>
+                <div id="search-results-container" class="mt-4"></div>
             </div>
         </div>
     </div>

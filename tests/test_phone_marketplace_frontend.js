@@ -46,13 +46,7 @@ describe('Phone Number Marketplace', () => {
             writable: true,
         });
 
-        // Mock bootstrap Modal
-        global.bootstrap = {
-            Modal: jest.fn().mockImplementation(() => ({
-                show: jest.fn(),
-                hide: jest.fn()
-            }))
-        };
+        
 
         marketplace = new PhoneMarketplace();
     });
@@ -267,7 +261,7 @@ describe('Phone Number Marketplace', () => {
             capabilities: ['sms', 'voice']
         };
 
-        test('should show purchase modal with number details', () => {
+                test('should show purchase modal with number details', () => {
             marketplace.availableNumbers = [mockNumber];
             marketplace.countries = [{ code: 'US', name: 'United States', flag: '🇺🇸' }];
 
@@ -563,7 +557,7 @@ describe('Phone Number Marketplace', () => {
         test('should show error notifications', () => {
             marketplace.showError('Test error message');
 
-            const notification = document.querySelector('.alert-danger');
+            const notification = document.querySelector('.fixed.top-5.right-5.bg-red-500');
             expect(notification).toBeTruthy();
             expect(notification.textContent).toContain('Test error message');
         });
@@ -571,7 +565,7 @@ describe('Phone Number Marketplace', () => {
         test('should show success notifications', () => {
             marketplace.showSuccess('Test success message');
 
-            const notification = document.querySelector('.alert-success');
+            const notification = document.querySelector('.fixed.top-5.right-5.bg-green-500');
             expect(notification).toBeTruthy();
             expect(notification.textContent).toContain('Test success message');
         });

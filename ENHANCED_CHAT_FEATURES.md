@@ -60,7 +60,7 @@ Task 4.2 has been successfully completed, implementing advanced chat interface f
 
 ### Key Technologies
 - **WebSocket** for real-time communication
-- **Bootstrap 5** for responsive UI
+
 - **Font Awesome** for icons
 - **Browser Notification API** for desktop alerts
 - **Local Storage** for user preferences

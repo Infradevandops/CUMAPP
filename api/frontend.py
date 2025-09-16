@@ -84,3 +84,9 @@ async def billing_page(request: Request):
 async def admin_page(request: Request):
     """Serves the admin dashboard."""
     return templates.TemplateResponse("admin.html", {"request": request})
+
+
+@router.get("/user/history", response_class=HTMLResponse)
+async def user_history_page(request: Request):
+    """Serves the user history and usage page."""
+    return templates.TemplateResponse("user_history.html", {"request": request})

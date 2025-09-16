@@ -6,7 +6,7 @@
 [![Security](https://img.shields.io/badge/security-hardened-brightgreen.svg)](#security)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
-**Production-ready SMS verification platform** with modern dark/grey Bootstrap 5.3 UI, real API integration, and React Native mobile app planned.
+**Production-ready SMS verification platform** with modern dark/grey Tailwind CSS UI, real API integration, and React Native mobile app planned.
 
 ---
 
@@ -34,7 +34,7 @@ open http://localhost:8000
 ```
 ┌─────────────────┐    ┌─────────────────┐    ┌─────────────────┐
 │   Frontend      │    │   FastAPI       │    │   Services      │
-│   Bootstrap 5   │◄──►│   + WebSocket   │◄──►│   SMS/AI/Auth   │
+│   Tailwind CSS  │◄──►│   + WebSocket   │◄──►│   SMS/AI/Auth   │
 └─────────────────┘    └─────────────────┘    └─────────────────┘
                                 │
                        ┌─────────────────┐
@@ -52,7 +52,7 @@ open http://localhost:8000
 - **Docker Ready**: Production deployment
 
 ### Frontend Technology
-- **Current**: Bootstrap 5.3 (dark/grey theme) + Tailwind CSS (landing) + Vanilla JS
+- **Current**: Tailwind CSS (dark/grey theme) + Vanilla JS
 - **Planned**: React Native mobile app
 - **Features**: Responsive design, modern UI/UX, sidebar navigation, red accent color
 
@@ -87,7 +87,7 @@ token = csrf_protection.generate_token(session_id)
 - Unified dark/grey theme across dashboard and homepage
 - Sidebar navigation for user dashboard
 - Red accent color for primary actions and highlights
-- Bootstrap 5.3 for dashboard, Tailwind CSS for landing page
+- Tailwind CSS for dashboard and landing page
 - Responsive, accessible, and visually appealing design
 
 ### 📱 **SMS & Verification**

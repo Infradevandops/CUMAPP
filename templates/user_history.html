@@ -1,0 +1,268 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CumApp - Communication Platform Dashboard</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+</head>
+<body class="bg-gray-800 text-gray-200 font-sans">
+    <!-- Navigation -->
+    <nav class="bg-gray-900 text-white">
+        <div class="container mx-auto px-4">
+            <div class="flex justify-between items-center py-3">
+                <a class="text-xl font-bold" href="/">
+                    <i class="fas fa-sms mr-2"></i>CumApp
+                </a>
+                <div class="hidden md:flex items-center space-x-4">
+                    <a class="hover:text-gray-300" href="#features">Features</a>
+                    <a class="hover:text-gray-300" href="#demo">Demo</a>
+                    <a class="hover:text-gray-300" href="#api">API</a>
+                </div>
+                <div class="md:hidden">
+                    <button onclick="toggleMobileMenu()"><i class="fas fa-bars"></i></button>
+                </div>
+            </div>
+            <div id="mobileMenu" class="hidden md:hidden">
+                <a class="block py-2 px-4 text-sm hover:bg-gray-700" href="#features">Features</a>
+                <a class="block py-2 px-4 text-sm hover:bg-gray-700" href="#demo">Demo</a>
+                <a class="block py-2 px-4 text-sm hover:bg-gray-700" href="#api">API</a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section class="bg-gray-800 text-gray-200 py-16">
+        <div class="container mx-auto text-center">
+            <h1 class="text-4xl font-bold mb-4">
+                <i class="fas fa-history mr-3"></i>User History and Usage
+            </h1>
+            <p class="text-lg text-gray-400 mb-4">
+                Here you can see your history of used services, numbers, and recent calls/verifications.
+            </p>
+        </div>
+    </section>
+
+    <!-- History and Usage Section -->
+    <section id="history" class="py-12 bg-gray-900">
+        <div class="container mx-auto px-4">
+            <h2 class="text-3xl text-center font-bold mb-10">Your Activity</h2>
+            <div class="flex flex-wrap -mx-4">
+                <div class="w-full px-4 mb-8">
+                    <div class="bg-gray-700 rounded-lg shadow-lg">
+                        <div class="p-4 border-b border-gray-600">
+                            <h5 class="font-bold mb-0"><i class="fas fa-history mr-2"></i>Verification History</h5>
+                        </div>
+                        <div class="p-4">
+                            <div id="verification-history">
+                                <div class="text-center text-gray-400">
+                                    <i class="fas fa-spinner fa-spin mr-2"></i>Loading verification history...
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="w-full px-4 mb-8">
+                    <div class="bg-gray-700 rounded-lg shadow-lg">
+                        <div class="p-4 border-b border-gray-600">
+                            <h5 class="font-bold mb-0"><i class="fas fa-phone-alt mr-2"></i>Call History</h5>
+                        </div>
+                        <div class="p-4">
+                            <div id="call-history">
+                                <div class="text-center text-gray-400">
+                                    <i class="fas fa-spinner fa-spin mr-2"></i>Loading call history...
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="w-full px-4 mb-8">
+                    <div class="bg-gray-700 rounded-lg shadow-lg">
+                        <div class="p-4 border-b border-gray-600">
+                            <h5 class="font-bold mb-0"><i class="fas fa-map-signs mr-2"></i>Number/Service Mapping</h5>
+                        </div>
+                        <div class="p-4">
+                            <div id="number-service-mapping">
+                                <div class="text-center text-gray-400">
+                                    <i class="fas fa-spinner fa-spin mr-2"></i>Loading number/service mapping...
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="w-full px-4 mb-8">
+                    <div class="bg-gray-700 rounded-lg shadow-lg">
+                        <div class="p-4 border-b border-gray-600">
+                            <h5 class="font-bold mb-0"><i class="fas fa-random mr-2"></i>Service/Number Mapping</h5>
+                        </div>
+                        <div class="p-4">
+                            <div id="service-number-mapping">
+                                <div class="text-center text-gray-400">
+                                    <i class="fas fa-spinner fa-spin mr-2"></i>Loading service/number mapping...
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="bg-gray-900 text-white py-4">
+        <div class="container mx-auto text-center">
+            <p class="mb-0">
+                <i class="fas fa-heart text-red-500 mr-2"></i>
+                CumApp - Comprehensive Communication Platform
+            </p>
+            <small class="text-gray-400">Built with FastAPI, TextVerified, Twilio (Mock), and Groq AI</small>
+        </div>
+    </footer>
+
+    <script>
+        function toggleMobileMenu() {
+            document.getElementById('mobileMenu').classList.toggle('hidden');
+        }
+
+        async function loadVerificationHistory() {
+            const historyDiv = document.getElementById('verification-history');
+            try {
+                const response = await fetch('/api/verifications/history'); // Assuming this endpoint exists
+                const data = await response.json();
+
+                if (response.ok && data.length > 0) {
+                    let html = '<ul class="space-y-4">';
+                    data.forEach(item => {
+                        html += `
+                            <li class="bg-gray-800 p-4 rounded-md border border-gray-600">
+                                <div class="flex justify-between items-center">
+                                    <div>
+                                        <strong class="text-white">Service:</strong> ${item.service}
+                                        <br>
+                                        <small class="text-gray-400">Number: ${item.phone_number}</small>
+                                    </div>
+                                    <div class="text-right">
+                                        <span class="text-sm text-gray-400">${new Date(item.created_at).toLocaleString()}</span>
+                                        <br>
+                                        <span class="px-2 py-1 text-xs font-bold rounded-full ${item.status === 'completed' ? 'bg-green-500 text-white' : 'bg-yellow-500 text-black'}">
+                                            ${item.status}
+                                        </span>
+                                    </div>
+                                </div>
+                                <div class="mt-2 text-gray-300">
+                                    <strong>Code:</strong> ${item.code || 'N/A'}
+                                </div>
+                            </li>
+                        `;
+                    });
+                    html += '</ul>';
+                    historyDiv.innerHTML = html;
+                } else {
+                    historyDiv.innerHTML = '<div class="text-center text-gray-400">No verification history found.</div>';
+                }
+            } catch (error) {
+                historyDiv.innerHTML = '<div class="text-center text-red-500">Error loading verification history.</div>';
+            }
+        }
+
+        async function loadCallHistory() {
+            const historyDiv = document.getElementById('call-history');
+            try {
+                const response = await fetch('/api/calls/history'); // Assuming this endpoint exists
+                const data = await response.json();
+
+                if (response.ok && data.length > 0) {
+                    let html = '<ul class="space-y-4">';
+                    data.forEach(item => {
+                        html += `
+                            <li class="bg-gray-800 p-4 rounded-md border border-gray-600">
+                                <div class="flex justify-between items-center">
+                                    <div>
+                                        <strong class="text-white">From:</strong> ${item.from_number}
+                                        <br>
+                                        <small class="text-gray-400">To: ${item.to_number}</small>
+                                    </div>
+                                    <div class="text-right">
+                                        <span class="text-sm text-gray-400">${new Date(item.created_at).toLocaleString()}</span>
+                                        <br>
+                                        <span class="px-2 py-1 text-xs font-bold rounded-full ${item.status === 'completed' ? 'bg-green-500 text-white' : 'bg-yellow-500 text-black'}">
+                                            ${item.status}
+                                        </span>
+                                    </div>
+                                </div>
+                            </li>
+                        `;
+                    });
+                    html += '</ul>';
+                    historyDiv.innerHTML = html;
+                } else {
+                    historyDiv.innerHTML = '<div class="text-center text-gray-400">No call history found.</div>';
+                }
+            } catch (error) {
+                historyDiv.innerHTML = '<div class="text-center text-red-500">Error loading call history.</div>';
+            }
+        }
+
+        async function loadNumberServiceMapping() {
+            const mappingDiv = document.getElementById('number-service-mapping');
+            try {
+                const response = await fetch('/api/user/number-service-mapping'); // Assuming this endpoint exists
+                const data = await response.json();
+
+                if (response.ok && data.length > 0) {
+                    let html = '<ul class="space-y-4">';
+                    data.forEach(item => {
+                        html += `
+                            <li class="bg-gray-800 p-4 rounded-md border border-gray-600">
+                                <strong class="text-white">Number:</strong> ${item.phone_number}
+                                <br>
+                                <small class="text-gray-400">Services: ${item.services_used.join(', ')}</small>
+                            </li>
+                        `;
+                    });
+                    html += '</ul>';
+                    mappingDiv.innerHTML = html;
+                } else {
+                    mappingDiv.innerHTML = '<div class="text-center text-gray-400">No number/service mapping found.</div>';
+                }
+            } catch (error) {
+                mappingDiv.innerHTML = '<div class="text-center text-red-500">Error loading number/service mapping.</div>';
+            }
+        }
+
+        async function loadServiceNumberMapping() {
+            const mappingDiv = document.getElementById('service-number-mapping');
+            try {
+                const response = await fetch('/api/user/service-number-mapping'); // Assuming this endpoint exists
+                const data = await response.json();
+
+                if (response.ok && data.length > 0) {
+                    let html = '<ul class="space-y-4">';
+                    data.forEach(item => {
+                        html += `
+                            <li class="bg-gray-800 p-4 rounded-md border border-gray-600">
+                                <strong class="text-white">Service:</strong> ${item.service}
+                                <br>
+                                <small class="text-gray-400">Numbers: ${item.numbers_used.join(', ')}</small>
+                            </li>
+                        `;
+                    });
+                    html += '</ul>';
+                    mappingDiv.innerHTML = html;
+                } else {
+                    mappingDiv.innerHTML = '<div class="text-center text-gray-400">No service/number mapping found.</div>';
+                }
+            } catch (error) {
+                mappingDiv.innerHTML = '<div class="text-center text-red-500">Error loading service/number mapping.</div>';
+            }
+        }
+
+        // Initialize
+        loadVerificationHistory();
+        loadCallHistory();
+        loadNumberServiceMapping();
+        loadServiceNumberMapping();
+    </script>
+</body>
+</html>
