@@ -325,4 +325,41 @@ class ServiceRetryConfigs:
             max_attempts=4,
             base_delay=1.0,
             max_delay=60.0,
-            strategy=
+            strategy=RetryStrategy.EXPONENTIAL_BACKOFF,
+            retryable_exceptions=[ConnectionError, TimeoutError, BaseServiceException],
+            non_retryable_exceptions=[],
+        )
+
+
+def get_textverified_retry_config():
+    """Returns a pre-configured retry handler for TextVerified"""
+    return ServiceRetryConfigs.textverified()
+
+
+def textverified_retry_decorator(func):
+    """Applies a standard retry policy for TextVerified operations"""
+    config = get_textverified_retry_config()
+    handler = RetryHandler(config)
+
+    @wraps(func)
+    async def wrapper(*args, **kwargs):
+        return await handler.execute_with_retry(func, *args, **kwargs)
+
+    return wrapper
+
+
+def get_twilio_retry_config():
+    """Returns a pre-configured retry handler for Twilio"""
+    return ServiceRetryConfigs.twilio()
+
+
+def twilio_retry_decorator(func):
+    """Applies a standard retry policy for Twilio operations"""
+    config = get_twilio_retry_config()
+    handler = RetryHandler(config)
+
+    @wraps(func)
+    async def wrapper(*args, **kwargs):
+        return await handler.execute_with_retry(func, *args, **kwargs)
+
+    return wrapper
