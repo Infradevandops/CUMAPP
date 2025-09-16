@@ -336,16 +336,27 @@ def get_textverified_retry_config():
     return ServiceRetryConfigs.textverified()
 
 
-def textverified_retry_decorator(func):
+def textverified_retry_decorator(
+    _func=None, *, max_attempts: int = 3, base_delay: float = 2.0, max_delay: float = 120.0
+):
     """Applies a standard retry policy for TextVerified operations"""
-    config = get_textverified_retry_config()
-    handler = RetryHandler(config)
+    def decorator(func):
+        config = get_textverified_retry_config()
+        config.max_attempts = max_attempts
+        config.base_delay = base_delay
+        config.max_delay = max_delay
+        handler = RetryHandler(config)
 
-    @wraps(func)
-    async def wrapper(*args, **kwargs):
-        return await handler.execute_with_retry(func, *args, **kwargs)
+        @wraps(func)
+        async def wrapper(*args, **kwargs):
+            return await handler.execute_with_retry(func, *args, **kwargs)
 
-    return wrapper
+        return wrapper
+
+    if _func is None:
+        return decorator
+    else:
+        return decorator(_func)
 
 
 def get_twilio_retry_config():
@@ -353,13 +364,24 @@ def get_twilio_retry_config():
     return ServiceRetryConfigs.twilio()
 
 
-def twilio_retry_decorator(func):
+def twilio_retry_decorator(
+    _func=None, *, max_attempts: int = 4, base_delay: float = 1.0, max_delay: float = 60.0
+):
     """Applies a standard retry policy for Twilio operations"""
-    config = get_twilio_retry_config()
-    handler = RetryHandler(config)
+    def decorator(func):
+        config = get_twilio_retry_config()
+        config.max_attempts = max_attempts
+        config.base_delay = base_delay
+        config.max_delay = max_delay
+        handler = RetryHandler(config)
 
-    @wraps(func)
-    async def wrapper(*args, **kwargs):
-        return await handler.execute_with_retry(func, *args, **kwargs)
+        @wraps(func)
+        async def wrapper(*args, **kwargs):
+            return await handler.execute_with_retry(func, *args, **kwargs)
 
-    return wrapper
+        return wrapper
+
+    if _func is None:
+        return decorator
+    else:
+        return decorator(_func)
