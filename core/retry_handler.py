@@ -317,6 +317,18 @@ class ServiceRetryConfigs:
         )
 
     @staticmethod
+    def ai_service() -> RetryConfig:
+        """Retry configuration for AI service operations"""
+        return RetryConfig(
+            max_attempts=3,
+            base_delay=1.0,
+            max_delay=10.0,
+            strategy=RetryStrategy.EXPONENTIAL_BACKOFF,
+            retryable_exceptions=[],
+            non_retryable_exceptions=[],
+        )
+
+    @staticmethod
     def textverified() -> RetryConfig:
         """Retry configuration for TextVerified API"""
         return RetryConfig(
