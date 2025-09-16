@@ -6,6 +6,9 @@
     <title>Dashboard - CumApp</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <!-- Intro.js for in-app tours -->
+    <link href="https://cdn.jsdelivr.net/npm/intro.js@7.1.0/minified/introjs.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/intro.js@7.1.0/minified/introjs.bundle.min.js"></script>
 </head>
 <body class="bg-gray-900 text-gray-100">
     <div class="flex min-h-screen">
@@ -490,6 +493,94 @@
 
         // Load dashboard data
         document.addEventListener('DOMContentLoaded', loadUserData);
+
+        // In-app tour and success metrics
+        function startDashboardTour() {
+            const tourCompleted = localStorage.getItem('dashboard_tour_completed');
+            if (!tourCompleted) {
+                introJs().setOptions({
+                    steps: [
+                        {
+                            element: '#sidebar',
+                            intro: 'This is your sidebar navigation. Use it to access different sections of the dashboard.',
+                            position: 'right'
+                        },
+                        {
+                            element: document.querySelector('.grid.grid-cols-1.md\\:grid-cols-2.lg\\:grid-cols-4'),
+                            intro: 'These cards show your key metrics: credits, active numbers, verifications, and success rate.',
+                            position: 'bottom'
+                        },
+                        {
+                            element: '.bg-gray-800:has(h5:text-red-500:contains("Quick Actions"))',
+                            intro: 'Quick actions allow you to perform common tasks like creating verifications or buying numbers.',
+                            position: 'bottom'
+                        },
+                        {
+                            element: '#recentActivity',
+                            intro: 'Here you can see your recent activity and history.',
+                            position: 'top'
+                        },
+                        {
+                            element: document.querySelector('button:has(i.fa-download)'),
+                            intro: 'Export your data as JSON or CSV for records.',
+                            position: 'top'
+                        }
+                    ],
+                    showStepNumbers: false,
+                    tooltipClass: 'custom-tooltip',
+                    highlightClass: 'custom-highlight'
+                }).start().oncomplete(() => {
+                    localStorage.setItem('dashboard_tour_completed', 'true');
+                    trackSuccessMetric('dashboard_tour_completed');
+                });
+            }
+        }
+
+        function trackSuccessMetric(eventName, data = {}) {
+            // Track success metrics locally
+            const metrics = JSON.parse(localStorage.getItem('user_metrics') || '[]');
+            metrics.push({
+                event: eventName,
+                timestamp: new Date().toISOString(),
+                data: data,
+                session_id: localStorage.getItem('session_id') || generateSessionId()
+            });
+            localStorage.setItem('user_metrics', JSON.stringify(metrics));
+
+            // Optional: Send to backend if API available
+            // fetch('/api/metrics/track', {
+            //     method: 'POST',
+            //     headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${localStorage.getItem('token')}` },
+            //     body: JSON.stringify({ event: eventName, data })
+            // }).catch(console.error);
+
+            console.log(`Success metric tracked: ${eventName}`);
+        }
+
+        function generateSessionId() {
+            return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
+                const r = Math.random() * 16 | 0, v = c == 'x' ? r : (r & 0x3 | 0x8);
+                return v.toString(16);
+            });
+        }
+
+        // Track page view
+        if (localStorage.getItem('token')) {
+            const sessionId = generateSessionId();
+            localStorage.setItem('session_id', sessionId);
+            trackSuccessMetric('dashboard_viewed', { session_id: sessionId });
+            startDashboardTour();
+        }
+
+        // Track button clicks as success events
+        document.addEventListener('click', (e) => {
+            if (e.target.matches('a[href*="/services"], a[href*="/numbers"], a[href*="/verifications"], a[href*="/billing"]')) {
+                trackSuccessMetric('quick_action_clicked', { action: e.target.textContent.trim() });
+            }
+            if (e.target.matches('button[onclick*="exportHistory"]')) {
+                trackSuccessMetric('export_history_clicked');
+            }
+        });
     </script>
 </body>
 </html>

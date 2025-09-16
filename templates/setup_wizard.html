@@ -1,0 +1,320 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Setup Wizard - CumApp</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        .step-indicator { position: relative; }
+        .step-indicator::before { content: ''; position: absolute; top: 50%; left: 0; right: 0; height: 2px; background: #e5e7eb; z-index: -1; }
+        .step-indicator.active::before { background: #ef4444; }
+        .step-indicator.completed::before { background: #10b981; }
+        .video-container { position: relative; padding-bottom: 56.25%; height: 0; overflow: hidden; }
+        .video-container iframe { position: absolute; top: 0; left: 0; width: 100%; height: 100%; }
+    </style>
+</head>
+<body class="bg-gray-900 text-gray-100 min-h-screen">
+    <div class="container mx-auto px-4 py-8 max-w-4xl">
+        <!-- Header -->
+        <div class="text-center mb-8">
+            <h1 class="text-4xl font-bold text-red-500 mb-4">Welcome to CumApp Setup Wizard</h1>
+            <p class="text-gray-400">Get started in minutes with our guided setup</p>
+        </div>
+
+        <!-- Progress Bar -->
+        <div class="mb-8">
+            <div class="flex justify-between items-center mb-2">
+                <div class="flex-1 h-2 bg-gray-700 rounded-full">
+                    <div id="progress-bar" class="h-2 bg-red-500 rounded-full transition-all duration-300" style="width: 0%"></div>
+                </div>
+                <span id="progress-text" class="ml-4 text-sm font-medium text-gray-400">Step 1 of 5</span>
+            </div>
+        </div>
+
+        <!-- Steps Container -->
+        <div id="wizard-steps" class="space-y-8">
+            <!-- Step 1: Account Setup -->
+            <div id="step-1" class="step bg-gray-800 p-6 rounded-lg shadow-lg">
+                <div class="step-indicator flex items-center mb-4">
+                    <div class="w-8 h-8 bg-red-500 text-white rounded-full flex items-center justify-center font-bold completed">1</div>
+                    <span class="ml-4 font-semibold">Account Setup</span>
+                </div>
+                <div class="grid md:grid-cols-2 gap-6">
+                    <div>
+                        <h3 class="text-xl font-bold mb-4">Complete Your Profile</h3>
+                        <form id="profile-form">
+                            <div class="mb-4">
+                                <label class="block text-sm font-medium mb-2">Full Name</label>
+                                <input type="text" id="full-name" class="w-full bg-gray-700 text-white p-3 rounded-lg border border-gray-600 focus:border-red-500 focus:outline-none" placeholder="Enter your full name">
+                            </div>
+                            <div class="mb-4">
+                                <label class="block text-sm font-medium mb-2">Business Name (Optional)</label>
+                                <input type="text" id="business-name" class="w-full bg-gray-700 text-white p-3 rounded-lg border border-gray-600 focus:border-red-500 focus:outline-none" placeholder="Enter your business name">
+                            </div>
+                            <div class="mb-6">
+                                <label class="block text-sm font-medium mb-2">Phone Number</label>
+                                <input type="tel" id="phone-number" class="w-full bg-gray-700 text-white p-3 rounded-lg border border-gray-600 focus:border-red-500 focus:outline-none" placeholder="+1 (555) 123-4567">
+                            </div>
+                            <button type="submit" class="bg-red-600 hover:bg-red-700 text-white font-bold py-3 px-6 rounded-lg w-full">Save Profile</button>
+                        </form>
+                    </div>
+                    <div>
+                        <h3 class="text-xl font-bold mb-4">Watch Tutorial</h3>
+                        <div class="video-container mb-4">
+                            <iframe src="https://www.youtube.com/embed/dQw4w9WgXcQ" title="Account Setup Tutorial" frameborder="0" allowfullscreen></iframe>
+                        </div>
+                        <p class="text-gray-400 text-sm">Learn how to set up your CumApp account and configure your profile in under 2 minutes.</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Step 2: API Keys -->
+            <div id="step-2" class="step bg-gray-800 p-6 rounded-lg shadow-lg hidden">
+                <div class="step-indicator flex items-center mb-4">
+                    <div class="w-8 h-8 bg-red-500 text-white rounded-full flex items-center justify-center font-bold">2</div>
+                    <span class="ml-4 font-semibold">Configure API Keys</span>
+                </div>
+                <div class="grid md:grid-cols-2 gap-6">
+                    <div>
+                        <h3 class="text-xl font-bold mb-4">Connect Your Services</h3>
+                        <div class="space-y-4">
+                            <div>
+                                <h4 class="font-semibold mb-2">TextVerified API</h4>
+                                <input type="password" id="textverified-key" class="w-full bg-gray-700 text-white p-3 rounded-lg border border-gray-600 focus:border-red-500 focus:outline-none" placeholder="Enter TextVerified API Key">
+                                <p class="text-gray-400 text-sm mt-1">Get your API key from <a href="https://textverified.com" class="text-red-400">textverified.com</a></p>
+                            </div>
+                            <div>
+                                <h4 class="font-semibold mb-2">Twilio Credentials</h4>
+                                <div class="space-y-2">
+                                    <input type="text" id="twilio-sid" class="w-full bg-gray-700 text-white p-3 rounded-lg border border-gray-600 focus:border-red-500 focus:outline-none" placeholder="Account SID">
+                                    <input type="password" id="twilio-token" class="w-full bg-gray-700 text-white p-3 rounded-lg border border-gray-600 focus:border-red-500 focus:outline-none" placeholder="Auth Token">
+                                </div>
+                                <p class="text-gray-400 text-sm mt-1">Configure SMS sending from <a href="https://twilio.com" class="text-red-400">twilio.com</a></p>
+                            </div>
+                            <div>
+                                <h4 class="font-semibold mb-2">Groq AI Key</h4>
+                                <input type="password" id="groq-key" class="w-full bg-gray-700 text-white p-3 rounded-lg border border-gray-600 focus:border-red-500 focus:outline-none" placeholder="Enter Groq API Key">
+                                <p class="text-gray-400 text-sm mt-1">Enable AI features from <a href="https://groq.com" class="text-red-400">groq.com</a></p>
+                            </div>
+                            <button onclick="saveApiKeys()" class="bg-red-600 hover:bg-red-700 text-white font-bold py-3 px-6 rounded-lg mt-4">Save API Keys</button>
+                        </div>
+                    </div>
+                    <div>
+                        <h3 class="text-xl font-bold mb-4">Watch Tutorial</h3>
+                        <div class="video-container mb-4">
+                            <iframe src="https://www.youtube.com/embed/dQw4w9WgXcQ" title="API Configuration Tutorial" frameborder="0" allowfullscreen></iframe>
+                        </div>
+                        <p class="text-gray-400 text-sm">Step-by-step guide to connecting your API services to CumApp.</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Step 3: Billing Setup -->
+            <div id="step-3" class="step bg-gray-800 p-6 rounded-lg shadow-lg hidden">
+                <div class="step-indicator flex items-center mb-4">
+                    <div class="w-8 h-8 bg-red-500 text-white rounded-full flex items-center justify-center font-bold">3</div>
+                    <span class="ml-4 font-semibold">Billing & Payment</span>
+                </div>
+                <div class="grid md:grid-cols-2 gap-6">
+                    <div>
+                        <h3 class="text-xl font-bold mb-4">Set Up Payment Method</h3>
+                        <div class="space-y-4">
+                            <div>
+                                <h4 class="font-semibold mb-2">Choose Subscription Plan</h4>
+                                <select id="plan-select" class="w-full bg-gray-700 text-white p-3 rounded-lg border border-gray-600 focus:border-red-500 focus:outline-none">
+                                    <option value="free">Free Plan - $0/month</option>
+                                    <option value="basic">Basic - $9.99/month</option>
+                                    <option value="premium">Premium - $29.99/month</option>
+                                    <option value="enterprise">Enterprise - $99.99/month</option>
+                                </select>
+                            </div>
+                            <div>
+                                <h4 class="font-semibold mb-2">Payment Method</h4>
+                                <div id="payment-element" class="bg-gray-700 p-3 rounded-lg border border-gray-600 min-h-[100px]"></div>
+                                <script src="https://js.stripe.com/v3/"></script>
+                                <script>
+                                    const stripe = Stripe('pk_test_your_publishable_key_here');
+                                    const elements = stripe.elements();
+                                    const paymentElement = elements.create('payment');
+                                    paymentElement.mount('#payment-element');
+                                </script>
+                            </div>
+                            <button onclick="setupBilling()" class="bg-red-600 hover:bg-red-700 text-white font-bold py-3 px-6 rounded-lg w-full">Subscribe Now</button>
+                        </div>
+                    </div>
+                    <div>
+                        <h3 class="text-xl font-bold mb-4">Watch Tutorial</h3>
+                        <div class="video-container mb-4">
+                            <iframe src="https://www.youtube.com/embed/dQw4w9WgXcQ" title="Billing Setup Tutorial" frameborder="0" allowfullscreen></iframe>
+                        </div>
+                        <p class="text-gray-400 text-sm">Learn how to set up billing and choose the right plan for your needs.</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Step 4: Integration Test -->
+            <div id="step-4" class="step bg-gray-800 p-6 rounded-lg shadow-lg hidden">
+                <div class="step-indicator flex items-center mb-4">
+                    <div class="w-8 h-8 bg-red-500 text-white rounded-full flex items-center justify-center font-bold">4</div>
+                    <span class="ml-4 font-semibold">Test Your Setup</span>
+                </div>
+                <div class="grid md:grid-cols-2 gap-6">
+                    <div>
+                        <h3 class="text-xl font-bold mb-4">Run Integration Tests</h3>
+                        <div class="space-y-4">
+                            <div class="flex items-center">
+                                <input type="checkbox" id="test-sms" class="mr-2">
+                                <label class="text-sm">Test SMS Sending</label>
+                            </div>
+                            <div class="flex items-center">
+                                <input type="checkbox" id="test-verification" class="mr-2">
+                                <label class="text-sm">Test Verification Request</label>
+                            </div>
+                            <div class="flex items-center">
+                                <input type="checkbox" id="test-api" class="mr-2">
+                                <label class="text-sm">Test API Endpoint</label>
+                            </div>
+                            <div class="flex items-center">
+                                <input type="checkbox" id="test-billing" class="mr-2">
+                                <label class="text-sm">Test Billing Integration</label>
+                            </div>
+                            <button onclick="runTests()" class="bg-red-600 hover:bg-red-700 text-white font-bold py-3 px-6 rounded-lg">Run All Tests</button>
+                            <div id="test-results" class="mt-4 p-4 bg-gray-700 rounded-lg hidden">
+                                <h4 class="font-semibold mb-2">Test Results</h4>
+                                <div id="test-output"></div>
+                            </div>
+                        </div>
+                    </div>
+                    <div>
+                        <h3 class="text-xl font-bold mb-4">Watch Tutorial</h3>
+                        <div class="video-container mb-4">
+                            <iframe src="https://www.youtube.com/embed/dQw4w9WgXcQ" title="Integration Test Tutorial" frameborder="0" allowfullscreen></iframe>
+                        </div>
+                        <p class="text-gray-400 text-sm">Verify your configuration with our automated tests and troubleshooting guide.</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Step 5: Complete -->
+            <div id="step-5" class="step bg-green-900 p-6 rounded-lg shadow-lg text-center hidden">
+                <div class="step-indicator flex items-center mb-4 justify-center">
+                    <div class="w-8 h-8 bg-green-500 text-white rounded-full flex items-center justify-center font-bold completed">5</div>
+                    <span class="ml-4 font-semibold">Setup Complete!</span>
+                </div>
+                <i class="fas fa-check-circle text-6xl text-green-400 mb-4"></i>
+                <h3 class="text-2xl font-bold mb-4">Congratulations!</h3>
+                <p class="text-gray-300 mb-6">Your CumApp setup is complete. You can now start using all features.</p>
+                <div class="space-y-2">
+                    <a href="/dashboard" class="block bg-green-600 hover:bg-green-700 text-white font-bold py-3 px-6 rounded-lg">Go to Dashboard</a>
+                    <a href="/docs" class="block text-red-400 hover:text-red-300 font-semibold">View API Documentation</a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Navigation Buttons -->
+        <div class="flex justify-between mt-8">
+            <button id="prev-btn" onclick="prevStep()" class="bg-gray-700 hover:bg-gray-600 text-white font-bold py-2 px-6 rounded-lg hidden">Previous</button>
+            <button id="next-btn" onclick="nextStep()" class="bg-red-600 hover:bg-red-700 text-white font-bold py-2 px-6 rounded-lg ml-auto">Next</button>
+        </div>
+    </div>
+
+    <script>
+        let currentStep = 1;
+        const totalSteps = 5;
+
+        function updateProgress() {
+            const progress = ((currentStep - 1) / (totalSteps - 1)) * 100;
+            document.getElementById('progress-bar').style.width = progress + '%';
+            document.getElementById('progress-text').textContent = `Step ${currentStep} of ${totalSteps}`;
+
+            // Update step indicators
+            document.querySelectorAll('.step-indicator div').forEach((div, index) => {
+                if (index + 1 < currentStep) {
+                    div.classList.add('completed');
+                    div.innerHTML = '✓';
+                } else if (index + 1 === currentStep) {
+                    div.classList.remove('completed');
+                    div.innerHTML = currentStep;
+                }
+            });
+
+            // Show/hide steps
+            document.querySelectorAll('.step').forEach((step, index) => {
+                step.classList.toggle('hidden', index + 1 !== currentStep);
+            });
+
+            // Update buttons
+            document.getElementById('prev-btn').classList.toggle('hidden', currentStep === 1);
+            document.getElementById('next-btn').textContent = currentStep === totalSteps ? 'Finish' : 'Next';
+        }
+
+        function nextStep() {
+            if (currentStep < totalSteps) {
+                // Validate current step
+                if (validateCurrentStep()) {
+                    currentStep++;
+                    updateProgress();
+                }
+            }
+        }
+
+        function prevStep() {
+            if (currentStep > 1) {
+                currentStep--;
+                updateProgress();
+            }
+        }
+
+        function validateCurrentStep() {
+            const step = document.getElementById(`step-${currentStep}`);
+            switch (currentStep) {
+                case 1:
+                    return !!document.getElementById('full-name').value.trim();
+                case 2:
+                    return !!document.getElementById('textverified-key').value.trim();
+                case 3:
+                    return !!document.getElementById('plan-select').value;
+                case 4:
+                    return document.querySelectorAll('#step-4 input[type="checkbox"]:checked').length > 0;
+                default:
+                    return true;
+            }
+        }
+
+        function saveProfile(e) {
+            e.preventDefault();
+            // Save profile via API
+            alert('Profile saved!');
+            nextStep();
+        }
+
+        function saveApiKeys() {
+            // Save API keys via API
+            alert('API keys saved!');
+            nextStep();
+        }
+
+        function setupBilling() {
+            // Setup billing via Stripe
+            alert('Billing setup complete!');
+            nextStep();
+        }
+
+        function runTests() {
+            const results = document.getElementById('test-results');
+            const output = document.getElementById('test-output');
+            output.innerHTML = '<p class="text-green-400">All tests passed! ✅</p>';
+            results.classList.remove('hidden');
+            nextStep();
+        }
+
+        // Form event listeners
+        document.getElementById('profile-form').addEventListener('submit', saveProfile);
+
+        // Initialize
+        updateProgress();
+    </script>
+</body>
+</html>

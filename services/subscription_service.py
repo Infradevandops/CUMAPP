@@ -4,11 +4,14 @@ Subscription Management Service for CumApp Communication Platform
 Handles subscription plans, pricing logic, purchase/renewal workflows, usage tracking, and billing integration
 """
 import logging
+import os
 from datetime import datetime, timedelta
 from decimal import Decimal
 from enum import Enum
 from typing import Any, Dict, List, Optional, Tuple
 
+import stripe
+from dotenv import load_dotenv
 from sqlalchemy import and_, desc, func, or_
 from sqlalchemy.orm import Session
 
@@ -16,6 +19,8 @@ from models.conversation_models import Message
 from models.phone_number_models import PhoneNumber
 from models.user_models import User
 from models.verification_models import VerificationRequest
+
+load_dotenv()
 
 logger = logging.getLogger(__name__)
 
@@ -54,6 +59,11 @@ class SubscriptionService:
             db_session: Database session
         """
         self.db = db_session
+
+        # Initialize Stripe
+        stripe.api_key = os.getenv('STRIPE_SECRET_KEY')
+        if not stripe.api_key:
+            logger.warning("STRIPE_SECRET_KEY not configured. Using mock payments.")
 
         # Load subscription plans and pricing
         self.subscription_plans = self._load_subscription_plans()
@@ -356,19 +366,42 @@ class SubscriptionService:
             price_key = f"{billing_cycle}_price"
             subscription_price = plan_config[price_key]
 
-            # Process payment (simplified - in production would integrate with Stripe/PayPal)
-            payment_result = await self._process_payment(
-                user_id=user_id,
-                amount=subscription_price,
-                description=f"{plan_config['name']} - {billing_cycle} billing",
-                payment_method=payment_method,
+            # Create Stripe customer if not exists
+            customer = stripe.Customer.create(
+                email=user.email,
+                metadata={"user_id": user_id},
             )
 
-            if not payment_result["success"]:
-                raise Exception(f"Payment failed: {payment_result['error']}")
+            # Create Stripe subscription
+            stripe_plan_id = f"price_{plan_id}_{billing_cycle}"  # Assume prices created in Stripe dashboard
+            subscription = stripe.Subscription.create(
+                customer=customer.id,
+                items=[{"price": stripe_plan_id}],
+                payment_behavior="default_incomplete",
+                payment_settings={"save_default_payment_method": "on_subscription"},
+                expand=["latest_invoice.payment_intent"],
+                metadata={"user_id": user_id},
+            )
 
-            # Update user subscription
+            if subscription.status == "incomplete":
+                # Handle setup intent for payment method
+                setup_intent = stripe.SetupIntent.create(
+                    customer=customer.id,
+                    usage="off_session",
+                )
+                return {
+                    "success": False,
+                    "requires_action": True,
+                    "client_secret": setup_intent.client_secret,
+                    "subscription_id": subscription.id,
+                    "message": "Payment setup required",
+                }
+
+            # Update user subscription with Stripe IDs
+            user.stripe_customer_id = customer.id
+            user.stripe_subscription_id = subscription.id
             user.subscription_plan = plan_id
+            user.subscription_status = "active"
 
             # Calculate subscription expiry based on billing cycle
             if billing_cycle == "monthly":
@@ -397,17 +430,18 @@ class SubscriptionService:
 
             self.db.commit()
 
-            # Create subscription record (simplified)
+            # Create subscription record
             subscription_record = {
-                "subscription_id": f"sub_{user_id}_{datetime.utcnow().timestamp()}",
+                "subscription_id": subscription.id,
                 "user_id": user_id,
                 "plan_id": plan_id,
                 "billing_cycle": billing_cycle,
                 "price": float(subscription_price),
-                "payment_id": payment_result["payment_id"],
+                "payment_id": subscription.latest_invoice.payment_intent.id if subscription.latest_invoice.payment_intent else None,
                 "start_date": datetime.utcnow().isoformat(),
                 "end_date": expiry_date.isoformat(),
-                "status": "active",
+                "status": subscription.status,
+                "stripe_subscription": subscription,
             }
 
             result = {
@@ -417,7 +451,7 @@ class SubscriptionService:
                 "next_billing_date": expiry_date.isoformat(),
             }
 
-            logger.info(f"User {user_id} subscribed to {plan_id} plan")
+            logger.info(f"User {user_id} subscribed to {plan_id} plan via Stripe")
             return result
 
         except Exception as e:
@@ -1085,30 +1119,62 @@ class SubscriptionService:
         description: str,
         payment_method: Dict[str, Any] = None,
     ) -> Dict[str, Any]:
-        """Process payment (simplified mock implementation)"""
-        # In production, this would integrate with Stripe, PayPal, etc.
-
+        """Process payment using Stripe"""
         if amount <= 0:
             return {"success": True, "payment_id": "free", "amount": 0}
 
-        # Mock payment processing
-        import random
+        try:
+            if not stripe.api_key:
+                # Fallback to mock if not configured
+                import random
+                success = random.random() > 0.05
+                if success:
+                    return {
+                        "success": True,
+                        "payment_id": f"pay_{user_id}_{datetime.utcnow().timestamp()}",
+                        "amount": float(amount),
+                        "currency": "USD",
+                        "status": "completed",
+                    }
+                else:
+                    return {
+                        "success": False,
+                        "error": "Payment declined by bank",
+                        "error_code": "card_declined",
+                    }
 
-        success = random.random() > 0.05  # 95% success rate
+            # Create payment intent for one-time payments (overage, etc.)
+            intent = stripe.PaymentIntent.create(
+                amount=int(amount * 100),  # cents
+                currency="usd",
+                description=description,
+                metadata={"user_id": user_id},
+                payment_method_types=["card"],
+                receipt_email=None,  # User email from DB
+            )
 
-        if success:
             return {
                 "success": True,
-                "payment_id": f"pay_{user_id}_{datetime.utcnow().timestamp()}",
+                "payment_id": intent.id,
+                "client_secret": intent.client_secret,
                 "amount": float(amount),
                 "currency": "USD",
-                "status": "completed",
+                "status": "requires_confirmation",
             }
-        else:
+
+        except stripe.error.StripeError as e:
+            logger.error(f"Stripe payment error: {e}")
             return {
                 "success": False,
-                "error": "Payment declined by bank",
-                "error_code": "card_declined",
+                "error": str(e),
+                "error_code": e.code if hasattr(e, 'code') else "stripe_error",
+            }
+        except Exception as e:
+            logger.error(f"Payment processing error: {e}")
+            return {
+                "success": False,
+                "error": "Payment processing failed",
+                "error_code": "internal_error",
             }
 
     def _generate_usage_recommendations(
@@ -1144,6 +1210,186 @@ class SubscriptionService:
 
         return recommendations
 
+    def generate_invoice(self, user_id: str, invoice_date: datetime = None, payment_id: str = None) -> str:
+        """Generate PDF invoice for a user"""
+        from reportlab.lib.pagesizes import letter
+        from reportlab.lib import colors
+        from reportlab.lib.styles import getSampleStyleSheet, ParagraphStyle
+        from reportlab.lib.units import inch
+        from reportlab.platypus import SimpleDocTemplate, Paragraph, Spacer, Table, TableStyle
+        from reportlab.pdfgen import canvas
+
+        if invoice_date is None:
+            invoice_date = datetime.utcnow()
+
+        # Get user and subscription
+        user = self._get_active_user(user_id)
+        subscription = await self.get_user_subscription(user_id)
+
+        # Create PDF
+        filename = f"invoice_{user_id}_{invoice_date.strftime('%Y%m%d')}.pdf"
+        doc = SimpleDocTemplate(filename, pagesize=letter)
+
+        # Styles
+        styles = getSampleStyleSheet()
+        title_style = ParagraphStyle(
+            'CustomTitle',
+            parent=styles['Heading1'],
+            fontSize=18,
+            spaceAfter=30,
+            textColor=colors.darkblue,
+            alignment=1  # Center
+        )
+
+        # Content
+        story = []
+
+        # Header
+        story.append(Paragraph("CumApp Invoice", title_style))
+        story.append(Spacer(1, 12))
+
+        # Invoice info table
+        invoice_data = [
+            ['Invoice Date', invoice_date.strftime('%Y-%m-%d')],
+            ['Due Date', (invoice_date + timedelta(days=30)).strftime('%Y-%m-%d')],
+            ['Invoice #', f"INV-{user_id[:8]}-{invoice_date.year}"]
+        ]
+        table = Table(invoice_data)
+        table.setStyle(TableStyle([
+            ('BACKGROUND', (0, 0), (-1, 0), colors.grey),
+            ('TEXTCOLOR', (0, 0), (-1, 0), colors.whitesmoke),
+            ('ALIGN', (0, 0), (-1, -1), 'CENTER'),
+            ('FONTNAME', (0, 0), (-1, 0), 'Helvetica-Bold'),
+            ('FONTSIZE', (0, 0), (-1, 0), 14),
+            ('BOTTOMPADDING', (0, 0), (-1, 0), 12),
+            ('BACKGROUND', (0, 1), (-1, -1), colors.beige),
+            ('GRID', (0, 0), (-1, -1), 1, colors.black)
+        ]))
+        story.append(table)
+        story.append(Spacer(1, 12))
+
+        # Bill to
+        story.append(Paragraph("Bill To:", styles['Heading2']))
+        story.append(Paragraph(f"{user.email}", styles['Normal']))
+        story.append(Spacer(1, 12))
+
+        # Subscription details
+        story.append(Paragraph("Subscription Details:", styles['Heading2']))
+        sub_data = [
+            ['Plan', subscription['current_plan']['name']],
+            ['Billing Cycle', subscription['billing']['cycle']],
+            ['Next Billing Date', subscription['billing']['next_billing_date']],
+            ['Status', subscription['billing']['status']]
+        ]
+        sub_table = Table(sub_data)
+        sub_table.setStyle(TableStyle([
+            ('BACKGROUND', (0, 0), (-1, 0), colors.grey),
+            ('TEXTCOLOR', (0, 0), (-1, 0), colors.whitesmoke),
+            ('ALIGN', (0, 0), (-1, -1), 'LEFT'),
+            ('FONTNAME', (0, 0), (-1, 0), 'Helvetica-Bold'),
+            ('FONTSIZE', (0, 0), (-1, 0), 12),
+            ('GRID', (0, 0), (-1, -1), 1, colors.black)
+        ]))
+        story.append(sub_table)
+        story.append(Spacer(1, 12))
+
+        # Usage and costs
+        story.append(Paragraph("Usage Summary:", styles['Heading2']))
+        usage_data = [
+            ['SMS Sent', f"{subscription['usage']['sms_sent']} / {subscription['limits']['sms_monthly']}"],
+            ['Voice Minutes', f"{subscription['usage']['voice_minutes']} / {subscription['limits']['voice_minutes_monthly']}"],
+            ['Verifications', f"{subscription['usage']['verifications']} / {subscription['limits']['verifications_monthly']}"],
+            ['Phone Numbers', f"{subscription['usage']['phone_numbers']} / {subscription['limits']['phone_numbers']}"],
+        ]
+        usage_table = Table(usage_data)
+        usage_table.setStyle(TableStyle([
+            ('ALIGN', (0, 0), (-1, -1), 'LEFT'),
+            ('FONTNAME', (0, 0), (-1, 0), 'Helvetica-Bold'),
+            ('FONTSIZE', (0, 0), (-1, 0), 10),
+            ('GRID', (0, 0), (-1, -1), 1, colors.black)
+        ]))
+        story.append(usage_table)
+        story.append(Spacer(1, 12))
+
+        # Cost breakdown
+        story.append(Paragraph("Cost Breakdown:", styles['Heading2']))
+        cost_data = [
+            ['Base Subscription', f"${subscription['costs']['base_subscription']:.2f}"],
+            ['SMS Overage', f"${subscription['costs']['total_overage']:.2f}"],
+            ['Total Amount Due', f"${subscription['costs']['total_cost']:.2f}"]
+        ]
+        cost_table = Table(cost_data)
+        cost_table.setStyle(TableStyle([
+            ('ALIGN', (0, 0), (-1, -1), 'RIGHT'),
+            ('FONTNAME', (0, 0), (-1, 0), 'Helvetica-Bold'),
+            ('FONTSIZE', (0, 0), (-1, 0), 12),
+            ('GRID', (0, 0), (-1, -1), 1, colors.black),
+            ('BACKGROUND', (0, 2), (-1, 2), colors.lightgrey)
+        ]))
+        story.append(cost_table)
+
+        # Build PDF
+        doc.build(story)
+
+        return filename
+
+    async def send_dunning_email(self, user_id: str, days_overdue: int = 0) -> bool:
+        """Send dunning email for overdue payments"""
+        import smtplib
+        from email.mime.text import MIMEText
+        from email.mime.multipart import MIMEMultipart
+
+        user = self._get_active_user(user_id)
+        subscription = await self.get_user_subscription(user_id)
+
+        if subscription['billing']['status'] == 'active':
+            return False  # No dunning needed
+
+        # SMTP config from env
+        smtp_server = os.getenv('SMTP_SERVER', 'smtp.gmail.com')
+        smtp_port = int(os.getenv('SMTP_PORT', 587))
+        smtp_user = os.getenv('SMTP_USER')
+        smtp_password = os.getenv('SMTP_PASSWORD')
+
+        if not all([smtp_server, smtp_port, smtp_user, smtp_password]):
+            logger.warning("SMTP config not complete, skipping dunning email")
+            return False
+
+        # Email content
+        subject = f"Payment Overdue - Your CumApp Subscription"
+        body = f"""
+        Dear {user.email},
+
+        Your CumApp subscription is overdue by {days_overdue} days.
+        Amount due: ${subscription['costs']['total_cost']:.2f}
+
+        Please update your payment method or contact support.
+
+        Best regards,
+        CumApp Team
+        """
+
+        msg = MIMEMultipart()
+        msg['From'] = smtp_user
+        msg['To'] = user.email
+        msg['Subject'] = subject
+        msg.attach(MIMEText(body, 'plain'))
+
+        try:
+            server = smtplib.SMTP(smtp_server, smtp_port)
+            server.starttls()
+            server.login(smtp_user, smtp_password)
+            text = msg.as_string()
+            server.sendmail(smtp_user, user.email, text)
+            server.quit()
+
+            logger.info(f"Dunning email sent to {user.email}")
+            return True
+
+        except Exception as e:
+            logger.error(f"Failed to send dunning email: {e}")
+            return False
+
 
 # Factory function
 def create_subscription_service(db_session: Session) -> SubscriptionService:
@@ -1176,5 +1422,7 @@ if __name__ == "__main__":
         print("- Overage calculation and limit enforcement")
         print("- Billing history and analytics")
         print("- Usage recommendations")
+        print("- Invoice generation with ReportLab")
+        print("- Dunning email system")
 
     asyncio.run(test_subscription_service())

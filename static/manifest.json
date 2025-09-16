@@ -1,0 +1,17 @@
+{
+  "name": "CumApp - SMS Verification Platform",
+  "short_name": "CumApp",
+  "description": "Professional SMS verification platform with AI features",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "theme_color": "#ef4444",
+  "icons": [
+    {
+      "src": "data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTkyIiBoZWlnaHQ9IjE5MiIgdmlld0JveD0iMCAwIDE5MiAxOTIiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CjxyZWN0IHdpZHRoPSIxOTIiIGhlaWdodD0iMTkyIiBmaWxsPSIjZWY0NDQ0Ii8+CjxwYXRoIGQ9Ik0yNCAyNEgxNjhWMTE2SDI0VjI0WiIgZmlsbD0id2hpdGUiLz4KPHBhdGggZD0iTTI0IDExNkgxNjhWMzY4SDI0VjExNloiIGZpbGw9IndoaXRlIi8+Cjwvc3ZnPgo=",
+      "sizes": "192x192",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ]
+}
