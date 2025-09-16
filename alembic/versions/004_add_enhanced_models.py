@@ -330,7 +330,7 @@ def upgrade():
         sa.Column("current_verification_usage", sa.Integer(), nullable=True),
         sa.Column("current_phone_numbers", sa.Integer(), nullable=True),
         sa.Column("last_usage_reset", sa.DateTime(), nullable=True),
-        sa.Column("metadata", sa.JSON(), nullable=True),
+        sa.Column("subscription_metadata", sa.JSON(), nullable=True),
         sa.Column("created_at", sa.DateTime(), nullable=True),
         sa.Column("updated_at", sa.DateTime(), nullable=True),
         sa.ForeignKeyConstraint(

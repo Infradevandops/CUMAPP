@@ -170,7 +170,7 @@ class UserSubscription(Base):
     last_usage_reset = Column(DateTime, default=datetime.utcnow)
 
     # Metadata
-    metadata = Column(JSON)
+    subscription_metadata = Column(JSON)
 
     # Timestamps
     created_at = Column(DateTime, default=datetime.utcnow)
