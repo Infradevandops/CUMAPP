@@ -532,7 +532,7 @@ class InboxFolderCreate(BaseModel):
 
     name: str = Field(..., max_length=100)
     description: Optional[str] = None
-    color: Optional[str] = Field(None, regex=r"^#[0-9A-Fa-f]{6}$")
+    color: Optional[str] = Field(None, pattern=r"^#[0-9A-Fa-f]{6}$")
     icon: Optional[str] = None
     auto_categorize: bool = False
     categorization_rules: Optional[Dict[str, Any]] = None
