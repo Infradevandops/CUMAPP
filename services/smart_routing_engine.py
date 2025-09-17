@@ -12,7 +12,7 @@ from typing import Any, Dict, List, Optional, Tuple
 import phonenumbers
 from phonenumbers import carrier, geocoder
 
-from enhanced_twilio_client import EnhancedTwilioClient
+from clients.enhanced_twilio_client import EnhancedTwilioClient
 
 logger = logging.getLogger(__name__)
 
