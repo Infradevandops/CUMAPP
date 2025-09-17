@@ -346,4 +346,5 @@ jobs:
       if: ${{ needs.quality.result == 'failure' || needs.test.result == 'failure' || needs.docker.result == 'failure' || needs.integration.result == 'failure' || needs.codeql.result == 'failure' }}
       run: |
         echo "❌ Pipeline failed. Check the logs for details."
+        echo "❌ Some checks failed. Please review the logs."
         exit 1

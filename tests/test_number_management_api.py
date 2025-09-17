@@ -12,7 +12,7 @@ from fastapi import FastAPI
 from fastapi.testclient import TestClient
 
 from api.number_management_api import router
-from enhanced_twilio_client import EnhancedTwilioClient
+from clients.enhanced_twilio_client import EnhancedTwilioClient
 from models.user_models import User
 from services.smart_routing_engine import SmartRoutingEngine
 

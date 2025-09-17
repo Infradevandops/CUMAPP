@@ -8,7 +8,7 @@ from unittest.mock import AsyncMock, Mock, patch
 
 import pytest
 
-from enhanced_twilio_client import (EnhancedTwilioClient,
+from clients.enhanced_twilio_client import (EnhancedTwilioClient,
                                     create_enhanced_twilio_client)
 
 

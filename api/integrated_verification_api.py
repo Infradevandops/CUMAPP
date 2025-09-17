@@ -16,7 +16,7 @@ from clients.enhanced_twilio_client import EnhancedTwilioClient
 from models.user_models import User
 from services.integrated_verification_service import (
     IntegratedVerificationService, create_integrated_verification_service)
-from textverified_client import TextVerifiedClient
+from clients.textverified_client import TextVerifiedClient
 
 # Initialize router and security
 router = APIRouter(

@@ -198,9 +198,9 @@ def run_tests():
         print("✅ Core dependencies importable")
 
         # Test custom modules
-        from groq_client import GroqAIClient
-        from mock_twilio_client import MockTwilioClient
-        from textverified_client import TextVerifiedClient
+        from clients.groq_client import GroqAIClient
+        from clients.mock_twilio_client import MockTwilioClient
+        from clients.textverified_client import TextVerifiedClient
 
         print("✅ Custom modules importable")
 

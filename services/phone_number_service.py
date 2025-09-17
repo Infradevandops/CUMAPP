@@ -12,7 +12,7 @@ from typing import Any, Dict, List, Optional, Tuple
 from sqlalchemy import and_, desc, func, or_
 from sqlalchemy.orm import Session
 
-from enhanced_twilio_client import EnhancedTwilioClient
+from clients.enhanced_twilio_client import EnhancedTwilioClient
 from models.phone_number_models import PhoneNumber
 from models.user_models import User
 

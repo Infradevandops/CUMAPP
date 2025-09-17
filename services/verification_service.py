@@ -18,7 +18,7 @@ from core.retry_handler import textverified_retry_decorator
 from models.user_models import User
 from models.verification_models import VerificationRequest
 from services.notification_service import NotificationService
-from textverified_client import TextVerifiedClient
+from clients.textverified_client import TextVerifiedClient
 
 logger = logging.getLogger(__name__)
 

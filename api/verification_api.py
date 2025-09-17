@@ -15,7 +15,7 @@ from auth.jwt_handler import verify_jwt_token
 from core.database import get_db
 from models.user_models import User
 from services.verification_service import VerificationService
-from textverified_client import TextVerifiedClient
+from clients.textverified_client import TextVerifiedClient
 
 # Initialize router and security
 router = APIRouter(prefix="/api/verifications", tags=["verifications"])

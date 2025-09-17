@@ -19,7 +19,7 @@ from sqlalchemy.orm import Session
 
 from auth.jwt_handler import verify_jwt_token
 from core.database import get_db
-from enhanced_twilio_client import (EnhancedTwilioClient,
+from clients.enhanced_twilio_client import (EnhancedTwilioClient,
                                     create_enhanced_twilio_client)
 from models.phone_number_models import PhoneNumber as PhoneNumberModel
 from models.user_models import User

@@ -10,7 +10,7 @@ from typing import Any, Dict, List, Optional
 from sqlalchemy import and_, or_
 from sqlalchemy.orm import Session
 
-from mock_twilio_client import MockTwilioClient
+from clients.mock_twilio_client import MockTwilioClient
 from models.database import (Contact, Conversation, ConversationParticipant,
                              Message, MessageStatus, MessageType, NumberStatus,
                              PhoneNumber, User)
