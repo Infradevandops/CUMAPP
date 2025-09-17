@@ -13,7 +13,7 @@ from sqlalchemy.orm import Session
 
 from auth.jwt_handler import verify_jwt_token
 from core.database import get_db
-from enhanced_twilio_client import EnhancedTwilioClient
+from clients.enhanced_twilio_client import EnhancedTwilioClient
 from models.user_models import User
 from services.communication_service import (CommunicationService,
                                             create_communication_service)
