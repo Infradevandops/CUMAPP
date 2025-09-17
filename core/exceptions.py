@@ -429,3 +429,75 @@ def map_http_error(status_code: int, message: str, service_name: str = "unknown"
         return error_class(message, service_name=service_name)
     else:
         return error_class(message)
+
+
+def is_retryable_error(error: Exception) -> bool:
+    """
+    Determine if an error is retryable based on its type and properties.
+    
+    Args:
+        error: The exception to check
+        
+    Returns:
+        bool: True if the error is retryable, False otherwise
+    """
+    # Network and timeout errors are generally retryable
+    retryable_types = (
+        ServiceTimeoutError,
+        DatabaseConnectionError,
+        DatabaseTimeoutError,
+        TextVerifiedServiceUnavailableError,
+        TextVerifiedRateLimitError,
+        TwilioRateLimitError,
+        AIModelUnavailableError,
+    )
+    
+    if isinstance(error, retryable_types):
+        return True
+    
+    # Check if it's a ServiceError with specific characteristics
+    if isinstance(error, ServiceError):
+        # Don't retry authentication errors or validation errors
+        non_retryable_types = (
+            TextVerifiedAuthenticationError,
+            TwilioAuthenticationError,
+            ValidationError,
+            PhoneNumberValidationError,
+            InsufficientCreditsError,
+            SubscriptionLimitExceededError,
+            TextVerifiedInsufficientBalanceError,
+            TwilioInsufficientBalanceError,
+        )
+        
+        if isinstance(error, non_retryable_types):
+            return False
+            
+        # Check severity - don't retry critical errors
+        if error.severity == ErrorSeverity.CRITICAL:
+            return False
+            
+        # If it has a retry_after value, it's retryable
+        if error.retry_after is not None:
+            return True
+    
+    # For generic exceptions, check common patterns
+    error_message = str(error).lower()
+    retryable_patterns = [
+        'timeout',
+        'connection',
+        'network',
+        'temporary',
+        'unavailable',
+        'rate limit',
+        'too many requests',
+        'service unavailable',
+        'internal server error',
+        'bad gateway',
+        'gateway timeout'
+    ]
+    
+    return any(pattern in error_message for pattern in retryable_patterns)
+
+
+# Alias for backward compatibility
+BaseServiceException = ServiceError

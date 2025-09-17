@@ -12,9 +12,9 @@ from typing import Any, Callable, Dict, List, Optional, Type
 
 from core.circuit_breaker import (CircuitBreaker, CircuitBreakerConfig,
                                   ServiceCircuitConfigs, circuit_manager)
-from core.exceptions import (BaseServiceException, DatabaseException,
-                             NetworkException, TextVerifiedException,
-                             TwilioException, map_textverified_error,
+from core.exceptions import (ServiceError, DatabaseError,
+                             ExternalServiceError, TextVerifiedError,
+                             TwilioError, map_http_error,
                              map_twilio_error)
 from core.retry_handler import RetryConfig, RetryHandler, ServiceRetryConfigs
 
@@ -82,7 +82,7 @@ class ErrorReporter:
             self.recent_errors = self.recent_errors[-self.max_recent_errors :]
 
         # Log error with appropriate level
-        if isinstance(error, BaseServiceException):
+        if isinstance(error, ServiceError):
             if error.severity.value in ["high", "critical"]:
                 logger.error(
                     f"Service error in {service_name}.{operation}: {error}",

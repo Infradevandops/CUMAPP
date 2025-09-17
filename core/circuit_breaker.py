@@ -12,7 +12,7 @@ from functools import wraps
 from threading import Lock
 from typing import Any, Callable, Dict, List, Optional
 
-from core.exceptions import BaseServiceException, is_retryable_error
+from core.exceptions import ServiceError, is_retryable_error
 
 logger = logging.getLogger(__name__)
 
