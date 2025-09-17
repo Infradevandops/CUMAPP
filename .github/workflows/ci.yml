@@ -123,7 +123,8 @@ jobs:
       run: |
         python -m pip install --upgrade pip
         pip install -r requirements.txt
-        pip install pytest pytest-cov pytest-asyncio httpx
+        pip install pytest pytest-cov pytest-asyncio httpx pytest-playwright playwright
+        playwright install --with-deps
         
     - name: Create test environment file
       run: |
@@ -140,12 +141,23 @@ jobs:
         JWT_SECRET_KEY=test_jwt_secret
         EOF
         
-    - name: Run tests with coverage
+    - name: Create test database
+      env:
+        DATABASE_URL: postgresql://test_user:test_password@localhost:5432/test_db
+      run: |
+        python scripts/setup_database.py
+        alembic upgrade head
+
+    - name: Run Python tests with coverage
       env:
         DATABASE_URL: postgresql://test_user:test_password@localhost:5432/test_db
         REDIS_URL: redis://localhost:6379
       run: |
         pytest tests/ -v --cov=. --cov-report=xml --cov-report=html --cov-fail-under=70
+        
+    - name: Run E2E tests (headless)
+      run: |
+        pytest tests/test_e2e_flows.py --headed=false
         
     - name: Upload coverage reports
       uses: codecov/codecov-action@v4
@@ -163,11 +175,31 @@ jobs:
           htmlcov/
           coverage.xml
 
+  # CodeQL Security Scan
+  codeql:
+    name: CodeQL Scan
+    runs-on: ubuntu-latest
+    needs: quality
+    permissions:
+      security-events: write
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    - name: Initialize CodeQL
+      uses: github/codeql-action/init@v3
+      with:
+        languages: python
+
+    - name: Perform CodeQL Analysis
+      uses: github/codeql-action/analyze@v3
+
   # Docker Build and Security Scan
   docker:
     name: Docker Build & Scan
     runs-on: ubuntu-latest
-    needs: [quality, test]
+    needs: [quality, test, codeql]
     
     steps:
     - name: Checkout code
@@ -252,7 +284,7 @@ jobs:
   deploy:
     name: Build & Deploy
     runs-on: ubuntu-latest
-    needs: [quality, test, docker, integration]
+    needs: [quality, test, docker, integration, codeql]
     if: github.ref == 'refs/heads/main' || github.event_name == 'release'
     
     steps:
@@ -301,17 +333,17 @@ jobs:
   notify:
     name: Notify
     runs-on: ubuntu-latest
-    needs: [quality, test, docker, integration]
+    needs: [quality, test, docker, integration, codeql]
     if: always()
     
     steps:
     - name: Notify success
-      if: ${{ needs.quality.result == 'success' && needs.test.result == 'success' && needs.docker.result == 'success' && needs.integration.result == 'success' }}
+      if: ${{ needs.quality.result == 'success' && needs.test.result == 'success' && needs.docker.result == 'success' && needs.integration.result == 'success' && needs.codeql.result == 'success' }}
       run: |
         echo "✅ All checks passed successfully!"
         
     - name: Notify failure
-      if: ${{ needs.quality.result == 'failure' || needs.test.result == 'failure' || needs.docker.result == 'failure' || needs.integration.result == 'failure' }}
+      if: ${{ needs.quality.result == 'failure' || needs.test.result == 'failure' || needs.docker.result == 'failure' || needs.integration.result == 'failure' || needs.codeql.result == 'failure' }}
       run: |
         echo "❌ Pipeline failed. Check the logs for details."
       run: |
