@@ -35,7 +35,7 @@ from api.phone_number_api import router as phone_router
 from api.smart_routing_api import router as smart_routing_router
 from api.subscription_api import router as subscription_router
 from api.verification_api import router as verification_router
-from core.clients import groq_client, textverified_client, twilio_client
+from clients.unified_client import get_unified_client
 # Import core components
 from core.database import check_database_connection, create_tables
 from core.middleware import setup_middleware
@@ -78,10 +78,11 @@ app = FastAPI(
 setup_middleware(app)
 
 # Mount static files
-app.mount("/static", StaticFiles(directory="static"), name="static")
+app.mount("/static", StaticFiles(directory="frontend/build/static"), name="static")
+app.mount("/", StaticFiles(directory="frontend/build", html=True), name="frontend")
 
 # Include API routers
-app.include_router(frontend_router, tags=["frontend"])
+
 app.include_router(auth_router, prefix="/api/auth", tags=["authentication"])
 app.include_router(
     verification_router, prefix="/api/verification", tags=["verification"]

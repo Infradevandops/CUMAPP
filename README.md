@@ -183,6 +183,14 @@ git push heroku main
 
 ---
 
+## 📚 Documentation
+
+### 📖 **Complete Documentation**
+- **[Project Status](docs/PROJECT_STATUS.md)** - Current features and capabilities
+- **[Deployment Guide](docs/DEPLOYMENT_GUIDE.md)** - Production deployment instructions  
+- **[Roadmap](docs/ROADMAP.md)** - Future plans and development timeline
+- **[API Documentation](http://localhost:8000/docs)** - Interactive API docs (when running)
+
 ## 📚 API Documentation
 
 ### 🏥 **System Endpoints**
