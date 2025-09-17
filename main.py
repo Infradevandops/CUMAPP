@@ -24,7 +24,7 @@ from api.communication_dashboard_api import \
 from api.enhanced_communication_api import router as enhanced_comm_router
 from api.enhanced_verification_api import \
     router as enhanced_verification_router
-from api.frontend import router as frontend_router
+# from api.frontend import router as frontend_router  # Not used currently
 from api.inbox_api import router as inbox_router
 from api.integrated_verification_api import \
     router as integrated_verification_router
@@ -107,16 +107,27 @@ app.include_router(international_routing_router, tags=["international_routing"])
 @app.get("/health")
 async def health_check():
     """Health check endpoint for monitoring."""
-    return {
-        "status": "healthy",
-        "app_name": "CumApp",
-        "version": "1.1.0",
-        "services": {
-            "twilio": twilio_client is not None,
-            "textverified": textverified_client is not None,
-            "groq": groq_client is not None,
-        },
-    }
+    try:
+        unified_client = get_unified_client()
+        return {
+            "status": "healthy",
+            "app_name": "CumApp",
+            "version": "1.1.0",
+            "database": check_database_connection(),
+            "services": {
+                "twilio": unified_client.twilio_client is not None,
+                "textverified": unified_client.textverified_client is not None,
+                "groq": unified_client.groq_client is not None,
+            },
+        }
+    except Exception as e:
+        logger.error(f"Health check failed: {e}")
+        return {
+            "status": "unhealthy",
+            "app_name": "CumApp",
+            "version": "1.1.0",
+            "error": str(e),
+        }
 
 
 if __name__ == "__main__":
