@@ -170,3 +170,16 @@ This document tracks the progress of all web application improvements with detai
 
 *Last Updated: [Current Date]*
 *Next Review: [Weekly]*
+
+
+
+Compiled with problems:
+×
+ERROR in ./src/App.js 1:40-134
+Module not found: Error: You attempted to import /Users/machine/Project/GitHub/CumApp/frontend/node_modules/react-refresh/runtime.js which falls outside of the project src/ directory. Relative imports outside of src/ are not supported.
+You can either move it inside src/, or add a symlink to it from project's node_modules/.
+ERROR in ./src/components/Hero.js 1:40-134
+Module not found: Error: You attempted to import /Users/machine/Project/GitHub/CumApp/frontend/node_modules/react-refresh/runtime.js which falls outside of the project src/ directory. Relative imports outside of src/ are not supported.
+You can either move it inside src/, or add a symlink to it from project's node_modules/.
+ERROR in ./src/components/atoms/Avatar.js 1:40-134
+Module not found: Error: You attempted to import /Users/machine/Project/GitHub/CumApp/frontend/node_modules/react-refresh/runtime.js 

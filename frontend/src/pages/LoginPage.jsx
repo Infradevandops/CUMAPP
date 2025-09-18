@@ -1,15 +1,33 @@
 
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import '../styles/LoginPage.css';
+import FormField from '../components/molecules/FormField';
 
 const LoginPage = () => {
     const [email, setEmail] = useState('demo@cumapp.com');
     const [password, setPassword] = useState('demo123');
+    const [errors, setErrors] = useState({});
     const navigate = useNavigate();
+
+    const validate = () => {
+        const newErrors = {};
+        if (!email) {
+            newErrors.email = 'Email is required';
+        } else if (!/\S+@\S+\.\S+/.test(email)) {
+            newErrors.email = 'Email is invalid';
+        }
+        if (!password) newErrors.password = 'Password is required';
+        return newErrors;
+    };
 
     const handleLogin = async (e) => {
         e.preventDefault();
+        const validationErrors = validate();
+        if (Object.keys(validationErrors).length > 0) {
+            setErrors(validationErrors);
+            return;
+        }
+        setErrors({});
 
         if (email === 'demo@cumapp.com' && password === 'demo123') {
             demoLogin();
@@ -29,10 +47,10 @@ const LoginPage = () => {
                 navigate('/dashboard');
             } else {
                 const error = await response.json();
-                alert(error.detail || 'Login failed');
+                setErrors({ form: error.detail || 'Login failed' });
             }
         } catch (error) {
-            alert('Network error. Please try again.');
+            setErrors({ form: 'Network error. Please try again.' });
         }
     };
 
@@ -48,26 +66,42 @@ const LoginPage = () => {
     };
 
     return (
-        <div className="login-page-container">
-            <div className="login-form-container">
-                <div className="login-form-card">
-                    <div className="login-form-header">
+        <div className="min-h-screen flex items-center justify-center bg-gray-100">
+            <div className="w-full max-w-4xl flex bg-white shadow-lg rounded-lg overflow-hidden">
+                <div className="w-1/2 p-8">
+                    <div className="text-center mb-8">
                         <h2 className="text-3xl font-bold text-blue-600">CumApp</h2>
                         <p className="text-gray-600 mt-2">Sign in to your account</p>
                     </div>
                         
                     <form onSubmit={handleLogin} className="space-y-6">
-                        <div>
-                            <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-2">Email</label>
-                            <input type="email" id="email" value={email} onChange={(e) => setEmail(e.target.value)} required 
-                                   className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent" />
-                        </div>
+                        <FormField
+                            label="Email"
+                            id="email"
+                            name="email"
+                            type="email"
+                            value={email}
+                            onChange={(e) => setEmail(e.target.value)}
+                            error={errors.email}
+                            required
+                        />
                         
-                        <div>
-                            <label htmlFor="password" className="block text-sm font-medium text-gray-700 mb-2">Password</label>
-                            <input type="password" id="password" value={password} onChange={(e) => setPassword(e.target.value)} required 
-                                   className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent" />
-                        </div>
+                        <FormField
+                            label="Password"
+                            id="password"
+                            name="password"
+                            type="password"
+                            value={password}
+                            onChange={(e) => setPassword(e.target.value)}
+                            error={errors.password}
+                            required
+                        />
+
+                        {errors.form && (
+                            <p className="text-sm text-red-600" role="alert">
+                                {errors.form}
+                            </p>
+                        )}
                         
                         <button type="submit" className="w-full bg-blue-600 text-white py-3 rounded-lg font-semibold hover:bg-blue-700 transition flex items-center justify-center">
                             <i className="fas fa-sign-in-alt mr-2"></i>Sign In
@@ -89,18 +123,18 @@ const LoginPage = () => {
                         <p className="text-gray-600">Don't have an account? <a href="/register" className="text-blue-600 hover:text-blue-800 font-medium">Sign up</a></p>
                     </div>
                 </div>
-            </div>
-            
-            <div className="login-info-panel">
-                <div className="text-center px-8">
-                    <i className="fas fa-mobile-alt text-6xl mb-8 opacity-90"></i>
-                    <h3 className="text-3xl font-bold mb-4">Welcome Back</h3>
-                    <p className="text-xl mb-8 text-blue-100">Access your SMS verification dashboard</p>
-                    <ul className="space-y-3 text-left">
-                        <li className="flex items-center"><i className="fas fa-check mr-3"></i>Manage Verifications</li>
-                        <li className="flex items-center"><i className="fas fa-check mr-3"></i>Purchase Numbers</li>
-                        <li className="flex items-center"><i className="fas fa-check mr-3"></i>Track Usage</li>
-                    </ul>
+                
+                <div className="w-1/2 bg-blue-600 text-white flex items-center justify-center p-8">
+                    <div className="text-center">
+                        <i className="fas fa-mobile-alt text-6xl mb-8 opacity-90"></i>
+                        <h3 className="text-3xl font-bold mb-4">Welcome Back</h3>
+                        <p className="text-xl mb-8 text-blue-100">Access your SMS verification dashboard</p>
+                        <ul className="space-y-3 text-left">
+                            <li className="flex items-center"><i className="fas fa-check mr-3"></i>Manage Verifications</li>
+                            <li className="flex items-center"><i className="fas fa-check mr-3"></i>Purchase Numbers</li>
+                            <li className="flex items-center"><i className="fas fa-check mr-3"></i>Track Usage</li>
+                        </ul>
+                    </div>
                 </div>
             </div>
         </div>

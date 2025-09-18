@@ -431,6 +431,41 @@ def map_http_error(status_code: int, message: str, service_name: str = "unknown"
         return error_class(message)
 
 
+def map_twilio_error(twilio_exception) -> TwilioError:
+    """Map Twilio exception to appropriate CumApp exception"""
+    try:
+        # Handle Twilio REST exceptions
+        if hasattr(twilio_exception, 'status'):
+            status_code = twilio_exception.status
+            message = str(twilio_exception)
+            
+            if status_code == 401:
+                return TwilioAuthenticationError(message)
+            elif status_code == 429:
+                return TwilioRateLimitError(message)
+            elif status_code == 400 and 'insufficient' in message.lower():
+                return TwilioInsufficientBalanceError(message)
+            elif status_code in [500, 502, 503, 504]:
+                return TwilioError(message, error_code="TW_SERVICE_ERROR", severity=ErrorSeverity.HIGH)
+            else:
+                return TwilioError(message, error_code=f"TW_HTTP_{status_code}")
+        
+        # Handle generic Twilio errors
+        message = str(twilio_exception)
+        if 'auth' in message.lower() or 'credential' in message.lower():
+            return TwilioAuthenticationError(message)
+        elif 'rate' in message.lower() or 'limit' in message.lower():
+            return TwilioRateLimitError(message)
+        elif 'balance' in message.lower() or 'insufficient' in message.lower():
+            return TwilioInsufficientBalanceError(message)
+        else:
+            return TwilioError(message, error_code="TW_GENERIC_ERROR")
+            
+    except Exception:
+        # Fallback for any mapping errors
+        return TwilioError(f"Twilio error: {str(twilio_exception)}", error_code="TW_MAPPING_ERROR")
+
+
 def is_retryable_error(error: Exception) -> bool:
     """
     Determine if an error is retryable based on its type and properties.
