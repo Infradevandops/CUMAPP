@@ -106,12 +106,12 @@ class CachedStaticFiles(StaticFiles):
         
         return response
 
-# Mount static files - order matters!
-# Mount specific static assets first with caching
-app.mount("/static", CachedStaticFiles(directory="frontend/build/static"), name="static")
-
-# Mount frontend SPA last (catches all remaining routes)
-app.mount("/", CachedStaticFiles(directory="frontend/build", html=True), name="frontend")
+# Mount static files only if the build directory exists
+if os.path.exists("frontend/build"):
+    app.mount("/static", CachedStaticFiles(directory="frontend/build/static"), name="static")
+    app.mount("/", CachedStaticFiles(directory="frontend/build", html=True), name="frontend")
+else:
+    logger.warning("Frontend build directory not found. Skipping static file mounting.")
 
 # Include API routers
 
