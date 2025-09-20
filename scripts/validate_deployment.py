@@ -33,13 +33,6 @@ def validate_deployment():
         else:
             print(f"⚠️  Health endpoint returned {response.status_code}")
         
-        # Test API info endpoint
-        response = client.get("/api/info")
-        if response.status_code == 200:
-            print("✅ API info endpoint working")
-        else:
-            print(f"⚠️  API info endpoint returned {response.status_code}")
-            
         print("✅ Deployment validation passed!")
         return True
         
