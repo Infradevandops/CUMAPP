@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
 import SearchBar from '../molecules/SearchBar';
-import Button from '../atoms/Button';
 
 const Header = ({ user, onLogout, onSearch }) => {
   const [isProfileMenuOpen, setIsProfileMenuOpen] = useState(false);

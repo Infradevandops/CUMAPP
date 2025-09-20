@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useCallback } from 'react';
 import PropTypes from 'prop-types';
 
 const NotificationToast = ({ 
@@ -14,6 +14,14 @@ const NotificationToast = ({
   const [isVisible, setIsVisible] = useState(show);
   const [isAnimating, setIsAnimating] = useState(false);
   
+  const handleClose = useCallback(() => {
+    setIsAnimating(false);
+    setTimeout(() => {
+      setIsVisible(false);
+      if (onClose) onClose();
+    }, 300); // Animation duration
+  }, [onClose]);
+
   useEffect(() => {
     if (show) {
       setIsAnimating(true);
@@ -25,15 +33,8 @@ const NotificationToast = ({
         return () => clearTimeout(timer);
       }
     }
-  }, [show, duration]);
+  }, [show, duration, handleClose]);
 
-  const handleClose = () => {
-    setIsAnimating(false);
-    setTimeout(() => {
-      setIsVisible(false);
-      if (onClose) onClose();
-    }, 300); // Animation duration
-  };
   
   if (!isVisible) return null;
   

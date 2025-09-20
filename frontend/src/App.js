@@ -4,8 +4,7 @@ import { NotificationProvider } from './contexts/NotificationContext';
 import { useAuth } from './hooks/useAuth';
 import LoadingSpinner from './components/atoms/LoadingSpinner';
 import ErrorBoundary from './components/ErrorBoundary';
-import Hero from './components/Hero';
-import { 
+import {
   AboutPage,
   AdminPage,
   BillingPage,

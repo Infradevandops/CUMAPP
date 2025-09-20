@@ -81,36 +81,7 @@ setup_middleware(app)
 # Add compression middleware
 app.add_middleware(GZipMiddleware, minimum_size=1000)
 
-# Custom StaticFiles class with cache headers
-class CachedStaticFiles(StaticFiles):
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-    
-    async def get_response(self, path: str, scope):
-        response = await super().get_response(path, scope)
-        
-        # Add cache headers for static assets
-        if path.endswith(('.css', '.js')):
-            response.headers["Cache-Control"] = "public, max-age=31536000, immutable"  # 1 year for versioned assets
-            response.headers["ETag"] = f'"{hash(path)}"'
-        elif path.endswith(('.png', '.jpg', '.jpeg', '.gif', '.ico', '.svg', '.webp')):
-            response.headers["Cache-Control"] = "public, max-age=2592000"  # 30 days for images
-            response.headers["ETag"] = f'"{hash(path)}"'
-        elif path.endswith('.html'):
-            response.headers["Cache-Control"] = "no-cache, must-revalidate"
-            response.headers["ETag"] = f'"{hash(path)}"'
-        
-        # Add compression hint
-        response.headers["Vary"] = "Accept-Encoding"
-        
-        return response
 
-# Mount static files only if the build directory exists
-if os.path.exists("frontend/build"):
-    app.mount("/static", CachedStaticFiles(directory="frontend/build/static"), name="static")
-    app.mount("/", CachedStaticFiles(directory="frontend/build", html=True), name="frontend")
-else:
-    logger.warning("Frontend build directory not found. Skipping static file mounting.")
 
 # Include API routers
 

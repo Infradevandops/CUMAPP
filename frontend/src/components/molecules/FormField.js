@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import PropTypes from 'prop-types';
 import Input from '../atoms/Input';
 import { Icon } from '../atoms';
@@ -25,7 +25,7 @@ const FormField = ({
   const [isValid, setIsValid] = useState(false);
   const [touched, setTouched] = useState(false);
 
-  const validateField = (fieldValue) => {
+  const validateField = useCallback((fieldValue) => {
     if (!validation) return '';
     
     if (required && (!fieldValue || fieldValue.trim() === '')) {
@@ -49,7 +49,7 @@ const FormField = ({
     }
     
     return '';
-  };
+  }, [validation, required, label]);
 
   useEffect(() => {
     if (touched && validateOnChange) {
@@ -57,7 +57,7 @@ const FormField = ({
       setLocalError(validationError);
       setIsValid(!validationError && value);
     }
-  }, [value, touched, validateOnChange]);
+  }, [value, touched, validateOnChange, validateField]);
 
   const handleBlur = () => {
     setTouched(true);
@@ -132,8 +132,7 @@ const FormField = ({
 };
 
 export default FormField;
-FormField.
-propTypes = {
+FormField.propTypes = {
   label: PropTypes.string,
   id: PropTypes.string.isRequired,
   name: PropTypes.string.isRequired,

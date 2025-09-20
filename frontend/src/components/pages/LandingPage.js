@@ -1,6 +1,5 @@
 import React from 'react';
 import { Button, Typography, Card, Badge } from '../atoms';
-import BaseLayout from '../templates/BaseLayout';
 
 const LandingPage = () => {
   const testimonials = [

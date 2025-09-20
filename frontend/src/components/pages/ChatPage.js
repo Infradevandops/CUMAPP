@@ -2,7 +2,6 @@ import React, { useState, useEffect, useRef } from 'react';
 import BaseLayout from '../templates/BaseLayout';
 import SearchBar from '../molecules/SearchBar';
 import Button from '../atoms/Button';
-import LoadingSpinner from '../atoms/LoadingSpinner';
 
 const ChatPage = ({ user }) => {
   const [messages, setMessages] = useState([]);

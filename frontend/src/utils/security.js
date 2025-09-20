@@ -74,7 +74,7 @@ export const validateEmail = (email) => {
  * @returns {boolean} True if valid phone format
  */
 export const validatePhone = (phone) => {
-  const phoneRegex = /^\+?[\d\s\-\(\)]{10,15}$/;
+  const phoneRegex = /^\+?[\d\s\-()]{10,15}$/;
   return phoneRegex.test(phone);
 };
 
