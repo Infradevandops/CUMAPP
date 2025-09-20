@@ -6,13 +6,16 @@ import LoadingSpinner from './components/atoms/LoadingSpinner';
 import ErrorBoundary from './components/ErrorBoundary';
 import Hero from './components/Hero';
 import { 
-  DashboardPage, 
-  LoginPage, 
-  AdminPage, 
-  BillingPage, 
-  ChatPage, 
-  NumbersPage, 
-  RegisterPage, 
+  AboutPage,
+  AdminPage,
+  BillingPage,
+  ChatPage,
+  DashboardPage,
+  LandingPage,
+  LoginPage,
+  NumbersPage,
+  RegisterPage,
+  ReviewsPage,
   VerificationsPage 
 } from './components/LazyComponents';
 import './App.css';
@@ -38,23 +41,28 @@ function App() {
             </div>
           }>
             <Routes>
-            <Route path="/" element={<Hero />} />
-            <Route path="/login" element={<LoginPage />} />
-            <Route path="/register" element={<RegisterPage />} />
-            <Route 
-              path="/dashboard"
-              element={isAuthenticated ? <DashboardPage user={user} /> : <Navigate to="/login" />}
-            />
-            <Route 
-              path="/admin"
-              element={isAuthenticated ? <AdminPage user={user} /> : <Navigate to="/login" />}
-            />
-            <Route 
-              path="/billing"
-              element={isAuthenticated ? <BillingPage user={user} /> : <Navigate to="/login" />}
-            />
-            <Route 
-              path="/chat"
+              {/* Public Routes */}
+              <Route path="/" element={<LandingPage />} />
+              <Route path="/about" element={<AboutPage />} />
+              <Route path="/reviews" element={<ReviewsPage />} />
+              <Route path="/login" element={<LoginPage />} />
+              <Route path="/register" element={<RegisterPage />} />
+              
+              {/* Protected Routes */}
+              <Route 
+                path="/dashboard"
+                element={isAuthenticated ? <DashboardPage user={user} /> : <Navigate to="/login" />}
+              />
+              <Route 
+                path="/admin"
+                element={isAuthenticated ? <AdminPage user={user} /> : <Navigate to="/login" />}
+              />
+              <Route 
+                path="/billing"
+                element={isAuthenticated ? <BillingPage user={user} /> : <Navigate to="/login" />}
+              />
+              <Route 
+                path="/chat"
               element={isAuthenticated ? <ChatPage user={user} /> : <Navigate to="/login" />}
             />
             <Route 
