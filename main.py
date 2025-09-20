@@ -47,7 +47,6 @@ logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
 
-@asynccontextmanager
 async def lifespan(app: FastAPI):
     """Initialize database and check connections on startup"""
     logger.info("Initializing database...")
@@ -136,7 +135,6 @@ app.include_router(international_routing_router, tags=["international_routing"])
 
 
 # --- Health Check Endpoint ---
-@app.get("/health")
 async def health_check():
     """Health check endpoint for monitoring."""
     try:
