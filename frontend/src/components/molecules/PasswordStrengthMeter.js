@@ -81,8 +81,9 @@ const PasswordStrengthMeter = ({ password, className = '', showRequirements = tr
   );
 };
 
-export default PasswordStrengthMeter;Password
-StrengthMeter.propTypes = {
+export default PasswordStrengthMeter;
+
+PasswordStrengthMeter.propTypes = {
   password: PropTypes.string,
   className: PropTypes.string,
   showRequirements: PropTypes.bool

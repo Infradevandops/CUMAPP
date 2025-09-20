@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import PropTypes from 'prop-types';
 import { Button, Typography, Card, Icon } from '../atoms';
-import { FormField } from './FormField';
+import FormField from './FormField';
 
 const TwoFactorSetup = ({ 
   onComplete, 

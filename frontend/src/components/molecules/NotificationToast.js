@@ -150,8 +150,9 @@ const NotificationToast = ({
   );
 };
 
-export default NotificationToast;No
-tificationToast.propTypes = {
+export default NotificationToast;
+
+NotificationToast.propTypes = {
   message: PropTypes.string.isRequired,
   type: PropTypes.oneOf(['success', 'error', 'warning', 'info']),
   duration: PropTypes.number,

@@ -163,7 +163,7 @@ const AboutPage = () => {
                     Performance
                   </Typography>
                   <Typography className="text-gray-600">
-                    Lightning-fast delivery with 99.9% uptime and <100ms response times globally.
+                    Lightning-fast delivery with 99.9% uptime and &lt;100ms response times globally.
                   </Typography>
                 </div>
                 <div>
