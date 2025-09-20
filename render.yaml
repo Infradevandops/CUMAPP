@@ -10,6 +10,13 @@ services:
       pip install -r requirements.txt
     startCommand: python scripts/start_production.py
     healthCheckPath: /health
+    routes:
+      - type: rewrite
+        source: "/api/{,}"
+        destination: "/api/{,}"
+      - type: rewrite
+        source: "/*"
+        destination: "http://frontend"
     envVars:
       - key: PYTHON_VERSION
         value: 3.11.0
@@ -25,7 +32,7 @@ services:
         value: INFO
       - key: USE_MOCK_TWILIO
         value: true
-      - key: DATABASE_URL
+      - key. DATABASE_URL
         fromDatabase:
           name: cumapp-db
           property: connectionString
