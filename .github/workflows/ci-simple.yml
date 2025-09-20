@@ -1,4 +1,4 @@
-name: Simple CI Pipeline
+name: CI Pipeline
 
 on:
   push:
@@ -169,16 +169,11 @@ jobs:
         
     - name: Run deployment readiness check
       env:
-        TEXTVERIFIED_API_KEY: test_key
-        TEXTVERIFIED_EMAIL: test@example.com
-        TWILIO_ACCOUNT_SID: test_sid
-        TWILIO_AUTH_TOKEN: test_token
-        TWILIO_PHONE_NUMBER: +1234567890
-        GROQ_API_KEY: test_groq_key
-        GROQ_MODEL: llama3-8b-8192
         JWT_SECRET_KEY: test_jwt_secret_key_for_testing_purposes_only
         JWT_ALGORITHM: HS256
         JWT_EXPIRE_MINUTES: 30
+        USE_MOCK_TWILIO: true
+        DEBUG: false
       run: |
         python scripts/deployment_check.py
         

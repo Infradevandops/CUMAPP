@@ -166,16 +166,16 @@ class ServiceErrorHandler:
 
         # Default mapping based on service name
         if self.service_name.lower() == "textverified" and not isinstance(
-            error, TextVerifiedException
+            error, TextVerifiedError
         ):
             # Try to map to TextVerified exception
             if hasattr(error, "response") and hasattr(error.response, "status_code"):
-                return map_textverified_error(
+                return map_http_error(
                     str(error.response.status_code), str(error)
                 )
 
         elif self.service_name.lower() == "twilio" and not isinstance(
-            error, TwilioException
+            error, TwilioError
         ):
             # Try to map to Twilio exception
             if hasattr(error, "code"):

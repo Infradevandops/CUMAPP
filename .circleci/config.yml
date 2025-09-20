@@ -102,32 +102,16 @@ jobs:
       - run:
           name: Create test environment
           command: |
-            cat > .env.test << EOF
-            TEXTVERIFIED_API_KEY=test_key
-            TEXTVERIFIED_EMAIL=test@example.com
-            TWILIO_ACCOUNT_SID=test_sid
-            TWILIO_AUTH_TOKEN=test_token
-            TWILIO_PHONE_NUMBER=+1234567890
-            GROQ_API_KEY=test_groq_key
-            GROQ_MODEL=llama3-8b-8192
-            JWT_SECRET_KEY=test_jwt_secret
-            EOF
+            export JWT_SECRET_KEY=test_jwt_secret_key_for_ci_testing
+            export USE_MOCK_TWILIO=true
+            export DEBUG=false
       - run:
           name: Test Python imports
           command: |
+            export JWT_SECRET_KEY=test_jwt_secret_key_for_ci_testing
+            export USE_MOCK_TWILIO=true
+            export DEBUG=false
             python -c "
-            import os
-            os.environ.update({
-                'TEXTVERIFIED_API_KEY': 'test_key',
-                'TEXTVERIFIED_EMAIL': 'test@example.com',
-                'TWILIO_ACCOUNT_SID': 'test_sid',
-                'TWILIO_AUTH_TOKEN': 'test_token',
-                'TWILIO_PHONE_NUMBER': '+1234567890',
-                'GROQ_API_KEY': 'test_groq_key',
-                'GROQ_MODEL': 'llama3-8b-8192',
-                'JWT_SECRET_KEY': 'test_jwt_secret'
-            })
-            
             try:
                 from main import app
                 print('✅ Main app imports successfully')
@@ -226,7 +210,7 @@ jobs:
                 'GROQ_MODEL': 'llama3-8b-8192',
                 'JWT_SECRET_KEY': 'test_jwt_secret'
             })
-            
+
             try:
                 from main import app
                 print('✅ Application imports and initializes successfully')
@@ -240,7 +224,7 @@ jobs:
 # Define workflows
 workflows:
   version: 2
-  
+
   # Main CI workflow
   ci-pipeline:
     jobs:
@@ -267,7 +251,7 @@ workflows:
   nightly-security:
     triggers:
       - schedule:
-          cron: "0 2 * * *"  # Run at 2 AM daily
+          cron: "0 2 * * *" # Run at 2 AM daily
           filters:
             branches:
               only:

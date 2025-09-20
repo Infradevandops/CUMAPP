@@ -7,8 +7,10 @@ import os
 from contextlib import asynccontextmanager
 
 from dotenv import load_dotenv
-from fastapi import FastAPI
+from fastapi import FastAPI, Request, Response
 from fastapi.staticfiles import StaticFiles
+from fastapi.responses import FileResponse
+from fastapi.middleware.gzip import GZipMiddleware
 
 # Load environment variables
 load_dotenv()
@@ -77,9 +79,39 @@ app = FastAPI(
 # Setup middleware
 setup_middleware(app)
 
-# Mount static files
-app.mount("/static", StaticFiles(directory="frontend/build/static"), name="static")
-app.mount("/", StaticFiles(directory="frontend/build", html=True), name="frontend")
+# Add compression middleware
+app.add_middleware(GZipMiddleware, minimum_size=1000)
+
+# Custom StaticFiles class with cache headers
+class CachedStaticFiles(StaticFiles):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+    
+    async def get_response(self, path: str, scope):
+        response = await super().get_response(path, scope)
+        
+        # Add cache headers for static assets
+        if path.endswith(('.css', '.js')):
+            response.headers["Cache-Control"] = "public, max-age=31536000, immutable"  # 1 year for versioned assets
+            response.headers["ETag"] = f'"{hash(path)}"'
+        elif path.endswith(('.png', '.jpg', '.jpeg', '.gif', '.ico', '.svg', '.webp')):
+            response.headers["Cache-Control"] = "public, max-age=2592000"  # 30 days for images
+            response.headers["ETag"] = f'"{hash(path)}"'
+        elif path.endswith('.html'):
+            response.headers["Cache-Control"] = "no-cache, must-revalidate"
+            response.headers["ETag"] = f'"{hash(path)}"'
+        
+        # Add compression hint
+        response.headers["Vary"] = "Accept-Encoding"
+        
+        return response
+
+# Mount static files - order matters!
+# Mount specific static assets first with caching
+app.mount("/static", CachedStaticFiles(directory="frontend/build/static"), name="static")
+
+# Mount frontend SPA last (catches all remaining routes)
+app.mount("/", CachedStaticFiles(directory="frontend/build", html=True), name="frontend")
 
 # Include API routers
 

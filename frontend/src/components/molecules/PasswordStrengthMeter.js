@@ -1,32 +1,21 @@
 import React from 'react';
+import PropTypes from 'prop-types';
+import { validatePasswordStrength } from '../../utils/security';
 
-const PasswordStrengthMeter = ({ password, className = '' }) => {
-  const calculateStrength = (password) => {
-    if (!password) return { score: 0, label: '', color: '' };
-    
-    let score = 0;
-    const checks = {
-      length: password.length >= 8,
-      lowercase: /[a-z]/.test(password),
-      uppercase: /[A-Z]/.test(password),
-      numbers: /\d/.test(password),
-      symbols: /[^A-Za-z0-9]/.test(password)
-    };
-    
-    // Calculate score based on criteria met
-    Object.values(checks).forEach(check => {
-      if (check) score++;
-    });
-    
-    // Determine strength level
-    if (score === 0) return { score: 0, label: '', color: '' };
-    if (score <= 2) return { score: 1, label: 'Weak', color: 'bg-red-500' };
-    if (score <= 3) return { score: 2, label: 'Fair', color: 'bg-yellow-500' };
-    if (score <= 4) return { score: 3, label: 'Good', color: 'bg-blue-500' };
-    return { score: 4, label: 'Strong', color: 'bg-green-500' };
+const PasswordStrengthMeter = ({ password, className = '', showRequirements = true }) => {
+  const validation = validatePasswordStrength(password);
+  
+  const getColorClasses = (strength) => {
+    switch (strength) {
+      case 'weak': return { bg: 'bg-red-500', text: 'text-red-600' };
+      case 'medium': return { bg: 'bg-yellow-500', text: 'text-yellow-600' };
+      case 'strong': return { bg: 'bg-green-500', text: 'text-green-600' };
+      default: return { bg: 'bg-gray-200', text: 'text-gray-400' };
+    }
   };
   
-  const strength = calculateStrength(password);
+  const colors = getColorClasses(validation.strength);
+  const strengthBars = validation.strength === 'weak' ? 1 : validation.strength === 'medium' ? 2 : validation.strength === 'strong' ? 4 : 0;
   
   if (!password) return null;
   
@@ -34,48 +23,67 @@ const PasswordStrengthMeter = ({ password, className = '' }) => {
     <div className={`mt-2 ${className}`}>
       <div className="flex items-center justify-between mb-1">
         <span className="text-sm text-gray-600">Password strength:</span>
-        <span className={`text-sm font-medium ${
-          strength.score === 1 ? 'text-red-600' :
-          strength.score === 2 ? 'text-yellow-600' :
-          strength.score === 3 ? 'text-blue-600' :
-          strength.score === 4 ? 'text-green-600' : 'text-gray-400'
-        }`}>
-          {strength.label}
+        <span className={`text-sm font-medium ${colors.text}`}>
+          {validation.strength.charAt(0).toUpperCase() + validation.strength.slice(1)} ({validation.score}%)
         </span>
       </div>
       
-      <div className="flex space-x-1">
+      {/* Strength bar */}
+      <div className="flex space-x-1 mb-2">
         {[1, 2, 3, 4].map((level) => (
           <div
             key={level}
-            className={`h-2 flex-1 rounded-full ${
-              level <= strength.score ? strength.color : 'bg-gray-200'
+            className={`h-2 flex-1 rounded-full transition-colors duration-300 ${
+              level <= strengthBars ? colors.bg : 'bg-gray-200'
             }`}
           />
         ))}
       </div>
       
-      <div className="mt-2 text-xs text-gray-500">
-        <ul className="space-y-1">
-          <li className={password.length >= 8 ? 'text-green-600' : 'text-gray-400'}>
-            ✓ At least 8 characters
-          </li>
-          <li className={/[a-z]/.test(password) ? 'text-green-600' : 'text-gray-400'}>
-            ✓ Lowercase letter
-          </li>
-          <li className={/[A-Z]/.test(password) ? 'text-green-600' : 'text-gray-400'}>
-            ✓ Uppercase letter
-          </li>
-          <li className={/\d/.test(password) ? 'text-green-600' : 'text-gray-400'}>
-            ✓ Number
-          </li>
-          <li className={/[^A-Za-z0-9]/.test(password) ? 'text-green-600' : 'text-gray-400'}>
-            ✓ Special character
-          </li>
-        </ul>
+      {/* Progress bar showing exact score */}
+      <div className="w-full bg-gray-200 rounded-full h-1 mb-2">
+        <div 
+          className={`h-1 rounded-full transition-all duration-300 ${colors.bg}`}
+          style={{ width: `${validation.score}%` }}
+        />
       </div>
+      
+      {/* Validation message */}
+      {!validation.valid && (
+        <p className="text-sm text-red-600 mb-2">
+          {validation.message}
+        </p>
+      )}
+      
+      {/* Requirements checklist */}
+      {showRequirements && (
+        <div className="text-xs text-gray-500">
+          <ul className="space-y-1">
+            <li className={password && password.length >= 8 ? 'text-green-600' : 'text-gray-400'}>
+              {password && password.length >= 8 ? '✓' : '○'} At least 8 characters
+            </li>
+            <li className={password && /[a-z]/.test(password) ? 'text-green-600' : 'text-gray-400'}>
+              {password && /[a-z]/.test(password) ? '✓' : '○'} Lowercase letter
+            </li>
+            <li className={password && /[A-Z]/.test(password) ? 'text-green-600' : 'text-gray-400'}>
+              {password && /[A-Z]/.test(password) ? '✓' : '○'} Uppercase letter
+            </li>
+            <li className={password && /\d/.test(password) ? 'text-green-600' : 'text-gray-400'}>
+              {password && /\d/.test(password) ? '✓' : '○'} Number
+            </li>
+            <li className={password && /[!@#$%^&*(),.?":{}|<>]/.test(password) ? 'text-green-600' : 'text-gray-400'}>
+              {password && /[!@#$%^&*(),.?":{}|<>]/.test(password) ? '✓' : '○'} Special character
+            </li>
+          </ul>
+        </div>
+      )}
     </div>
   );
 };
 
-export default PasswordStrengthMeter;
+export default PasswordStrengthMeter;Password
+StrengthMeter.propTypes = {
+  password: PropTypes.string,
+  className: PropTypes.string,
+  showRequirements: PropTypes.bool
+};

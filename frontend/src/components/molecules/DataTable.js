@@ -142,7 +142,7 @@ const DataTable = ({
               {columns.map((column) => (
                 <th
                   key={column.key}
-                  className={`px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider ${
+                  className={`px-3 md:px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider ${
                     sortable && column.sortable !== false ? 'cursor-pointer hover:bg-gray-100' : ''
                   }`}
                   onClick={() => sortable && column.sortable !== false && handleSort(column.key)}
@@ -205,7 +205,7 @@ const DataTable = ({
                     </td>
                   )}
                   {columns.map((column) => (
-                    <td key={column.key} className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                    <td key={column.key} className="px-3 md:px-6 py-4 whitespace-nowrap text-sm text-gray-900">
                       {renderCellContent(row, column)}
                     </td>
                   ))}
@@ -218,11 +218,11 @@ const DataTable = ({
       
       {/* Pagination */}
       {pagination && totalPages > 1 && (
-        <div className="px-6 py-3 border-t border-gray-200 flex items-center justify-between">
-          <div className="text-sm text-gray-700">
+        <div className="px-4 md:px-6 py-3 border-t border-gray-200 flex flex-col sm:flex-row items-center justify-between gap-3">
+          <div className="text-sm text-gray-700 order-2 sm:order-1">
             Showing {((currentPage - 1) * pageSize) + 1} to {Math.min(currentPage * pageSize, sortedData.length)} of {sortedData.length} results
           </div>
-          <div className="flex space-x-1">
+          <div className="flex space-x-1 order-1 sm:order-2">
             <Button
               variant="outline"
               size="sm"

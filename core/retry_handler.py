@@ -11,10 +11,12 @@ from typing import Callable, Any, Optional, Dict, List
 from functools import wraps
 from enum import Enum
 from datetime import datetime, timedelta
+from dataclasses import dataclass
 
 from core.exceptions import (
     ServiceError, TextVerifiedError, TwilioError, AIServiceError,
-    TextVerifiedRateLimitError, TwilioRateLimitError, ServiceTimeoutError
+    TextVerifiedRateLimitError, TwilioRateLimitError, ServiceTimeoutError,
+    TextVerifiedServiceUnavailableError, GroqAPIError
 )
 
 logger = logging.getLogger(__name__)
@@ -33,6 +35,26 @@ class RetryStrategy(Enum):
     LINEAR_BACKOFF = "linear_backoff"
     FIXED_DELAY = "fixed_delay"
     IMMEDIATE = "immediate"
+
+
+@dataclass
+class RetryConfig:
+    """Configuration for retry behavior"""
+    max_retries: int = 3
+    base_delay: float = 1.0
+    max_delay: float = 60.0
+    strategy: RetryStrategy = RetryStrategy.EXPONENTIAL_BACKOFF
+    jitter: bool = True
+    retryable_exceptions: Optional[List[type]] = None
+    
+    def __post_init__(self):
+        if self.retryable_exceptions is None:
+            self.retryable_exceptions = [
+                TextVerifiedRateLimitError,
+                TwilioRateLimitError,
+                ServiceTimeoutError,
+                TextVerifiedServiceUnavailableError
+            ]
 
 
 class CircuitBreaker:
@@ -108,26 +130,17 @@ class CircuitBreaker:
 class RetryHandler:
     """Handles retry logic with exponential backoff"""
     
-    def __init__(
-        self,
-        max_retries: int = 3,
-        base_delay: float = 1.0,
-        max_delay: float = 60.0,
-        strategy: RetryStrategy = RetryStrategy.EXPONENTIAL_BACKOFF,
-        jitter: bool = True,
-        retryable_exceptions: Optional[List[type]] = None
-    ):
-        self.max_retries = max_retries
-        self.base_delay = base_delay
-        self.max_delay = max_delay
-        self.strategy = strategy
-        self.jitter = jitter
-        self.retryable_exceptions = retryable_exceptions or [
-            TextVerifiedRateLimitError,
-            TwilioRateLimitError,
-            ServiceTimeoutError,
-            TextVerifiedServiceUnavailableError
-        ]
+    def __init__(self, config: Optional[RetryConfig] = None):
+        if config is None:
+            config = RetryConfig()
+        
+        self.config = config
+        self.max_retries = config.max_retries
+        self.base_delay = config.base_delay
+        self.max_delay = config.max_delay
+        self.strategy = config.strategy
+        self.jitter = config.jitter
+        self.retryable_exceptions = config.retryable_exceptions
     
     def _calculate_delay(self, attempt: int) -> float:
         """Calculate delay for the given attempt"""
@@ -221,6 +234,50 @@ class RetryHandler:
             return async_wrapper
         else:
             return sync_wrapper
+    
+    async def execute_with_retry(self, func: Callable, *args, operation_name: str = None, **kwargs) -> Any:
+        """Execute function with retry logic"""
+        last_exception = None
+        
+        for attempt in range(self.max_retries + 1):
+            try:
+                if asyncio.iscoroutinefunction(func):
+                    return await func(*args, **kwargs)
+                else:
+                    return func(*args, **kwargs)
+                    
+            except Exception as e:
+                last_exception = e
+                
+                if attempt == self.max_retries:
+                    logger.error(f"Function {operation_name or func.__name__} failed after {self.max_retries} retries: {e}")
+                    raise
+                
+                if not self._is_retryable(e):
+                    logger.error(f"Non-retryable error in {operation_name or func.__name__}: {e}")
+                    raise
+                
+                delay = self._calculate_delay(attempt)
+                logger.warning(f"Attempt {attempt + 1} failed for {operation_name or func.__name__}: {e}. Retrying in {delay:.2f}s")
+                
+                # Check if exception specifies retry_after
+                if hasattr(e, 'retry_after') and e.retry_after:
+                    delay = max(delay, e.retry_after)
+                
+                await asyncio.sleep(delay)
+        
+        raise last_exception
+    
+    def get_stats(self) -> Dict[str, Any]:
+        """Get retry handler statistics"""
+        return {
+            "max_retries": self.max_retries,
+            "base_delay": self.base_delay,
+            "max_delay": self.max_delay,
+            "strategy": self.strategy.value,
+            "jitter": self.jitter,
+            "retryable_exceptions": [exc.__name__ for exc in self.retryable_exceptions]
+        }
 
 
 # Global circuit breakers for different services
@@ -283,12 +340,13 @@ def with_retry(
 ):
     """Decorator to add retry logic"""
     def decorator(func: Callable) -> Callable:
-        retry_handler = RetryHandler(
+        config = RetryConfig(
             max_retries=max_retries,
             base_delay=base_delay,
             max_delay=max_delay,
             strategy=strategy
         )
+        retry_handler = RetryHandler(config)
         return retry_handler.retry(func)
     return decorator
 
@@ -302,7 +360,12 @@ def with_retry_and_circuit_breaker(
     """Decorator combining retry logic and circuit breaker"""
     def decorator(func: Callable) -> Callable:
         # Apply retry first, then circuit breaker
-        retry_handler = RetryHandler(max_retries=max_retries, base_delay=base_delay, max_delay=max_delay)
+        config = RetryConfig(
+            max_retries=max_retries,
+            base_delay=base_delay,
+            max_delay=max_delay
+        )
+        retry_handler = RetryHandler(config)
         circuit_breaker = get_circuit_breaker(service_name)
         
         @wraps(func)
@@ -342,3 +405,107 @@ def reset_circuit_breaker(service_name: str) -> bool:
         logger.info(f"Circuit breaker for {service_name} manually reset")
         return True
     return False
+
+
+# Service-specific retry decorators
+def textverified_retry_decorator(max_attempts: int = 3, base_delay: float = 1.0, max_delay: float = 10.0):
+    """Retry decorator specifically for TextVerified operations"""
+    config = RetryConfig(
+        max_retries=max_attempts,
+        base_delay=base_delay,
+        max_delay=max_delay,
+        strategy=RetryStrategy.EXPONENTIAL_BACKOFF,
+        retryable_exceptions=[
+            TextVerifiedRateLimitError,
+            TextVerifiedServiceUnavailableError,
+            ServiceTimeoutError
+        ]
+    )
+    
+    def decorator(func):
+        retry_handler = RetryHandler(config)
+        return retry_handler.retry(func)
+    return decorator
+
+
+def twilio_retry_decorator(max_attempts: int = 2, base_delay: float = 1.0, max_delay: float = 15.0):
+    """Retry decorator specifically for Twilio operations"""
+    config = RetryConfig(
+        max_retries=max_attempts,
+        base_delay=base_delay,
+        max_delay=max_delay,
+        strategy=RetryStrategy.EXPONENTIAL_BACKOFF,
+        retryable_exceptions=[
+            TwilioRateLimitError,
+            ServiceTimeoutError
+        ]
+    )
+    
+    def decorator(func):
+        retry_handler = RetryHandler(config)
+        return retry_handler.retry(func)
+    return decorator
+
+
+class ServiceRetryConfigs:
+    """Predefined retry configurations for different services"""
+    
+    @staticmethod
+    def textverified() -> RetryConfig:
+        """Retry configuration for TextVerified service"""
+        return RetryConfig(
+            max_retries=3,
+            base_delay=2.0,
+            max_delay=30.0,
+            strategy=RetryStrategy.EXPONENTIAL_BACKOFF,
+            jitter=True,
+            retryable_exceptions=[
+                TextVerifiedRateLimitError,
+                TextVerifiedServiceUnavailableError,
+                ServiceTimeoutError
+            ]
+        )
+    
+    @staticmethod
+    def twilio() -> RetryConfig:
+        """Retry configuration for Twilio service"""
+        return RetryConfig(
+            max_retries=2,
+            base_delay=1.0,
+            max_delay=15.0,
+            strategy=RetryStrategy.EXPONENTIAL_BACKOFF,
+            jitter=True,
+            retryable_exceptions=[
+                TwilioRateLimitError,
+                ServiceTimeoutError
+            ]
+        )
+    
+    @staticmethod
+    def database() -> RetryConfig:
+        """Retry configuration for database operations"""
+        return RetryConfig(
+            max_retries=3,
+            base_delay=0.5,
+            max_delay=10.0,
+            strategy=RetryStrategy.EXPONENTIAL_BACKOFF,
+            jitter=True,
+            retryable_exceptions=[
+                ServiceTimeoutError
+            ]
+        )
+    
+    @staticmethod
+    def ai_service() -> RetryConfig:
+        """Retry configuration for AI services (Groq, etc.)"""
+        return RetryConfig(
+            max_retries=2,
+            base_delay=1.5,
+            max_delay=20.0,
+            strategy=RetryStrategy.EXPONENTIAL_BACKOFF,
+            jitter=True,
+            retryable_exceptions=[
+                ServiceTimeoutError,
+                GroqAPIError
+            ]
+        )

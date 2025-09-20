@@ -1,11 +1,20 @@
-import React from 'react';
+import React, { Suspense } from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import { NotificationProvider } from './contexts/NotificationContext';
 import { useAuth } from './hooks/useAuth';
-import DashboardPage from './components/pages/DashboardPage';
 import LoadingSpinner from './components/atoms/LoadingSpinner';
+import ErrorBoundary from './components/ErrorBoundary';
 import Hero from './components/Hero';
-import LoginPage from './pages/LoginPage';
+import { 
+  DashboardPage, 
+  LoginPage, 
+  AdminPage, 
+  BillingPage, 
+  ChatPage, 
+  NumbersPage, 
+  RegisterPage, 
+  VerificationsPage 
+} from './components/LazyComponents';
 import './App.css';
 
 function App() {
@@ -20,18 +29,47 @@ function App() {
   }
 
   return (
-    <NotificationProvider>
-      <Router>
-        <Routes>
-          <Route path="/" element={<Hero />} />
-          <Route path="/login" element={<LoginPage />} />
-          <Route 
-            path="/dashboard"
-            element={isAuthenticated ? <DashboardPage user={user} /> : <Navigate to="/login" />}
-          />
-        </Routes>
-      </Router>
-    </NotificationProvider>
+    <ErrorBoundary>
+      <NotificationProvider>
+        <Router>
+          <Suspense fallback={
+            <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+              <LoadingSpinner size="lg" />
+            </div>
+          }>
+            <Routes>
+            <Route path="/" element={<Hero />} />
+            <Route path="/login" element={<LoginPage />} />
+            <Route path="/register" element={<RegisterPage />} />
+            <Route 
+              path="/dashboard"
+              element={isAuthenticated ? <DashboardPage user={user} /> : <Navigate to="/login" />}
+            />
+            <Route 
+              path="/admin"
+              element={isAuthenticated ? <AdminPage user={user} /> : <Navigate to="/login" />}
+            />
+            <Route 
+              path="/billing"
+              element={isAuthenticated ? <BillingPage user={user} /> : <Navigate to="/login" />}
+            />
+            <Route 
+              path="/chat"
+              element={isAuthenticated ? <ChatPage user={user} /> : <Navigate to="/login" />}
+            />
+            <Route 
+              path="/numbers"
+              element={isAuthenticated ? <NumbersPage user={user} /> : <Navigate to="/login" />}
+            />
+            <Route 
+              path="/verifications"
+              element={isAuthenticated ? <VerificationsPage user={user} /> : <Navigate to="/login" />}
+            />
+            </Routes>
+          </Suspense>
+        </Router>
+      </NotificationProvider>
+    </ErrorBoundary>
   );
 }
 
