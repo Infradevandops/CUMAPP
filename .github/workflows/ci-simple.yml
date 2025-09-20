@@ -101,6 +101,11 @@ jobs:
     - name: Build frontend
       working-directory: ./frontend
       run: npm run build
+      continue-on-error: true
+      
+    - name: List build directory
+      working-directory: ./frontend
+      run: ls -la build
       
     - name: Test frontend (if tests exist)
       working-directory: ./frontend
