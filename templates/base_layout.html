@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}CumApp - SMS Communication Platform{% endblock %}</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    {% block head %}{% endblock %}
+</head>
+<body class="bg-gray-900 text-white">
+    <!-- Navigation -->
+    <nav class="bg-gray-800 border-b border-gray-700">
+        <div class="container mx-auto px-4">
+            <div class="flex justify-between items-center py-4">
+                <a class="text-xl font-bold text-blue-400" href="/">
+                    <i class="fas fa-sms mr-2"></i>CumApp
+                </a>
+                <div class="hidden md:flex items-center space-x-6">
+                    <a class="text-gray-300 hover:text-blue-400" href="/dashboard"><i class="fas fa-home mr-1"></i>Dashboard</a>
+                    <a class="text-gray-300 hover:text-blue-400" href="/communication"><i class="fas fa-comments mr-1"></i>Communication</a>
+                    <a class="text-gray-300 hover:text-blue-400" href="/verifications"><i class="fas fa-check-circle mr-1"></i>Verifications</a>
+                    <a class="text-gray-300 hover:text-blue-400" href="/numbers"><i class="fas fa-phone mr-1"></i>Numbers</a>
+                    <a class="text-gray-300 hover:text-blue-400" href="/performance"><i class="fas fa-chart-line mr-1"></i>Performance</a>
+                    <a class="text-gray-300 hover:text-blue-400" href="/docs"><i class="fas fa-book mr-1"></i>API</a>
+                </div>
+                <div class="md:hidden">
+                    <button onclick="toggleMobileMenu()" class="text-gray-300">
+                        <i class="fas fa-bars"></i>
+                    </button>
+                </div>
+            </div>
+            <div id="mobileMenu" class="hidden md:hidden pb-4">
+                <a class="block py-2 text-gray-300 hover:text-blue-400" href="/dashboard">Dashboard</a>
+                <a class="block py-2 text-gray-300 hover:text-blue-400" href="/communication">Communication</a>
+                <a class="block py-2 text-gray-300 hover:text-blue-400" href="/verifications">Verifications</a>
+                <a class="block py-2 text-gray-300 hover:text-blue-400" href="/numbers">Numbers</a>
+                <a class="block py-2 text-gray-300 hover:text-blue-400" href="/performance">Performance</a>
+                <a class="block py-2 text-gray-300 hover:text-blue-400" href="/docs">API</a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="container mx-auto px-4 py-6">
+        {% block content %}{% endblock %}
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-gray-800 border-t border-gray-700 mt-12">
+        <div class="container mx-auto px-4 py-6">
+            <div class="text-center text-gray-400">
+                <p>&copy; 2024 CumApp - SMS Communication Platform</p>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        function toggleMobileMenu() {
+            const menu = document.getElementById('mobileMenu');
+            menu.classList.toggle('hidden');
+        }
+    </script>
+    {% block scripts %}{% endblock %}
+</body>
+</html>

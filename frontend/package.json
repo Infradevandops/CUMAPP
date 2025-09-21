@@ -1,25 +1,87 @@
 {
-  "name": "frontend",
-  "version": "0.1.0",
+  "name": "cumapp-frontend",
+  "version": "1.0.0",
+  "description": "CumApp React Frontend - Modern communication platform",
   "private": true,
-  "proxy": "http://localhost:8000",
   "dependencies": {
-    "@testing-library/jest-dom": "^5.16.5",
-    "@testing-library/react": "^13.4.0",
-    "@testing-library/user-event": "^13.5.0",
-    "prop-types": "^15.8.1",
+    "@testing-library/jest-dom": "^6.1.4",
+    "@testing-library/react": "^14.0.0",
+    "@testing-library/user-event": "^14.5.1",
+    "axios": "^1.6.0",
+    "jest-axe": "^8.0.0",
+    "jest-environment-jsdom": "^29.7.0",
+    "msw": "^2.0.0",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
-    "react-router-dom": "^6.2.1",
+    "react-router-dom": "^6.17.0",
     "react-scripts": "5.0.1",
-    "web-vitals": "^2.1.4"
+    "web-vitals": "^3.5.0"
+  },
+  "devDependencies": {
+    "@axe-core/playwright": "^4.8.2",
+    "@playwright/test": "^1.40.0",
+    "@storybook/addon-a11y": "^7.5.3",
+    "@storybook/addon-actions": "^7.5.3",
+    "@storybook/addon-backgrounds": "^7.5.3",
+    "@storybook/addon-controls": "^7.5.3",
+    "@storybook/addon-docs": "^7.5.3",
+    "@storybook/addon-toolbars": "^7.5.3",
+    "@storybook/addon-viewport": "^7.5.3",
+    "@storybook/react": "^7.5.3",
+    "@storybook/react-webpack5": "^7.5.3",
+    "@storybook/test-runner": "^0.16.0",
+    "@testing-library/jest-dom": "^6.1.4",
+    "@testing-library/react": "^14.0.0",
+    "@testing-library/user-event": "^14.5.1",
+    "axe-playwright": "^1.2.3",
+    "enzyme-to-json": "^3.6.2",
+    "jest": "^29.7.0",
+    "jest-axe": "^8.0.0",
+    "jest-environment-jsdom": "^29.7.0",
+    "jest-html-reporter": "^3.10.2",
+    "jest-junit": "^16.0.0",
+    "jest-sonar-reporter": "^2.0.0",
+    "jest-transform-css": "^6.0.1",
+    "msw": "^2.0.0",
+    "playwright": "^1.40.0",
+    "storybook": "^7.5.3"
   },
   "scripts": {
     "start": "react-scripts start",
     "build": "react-scripts build",
-    "build:analyze": "npm run build && npx webpack-bundle-analyzer build/static/js/*.js",
-    "test": "react-scripts test",
-    "eject": "react-scripts eject"
+    "test": "jest",
+    "test:watch": "jest --watch",
+    "test:coverage": "jest --coverage --coverageReporters=html-lcov --watchAll=false",
+    "test:coverage:ci": "jest --coverage --coverageReporters=lcov --coverageReporters=cobertura --watchAll=false",
+    "test:unit": "jest --testPathPattern='\\.test\\.js$' --testPathIgnorePatterns='integration|e2e'",
+    "test:integration": "jest --testPathPattern='integration'",
+    "test:a11y": "jest --testNamePattern='accessibility'",
+    "test:performance": "jest --testNamePattern='performance'",
+    "test:ci": "jest --ci --coverage --testResultsProcessor=jest-sonar-reporter --watchAll=false",
+    "test:debug": "jest --inspect-brk",
+    "test:update-snapshots": "jest -u",
+    "test:clear-cache": "jest --clearCache",
+    "test:visual": "playwright test",
+    "test:visual:ui": "playwright test --ui",
+    "test:visual:headed": "playwright test --headed",
+    "test:visual:debug": "playwright test --debug",
+    "test:visual:report": "playwright show-report",
+    "test:storybook": "test-storybook",
+    "test:storybook:watch": "test-storybook --watch",
+    "test:storybook:coverage": "test-storybook --coverage",
+    "eject": "react-scripts eject",
+    "storybook": "storybook dev -p 6006",
+    "storybook:build": "storybook build",
+    "storybook:serve": "storybook build && npx serve storybook-static",
+    "build-storybook": "storybook build",
+    "lint": "eslint src --ext .js,.jsx,.ts,.tsx",
+    "lint:fix": "eslint src --ext .js,.jsx,.ts,.tsx --fix",
+    "format": "prettier --write src/**/*.{js,jsx,ts,tsx,json,css,md}",
+    "format:check": "prettier --check src/**/*.{js,jsx,ts,tsx,json,css,md}",
+    "analyze": "npx webpack-bundle-analyzer build/static/js/*.js",
+    "serve": "npx serve -s build",
+    "precommit": "lint-staged",
+    "prepare": "husky install"
   },
   "eslintConfig": {
     "extends": [
@@ -39,11 +101,20 @@
       "last 1 safari version"
     ]
   },
-  "devDependencies": {
-    "autoprefixer": "^10.4.7",
-    "compression-webpack-plugin": "^10.0.0",
-    "postcss": "^8.4.14",
-    "tailwindcss": "^3.0.23",
-    "webpack-bundle-analyzer": "^4.9.0"
+  "lint-staged": {
+    "src/**/*.{js,jsx,ts,tsx}": [
+      "eslint --fix",
+      "prettier --write",
+      "jest --findRelatedTests --passWithNoTests"
+    ],
+    "src/**/*.{json,css,md}": [
+      "prettier --write"
+    ]
+  },
+  "husky": {
+    "hooks": {
+      "pre-commit": "lint-staged",
+      "commit-msg": "echo 'Commit message validation passed'"
+    }
   }
 }

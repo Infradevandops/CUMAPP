@@ -3,6 +3,8 @@
 Middleware configuration for the FastAPI application.
 """
 import logging
+import time
+import sentry_sdk
 from fastapi import FastAPI, Request, Response
 from starlette.middleware.base import BaseHTTPMiddleware
 
@@ -70,13 +72,85 @@ class RequestValidationMiddleware(BaseHTTPMiddleware):
         return await call_next(request)
 
 
+class SentryPerformanceMiddleware(BaseHTTPMiddleware):
+    """Capture performance metrics and user context for Sentry."""
+
+    async def dispatch(self, request: Request, call_next):
+        start_time = time.time()
+
+        # Set user context if available
+        user_context = getattr(request.state, "user", None)
+        if user_context:
+            sentry_sdk.set_user({
+                "id": user_context.get("id"),
+                "email": user_context.get("email"),
+                "username": user_context.get("username"),
+            })
+
+        # Set transaction name
+        transaction_name = f"{request.method} {request.url.path}"
+        sentry_sdk.set_tag("http.method", request.method)
+        sentry_sdk.set_tag("http.path", request.url.path)
+        sentry_sdk.set_tag("http.user_agent", request.headers.get("user-agent", ""))
+
+        # Process request
+        response = await call_next(request)
+
+        # Record performance metrics
+        duration = time.time() - start_time
+        sentry_sdk.set_measurement("request.duration", duration)
+        sentry_sdk.set_tag("http.status_code", response.status_code)
+
+        # Track slow requests (>1 second)
+        if duration > 1.0:
+            sentry_sdk.set_tag("performance.slow_request", "true")
+            logger.warning(f"Slow request detected: {transaction_name} took {duration:.2f}s")
+
+        # Track error responses
+        if response.status_code >= 400:
+            sentry_sdk.set_tag("error.type", "http_error")
+            sentry_sdk.set_tag("http.status_code", response.status_code)
+
+        return response
+
+
 def setup_middleware(app: FastAPI):
     """Configure and add middleware to the FastAPI app."""
     
-    # Add security headers middleware (first)
+    # Add CORS middleware for React development
+    from fastapi.middleware.cors import CORSMiddleware
+    import os
+    
+    # Configure CORS origins
+    origins = [
+        "http://localhost:3000",  # React development server
+        "http://127.0.0.1:3000",
+        "http://localhost:8000",  # FastAPI server
+        "http://127.0.0.1:8000",
+    ]
+    
+    # Add production origins from environment
+    cors_origins = os.getenv("CORS_ORIGINS", "").split(",")
+    if cors_origins and cors_origins[0]:
+        origins.extend([origin.strip() for origin in cors_origins])
+    
+    app.add_middleware(
+        CORSMiddleware,
+        allow_origins=origins,
+        allow_credentials=True,
+        allow_methods=["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+        allow_headers=["*"],
+    )
+    logger.info(f"CORS middleware added with origins: {origins}")
+
+    # Add Sentry performance middleware (first to capture all requests)
+    app.add_middleware(SentryPerformanceMiddleware)
+    logger.info("Sentry performance middleware added successfully")
+
+    # Add security headers middleware
     app.add_middleware(SecurityHeadersMiddleware)
     logger.info("Security headers middleware added successfully")
-    
+
     # Add request validation middleware
     app.add_middleware(RequestValidationMiddleware)
     logger.info("Request validation middleware added successfully")
@@ -111,3 +185,4 @@ def setup_middleware(app: FastAPI):
         logger.warning(f"Could not import JWT middleware: {e}")
     except Exception as e:
         logger.warning(f"Error adding JWT middleware: {e}")
+

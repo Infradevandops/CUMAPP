@@ -26,3 +26,4 @@ playwright==1.44.0
 selenium==4.21.0
 stripe==9.3.0
 reportlab==4.2.2
+sentry-sdk[fastapi]==1.38.0

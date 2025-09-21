@@ -1,0 +1,323 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Performance Dashboard - CumApp</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        .metric-card {
+            transition: transform 0.2s;
+        }
+        .metric-card:hover {
+            transform: translateY(-2px);
+        }
+        .status-healthy {
+            color: #198754;
+        }
+        .status-degraded {
+            color: #fd7e14;
+        }
+        .status-unhealthy {
+            color: #dc3545;
+        }
+        .performance-gauge {
+            position: relative;
+            display: inline-block;
+        }
+        .gauge-container {
+            position: relative;
+            width: 120px;
+            height: 60px;
+            overflow: hidden;
+        }
+        .gauge-fill {
+            height: 100%;
+            border-radius: 60px 60px 0 0;
+            transition: width 0.3s ease;
+        }
+    </style>
+</head>
+<body>
+    <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
+        <div class="container">
+            <a class="navbar-brand" href="/">
+                <i class="fas fa-chart-line me-2"></i>CumApp Performance Dashboard
+            </a>
+            <div class="navbar-nav ms-auto">
+                <span class="navbar-text me-3" id="lastUpdated">Loading...</span>
+                <button class="btn btn-outline-light btn-sm" onclick="refreshData()">
+                    <i class="fas fa-sync-alt"></i> Refresh
+                </button>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container-fluid mt-4">
+        <!-- Status Overview -->
+        <div class="row mb-4">
+            <div class="col-12">
+                <div class="card">
+                    <div class="card-header">
+                        <h5 class="mb-0">
+                            <i class="fas fa-tachometer-alt me-2"></i>System Status
+                        </h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="row text-center">
+                            <div class="col-md-4">
+                                <div class="performance-gauge">
+                                    <div class="gauge-container">
+                                        <div id="overallHealthGauge" class="gauge-fill bg-success" style="width: 100%"></div>
+                                    </div>
+                                    <div class="mt-2">
+                                        <h6>Overall Health</h6>
+                                        <span id="overallHealthStatus" class="badge bg-success">Healthy</span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <h6>Response Time</h6>
+                                <div class="mb-2">
+                                    <span id="avgResponseTime" class="h4">0.00s</span>
+                                </div>
+                                <small class="text-muted">Average API Response</small>
+                            </div>
+                            <div class="col-md-4">
+                                <h6>Budget Violations</h6>
+                                <div class="mb-2">
+                                    <span id="budgetViolations" class="h4">0</span>
+                                </div>
+                                <small class="text-muted">Performance Issues</small>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Core Web Vitals -->
+        <div class="row mb-4">
+            <div class="col-12">
+                <div class="card">
+                    <div class="card-header">
+                        <h5 class="mb-0">
+                            <i class="fas fa-globe me-2"></i>Core Web Vitals
+                        </h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="row" id="coreWebVitalsContainer">
+                            <!-- Core Web Vitals will be populated here -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Performance Metrics -->
+        <div class="row">
+            <div class="col-md-6 mb-4">
+                <div class="card">
+                    <div class="card-header">
+                        <h5 class="mb-0">
+                            <i class="fas fa-server me-2"></i>API Performance
+                        </h5>
+                    </div>
+                    <div class="card-body">
+                        <canvas id="apiPerformanceChart" width="400" height="200"></canvas>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-6 mb-4">
+                <div class="card">
+                    <div class="card-header">
+                        <h5 class="mb-0">
+                            <i class="fas fa-database me-2"></i>Database Performance
+                        </h5>
+                    </div>
+                    <div class="card-body">
+                        <canvas id="databasePerformanceChart" width="400" height="200"></canvas>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Chat Performance -->
+        <div class="row mb-4">
+            <div class="col-12">
+                <div class="card">
+                    <div class="card-header">
+                        <h5 class="mb-0">
+                            <i class="fas fa-comments me-2"></i>Chat Performance
+                        </h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="row" id="chatPerformanceContainer">
+                            <!-- Chat performance metrics will be populated here -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        let performanceData = {};
+        let charts = {};
+
+        // Initialize dashboard
+        document.addEventListener('DOMContentLoaded', function() {
+            refreshData();
+            // Auto-refresh every 30 seconds
+            setInterval(refreshData, 30000);
+        });
+
+        async function refreshData() {
+            try {
+                const response = await fetch('/api/performance/metrics');
+                const data = await response.json();
+                performanceData = data;
+
+                updateLastUpdated();
+                updateOverallHealth(data);
+                updateCoreWebVitals(data.metrics.core_web_vitals);
+                updateChatPerformance(data.metrics.chat_performance);
+                updateCharts(data.metrics);
+
+            } catch (error) {
+                console.error('Error fetching performance data:', error);
+                document.getElementById('overallHealthStatus').textContent = 'Error';
+                document.getElementById('overallHealthStatus').className = 'badge bg-danger';
+            }
+        }
+
+        function updateLastUpdated() {
+            const timestamp = new Date(performanceData.timestamp * 1000);
+            document.getElementById('lastUpdated').textContent = `Last updated: ${timestamp.toLocaleTimeString()}`;
+        }
+
+        function updateOverallHealth(data) {
+            const status = data.status;
+            const statusElement = document.getElementById('overallHealthStatus');
+            const gaugeElement = document.getElementById('overallHealthGauge');
+
+            statusElement.textContent = status.charAt(0).toUpperCase() + status.slice(1);
+            gaugeElement.className = `gauge-fill bg-${status === 'healthy' ? 'success' : status === 'degraded' ? 'warning' : 'danger'}`;
+
+            // Update budget violations count
+            const violations = Object.values(data.budget_violations).filter(v => v).length;
+            document.getElementById('budgetViolations').textContent = violations;
+        }
+
+        function updateCoreWebVitals(vitals) {
+            const container = document.getElementById('coreWebVitalsContainer');
+            container.innerHTML = '';
+
+            if (!vitals || Object.keys(vitals).length === 0) {
+                container.innerHTML = '<div class="col-12"><p class="text-muted">No Core Web Vitals data available</p></div>';
+                return;
+            }
+
+            Object.entries(vitals).forEach(([name, data]) => {
+                const col = document.createElement('div');
+                col.className = 'col-md-4 mb-3';
+
+                const value = data.average || data.latest || 0;
+                const status = getMetricStatus(name, value);
+
+                col.innerHTML = `
+                    <div class="card metric-card">
+                        <div class="card-body text-center">
+                            <h6 class="card-title">${formatMetricName(name)}</h6>
+                            <div class="h4 mb-2">${formatMetricValue(name, value)}</div>
+                            <small class="text-muted">Latest: ${formatMetricValue(name, data.latest || 0)}</small>
+                            <div><span class="badge bg-${status.color} mt-2">${status.text}</span></div>
+                        </div>
+                    </div>
+                `;
+                container.appendChild(col);
+            });
+        }
+
+        function updateChatPerformance(chatData) {
+            const container = document.getElementById('chatPerformanceContainer');
+            container.innerHTML = '';
+
+            if (!chatData || Object.keys(chatData).length === 0) {
+                container.innerHTML = '<div class="col-12"><p class="text-muted">No chat performance data available</p></div>';
+                return;
+            }
+
+            Object.entries(chatData).forEach(([operation, data]) => {
+                const col = document.createElement('div');
+                col.className = 'col-md-6 mb-3';
+
+                const avgTime = data.average || 0;
+                const status = avgTime > 2.0 ? {color: 'danger', text: 'Slow'} :
+                              avgTime > 1.0 ? {color: 'warning', text: 'Moderate'} :
+                              {color: 'success', text: 'Fast'};
+
+                col.innerHTML = `
+                    <div class="card metric-card">
+                        <div class="card-body">
+                            <h6 class="card-title">${operation.replace('_', ' ').toUpperCase()}</h6>
+                            <div class="row">
+                                <div class="col-6">
+                                    <div class="h5 mb-1">${avgTime.toFixed(3)}s</div>
+                                    <small class="text-muted">Avg Response</small>
+                                </div>
+                                <div class="col-6 text-end">
+                                    <div class="h6 mb-1">${data.count || 0}</div>
+                                    <small class="text-muted">Operations</small>
+                                </div>
+                            </div>
+                            <div class="mt-2">
+                                <span class="badge bg-${status.color}">${status.text}</span>
+                            </div>
+                        </div>
+                    </div>
+                `;
+                container.appendChild(col);
+            });
+        }
+
+        function updateCharts(metrics) {
+            // This would implement Chart.js visualizations
+            // For now, we'll just ensure the canvas elements are ready
+            console.log('Chart data available:', metrics);
+        }
+
+        function getMetricStatus(name, value) {
+            const thresholds = {
+                'lcp': { good: 2500, poor: 4000 },
+                'fid': { good: 100, poor: 300 },
+                'cls': { good: 0.1, poor: 0.25 }
+            };
+
+            const metric = name.split('.').pop();
+            if (thresholds[metric]) {
+                const threshold = thresholds[metric];
+                if (value <= threshold.good) return {color: 'success', text: 'Good'};
+                if (value <= threshold.poor) return {color: 'warning', text: 'Needs Improvement'};
+                return {color: 'danger', text: 'Poor'};
+            }
+
+            return {color: 'secondary', text: 'Unknown'};
+        }
+
+        function formatMetricName(name) {
+            return name.split('.').pop().toUpperCase();
+        }
+
+        function formatMetricValue(name, value) {
+            const metric = name.split('.').pop();
+            if (metric === 'cls') return value.toFixed(3);
+            if (metric === 'fid') return `${value.toFixed(0)}ms`;
+            return `${value.toFixed(0)}ms`;
+        }
+    </script>
+</body>
+</html>

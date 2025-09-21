@@ -11,12 +11,27 @@ services:
     startCommand: python scripts/start_production.py
     healthCheckPath: /health
     routes:
+      # API routes should go to the web service
       - type: rewrite
-        source: "/api/{,}"
-        destination: "/api/{,}"
+        source: "/api/(.*)"
+        destination: "/api/$1"
+      # Health check and docs should go to web service  
       - type: rewrite
-        source: "/*"
-        destination: "http://frontend"
+        source: "/health"
+        destination: "/health"
+      - type: rewrite
+        source: "/docs"
+        destination: "/docs"
+      - type: rewrite
+        source: "/redoc"
+        destination: "/redoc"
+      - type: rewrite
+        source: "/openapi.json"
+        destination: "/openapi.json"
+      # Everything else goes to frontend
+      - type: rewrite
+        source: "/(.*)"
+        destination: "http://frontend/$1"
     envVars:
       - key: PYTHON_VERSION
         value: 3.11.0
@@ -32,7 +47,7 @@ services:
         value: INFO
       - key: USE_MOCK_TWILIO
         value: true
-      - key. DATABASE_URL
+      - key: DATABASE_URL
         fromDatabase:
           name: cumapp-db
           property: connectionString
@@ -52,7 +67,7 @@ services:
     staticPublishPath: frontend/build
     routes:
       - type: rewrite
-        source: "/*"
+        source: "/(.*)"
         destination: "/index.html"
 
   # PostgreSQL Database
