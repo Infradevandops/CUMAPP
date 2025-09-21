@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { Link } from 'react-router-dom';
 import Button from '../atoms/Button';
 import FormField from '../molecules/FormField';
 import LoadingSpinner from '../atoms/LoadingSpinner';
@@ -78,15 +79,25 @@ const LoginPage = ({ onSuccess }) => {
   
   return (
     <div className="min-h-screen bg-gray-50 flex flex-col justify-center py-12 sm:px-6 lg:px-8">
+      {/* Back to Home Link */}
+      <div className="absolute top-4 left-4">
+        <Link to="/" className="flex items-center text-blue-600 hover:text-blue-800">
+          ← Back to Home
+        </Link>
+      </div>
+      
       <div className="sm:mx-auto sm:w-full sm:max-w-md">
+        <Link to="/" className="flex justify-center">
+          <h1 className="text-3xl font-bold text-blue-600 mb-4">CumApp</h1>
+        </Link>
         <h2 className="mt-6 text-center text-3xl font-extrabold text-gray-900">
           Sign in to your account
         </h2>
         <p className="mt-2 text-center text-sm text-gray-600">
           Or{' '}
-          <a href="/register" className="font-medium text-blue-600 hover:text-blue-500">
+          <Link to="/register" className="font-medium text-blue-600 hover:text-blue-500">
             create a new account
-          </a>
+          </Link>
         </p>
       </div>
       
@@ -131,9 +142,9 @@ const LoginPage = ({ onSuccess }) => {
               </div>
               
               <div className="text-sm">
-                <a href="/forgot-password" className="font-medium text-blue-600 hover:text-blue-500">
-                  Forgot your password?
-                </a>
+                <Link to="/register" className="font-medium text-blue-600 hover:text-blue-500">
+                  Forgot your password? Sign up instead
+                </Link>
               </div>
             </div>
             

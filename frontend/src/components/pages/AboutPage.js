@@ -1,311 +1,312 @@
 import React from 'react';
-import { Typography, Card, Button } from '../atoms';
-import BaseLayout from '../templates/BaseLayout';
+import { Link } from 'react-router-dom';
+import { Button, Typography, Card } from '../atoms';
 
 const AboutPage = () => {
-  const team = [
+  const teamMembers = [
     {
       name: "Alex Johnson",
-      role: "CEO & Co-Founder", 
-      bio: "Former VP Engineering at Twilio. 15+ years building communication platforms. Stanford CS, Y Combinator alum.",
+      role: "CEO & Founder",
+      bio: "10+ years in telecommunications and enterprise software. Previously led product at major telecom companies.",
       avatar: "AJ",
       linkedin: "#"
     },
     {
-      name: "Maria Garcia",
-      role: "CTO & Co-Founder",
-      bio: "Ex-Google Senior Staff Engineer. Led WhatsApp Business API team. MIT PhD in Distributed Systems.",
-      avatar: "MG", 
+      name: "Sarah Chen",
+      role: "CTO",
+      bio: "Former senior engineer at Google and Twilio. Expert in scalable communication infrastructure.",
+      avatar: "SC",
       linkedin: "#"
     },
     {
-      name: "David Chen",
+      name: "Marcus Rodriguez",
       role: "Head of Product",
-      bio: "Former Product Lead at Stripe. Built developer tools used by 100K+ developers. Harvard MBA.",
-      avatar: "DC",
+      bio: "Product leader with experience at Stripe and Slack. Focused on developer experience and API design.",
+      avatar: "MR",
       linkedin: "#"
     },
     {
-      name: "Sarah Kim",
-      role: "Head of Security",
-      bio: "Ex-Microsoft Security Architect. CISSP certified. Led SOC2 compliance for 3 unicorn startups.",
-      avatar: "SK",
+      name: "Jennifer Park",
+      role: "VP of Engineering",
+      bio: "Engineering leader with 8+ years building high-scale systems. Previously at Uber and Airbnb.",
+      avatar: "JP",
       linkedin: "#"
-    }
-  ];
-
-  const milestones = [
-    {
-      year: "2023",
-      title: "Company Founded",
-      description: "Started with a vision to simplify communication infrastructure for developers"
-    },
-    {
-      year: "2023",
-      title: "First 100 Customers", 
-      description: "Reached product-market fit with SMS verification platform"
-    },
-    {
-      year: "2024",
-      title: "AI Integration",
-      description: "Launched AI-powered conversation assistance and automation features"
-    },
-    {
-      year: "2024",
-      title: "Enterprise Ready",
-      description: "Achieved SOC2 compliance and launched multi-tenant architecture"
-    },
-    {
-      year: "2024",
-      title: "Global Expansion",
-      description: "Expanded to 15+ countries with 99.9% uptime SLA"
     }
   ];
 
   const values = [
     {
-      icon: "🎯",
-      title: "Developer First",
-      description: "We build tools that developers love to use. Clean APIs, excellent docs, and intuitive interfaces."
-    },
-    {
-      icon: "🛡️", 
-      title: "Security by Design",
-      description: "Security isn't an afterthought. We build with privacy and compliance at the core."
-    },
-    {
       icon: "🚀",
       title: "Innovation",
-      description: "We push the boundaries of what's possible in communication technology."
+      description: "We constantly push the boundaries of what's possible in communication technology."
     },
     {
-      icon: "🤝",
-      title: "Customer Success",
-      description: "Your success is our success. We're partners in your growth journey."
+      icon: "🔒",
+      title: "Security",
+      description: "Enterprise-grade security and compliance are built into everything we do."
     },
     {
       icon: "🌍",
-      title: "Global Impact",
-      description: "Building communication infrastructure that connects the world."
+      title: "Global Scale",
+      description: "Our platform is designed to work reliably across the globe, 24/7."
     },
     {
-      icon: "💡",
-      title: "Transparency",
-      description: "Open source, transparent pricing, and honest communication always."
+      icon: "🤝",
+      title: "Partnership",
+      description: "We believe in building long-term partnerships with our customers and community."
     }
   ];
 
+  const stats = [
+    { number: "500+", label: "Companies Trust Us" },
+    { number: "50K+", label: "Developers" },
+    { number: "10M+", label: "Messages Sent" },
+    { number: "99.9%", label: "Uptime SLA" }
+  ];
+
   return (
-    <BaseLayout>
-      <div className="min-h-screen bg-gray-50">
-        {/* Hero Section */}
-        <section className="bg-gradient-to-r from-blue-600 to-purple-600 text-white py-20">
-          <div className="container mx-auto px-4">
-            <div className="max-w-4xl mx-auto text-center">
-              <Typography variant="h1" className="text-5xl font-bold mb-6 text-white">
-                Building the Future of Communication
-              </Typography>
-              <Typography variant="body" className="text-xl text-blue-100 mb-8">
-                We're on a mission to make reliable, intelligent communication infrastructure 
-                accessible to every developer and business worldwide.
-              </Typography>
-              <div className="flex items-center justify-center space-x-8 text-blue-100">
-                <div className="text-center">
-                  <div className="text-2xl font-bold">500+</div>
-                  <div className="text-sm">Companies</div>
-                </div>
-                <div className="text-center">
-                  <div className="text-2xl font-bold">50K+</div>
-                  <div className="text-sm">Developers</div>
-                </div>
-                <div className="text-center">
-                  <div className="text-2xl font-bold">15+</div>
-                  <div className="text-sm">Countries</div>
-                </div>
-                <div className="text-center">
-                  <div className="text-2xl font-bold">99.9%</div>
-                  <div className="text-sm">Uptime</div>
-                </div>
-              </div>
+    <div className="min-h-screen bg-gray-50">
+      {/* Navigation Header */}
+      <nav className="bg-white shadow-sm fixed w-full top-0 z-50">
+        <div className="container mx-auto px-4">
+          <div className="flex justify-between items-center h-16">
+            <div className="flex items-center">
+              <Link to="/" className="text-2xl font-bold text-blue-600">
+                CumApp
+              </Link>
+            </div>
+            <div className="hidden md:flex items-center space-x-8">
+              <Link to="/" className="text-gray-600 hover:text-blue-600">Home</Link>
+              <Link to="/about" className="text-blue-600 font-semibold">About</Link>
+              <Link to="/reviews" className="text-gray-600 hover:text-blue-600">Reviews</Link>
+              <Link to="/login" className="text-gray-600 hover:text-blue-600">Login</Link>
+              <Link to="/register">
+                <Button className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700">
+                  Get Started
+                </Button>
+              </Link>
             </div>
           </div>
-        </section>
+        </div>
+      </nav>
 
-        {/* Mission Section */}
-        <section className="py-16 bg-white">
-          <div className="container mx-auto px-4">
-            <div className="max-w-4xl mx-auto">
-              <div className="text-center mb-12">
-                <Typography variant="h2" className="text-3xl font-bold mb-6">
-                  Our Mission
-                </Typography>
-                <Typography className="text-xl text-gray-600 leading-relaxed">
-                  To democratize communication infrastructure by providing developers and businesses 
-                  with powerful, reliable, and intelligent tools that scale from startup to enterprise. 
-                  We believe every company should have access to world-class communication capabilities 
-                  without the complexity and cost of building from scratch.
-                </Typography>
-              </div>
-              
-              <div className="grid md:grid-cols-3 gap-8 text-center">
-                <div>
-                  <div className="text-4xl mb-4">🎯</div>
-                  <Typography variant="h3" className="text-xl font-semibold mb-3">
-                    Simplicity
-                  </Typography>
-                  <Typography className="text-gray-600">
-                    Complex communication infrastructure made simple through intuitive APIs and excellent documentation.
-                  </Typography>
-                </div>
-                <div>
-                  <div className="text-4xl mb-4">⚡</div>
-                  <Typography variant="h3" className="text-xl font-semibold mb-3">
-                    Performance
-                  </Typography>
-                  <Typography className="text-gray-600">
-                    Lightning-fast delivery with 99.9% uptime and &lt;100ms response times globally.
-                  </Typography>
-                </div>
-                <div>
-                  <div className="text-4xl mb-4">🔒</div>
-                  <Typography variant="h3" className="text-xl font-semibold mb-3">
-                    Trust
-                  </Typography>
-                  <Typography className="text-gray-600">
-                    Enterprise-grade security, compliance, and reliability you can depend on.
-                  </Typography>
-                </div>
-              </div>
-            </div>
-          </div>
-        </section>
-
-        {/* Values Section */}
-        <section className="py-16 bg-gray-50">
-          <div className="container mx-auto px-4">
-            <div className="text-center mb-12">
-              <Typography variant="h2" className="text-3xl font-bold mb-4">
-                Our Values
-              </Typography>
-              <Typography className="text-xl text-gray-600">
-                The principles that guide everything we do
-              </Typography>
-            </div>
-            
-            <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
-              {values.map((value, index) => (
-                <Card key={index} className="p-6 text-center hover:shadow-lg transition-shadow">
-                  <div className="text-4xl mb-4">{value.icon}</div>
-                  <Typography variant="h3" className="text-xl font-semibold mb-3">
-                    {value.title}
-                  </Typography>
-                  <Typography className="text-gray-600">
-                    {value.description}
-                  </Typography>
-                </Card>
-              ))}
-            </div>
-          </div>
-        </section>
-
-        {/* Team Section */}
-        <section className="py-16 bg-white">
-          <div className="container mx-auto px-4">
-            <div className="text-center mb-12">
-              <Typography variant="h2" className="text-3xl font-bold mb-4">
-                Meet Our Team
-              </Typography>
-              <Typography className="text-xl text-gray-600">
-                Experienced leaders from top tech companies
-              </Typography>
-            </div>
-            
-            <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
-              {team.map((member, index) => (
-                <Card key={index} className="p-6 text-center">
-                  <div className="w-20 h-20 bg-blue-600 rounded-full flex items-center justify-center text-white font-bold text-xl mx-auto mb-4">
-                    {member.avatar}
-                  </div>
-                  <Typography variant="h3" className="text-xl font-semibold mb-2">
-                    {member.name}
-                  </Typography>
-                  <Typography className="text-blue-600 font-medium mb-3">
-                    {member.role}
-                  </Typography>
-                  <Typography className="text-gray-600 text-sm mb-4">
-                    {member.bio}
-                  </Typography>
-                  <Button variant="outline" size="sm" className="text-blue-600">
-                    LinkedIn
-                  </Button>
-                </Card>
-              ))}
-            </div>
-          </div>
-        </section>
-
-        {/* Timeline Section */}
-        <section className="py-16 bg-gray-50">
-          <div className="container mx-auto px-4">
-            <div className="text-center mb-12">
-              <Typography variant="h2" className="text-3xl font-bold mb-4">
-                Our Journey
-              </Typography>
-              <Typography className="text-xl text-gray-600">
-                Key milestones in building the future of communication
-              </Typography>
-            </div>
-            
-            <div className="max-w-4xl mx-auto">
-              <div className="space-y-8">
-                {milestones.map((milestone, index) => (
-                  <div key={index} className="flex items-start">
-                    <div className="flex-shrink-0 w-20 text-center">
-                      <div className="bg-blue-600 text-white rounded-full w-12 h-12 flex items-center justify-center font-bold mx-auto mb-2">
-                        {milestone.year}
-                      </div>
-                      {index < milestones.length - 1 && (
-                        <div className="w-px h-16 bg-gray-300 mx-auto"></div>
-                      )}
-                    </div>
-                    <div className="flex-1 ml-6">
-                      <Typography variant="h3" className="text-xl font-semibold mb-2">
-                        {milestone.title}
-                      </Typography>
-                      <Typography className="text-gray-600">
-                        {milestone.description}
-                      </Typography>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </div>
-          </div>
-        </section>
-
-        {/* CTA Section */}
-        <section className="py-16 bg-blue-600 text-white">
-          <div className="container mx-auto px-4 text-center">
-            <Typography variant="h2" className="text-3xl font-bold mb-4 text-white">
-              Join Our Mission
+      {/* Hero Section */}
+      <section className="bg-gradient-to-r from-blue-600 to-purple-600 text-white pt-20 pb-16">
+        <div className="container mx-auto px-4 py-16">
+          <div className="max-w-4xl mx-auto text-center">
+            <Typography variant="h1" className="text-5xl font-bold mb-6 leading-tight text-white">
+              About CumApp
             </Typography>
-            <Typography className="text-xl mb-8 text-blue-100 max-w-2xl mx-auto">
-              We're always looking for talented individuals who share our passion for 
-              building exceptional communication infrastructure.
+            <Typography variant="body" className="text-xl mb-8 text-blue-100">
+              We're building the future of communication infrastructure. 
+              Our mission is to make reliable, scalable communication accessible to every developer and business.
             </Typography>
+          </div>
+        </div>
+      </section>
+
+      {/* Stats Section */}
+      <section className="py-16 bg-white">
+        <div className="container mx-auto px-4">
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-8 text-center">
+            {stats.map((stat, index) => (
+              <div key={index}>
+                <Typography variant="h2" className="text-3xl font-bold text-blue-600 mb-2">
+                  {stat.number}
+                </Typography>
+                <Typography className="text-gray-600">{stat.label}</Typography>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* Mission Section */}
+      <section className="py-16 bg-gray-50">
+        <div className="container mx-auto px-4">
+          <div className="max-w-4xl mx-auto">
+            <div className="text-center mb-12">
+              <Typography variant="h2" className="text-3xl font-bold mb-4">
+                Our Mission
+              </Typography>
+              <Typography className="text-xl text-gray-600">
+                Empowering developers and businesses with reliable communication infrastructure
+              </Typography>
+            </div>
             
-            <div className="flex flex-col sm:flex-row gap-4 justify-center">
-              <Button className="bg-white text-blue-600 px-8 py-4 rounded-lg font-semibold hover:bg-gray-100">
-                🚀 View Open Positions
-              </Button>
-              <Button variant="outline" className="border-2 border-white text-white px-8 py-4 rounded-lg font-semibold hover:bg-white hover:text-blue-600">
-                📧 Contact Us
-              </Button>
+            <div className="grid md:grid-cols-2 gap-12 items-center">
+              <div>
+                <Typography className="text-lg text-gray-700 mb-6">
+                  Founded in 2024, CumApp was born from the frustration of dealing with unreliable 
+                  SMS verification services and fragmented communication APIs. We saw developers 
+                  struggling with multiple providers, inconsistent APIs, and poor reliability.
+                </Typography>
+                <Typography className="text-lg text-gray-700 mb-6">
+                  Our platform unifies SMS verification, real-time messaging, and voice communication 
+                  into a single, developer-friendly API. We handle the complexity so you can focus 
+                  on building great products.
+                </Typography>
+                <Typography className="text-lg text-gray-700">
+                  Today, we're trusted by over 500 companies worldwide, from startups to Fortune 500 
+                  enterprises, processing millions of messages with 99.9% uptime.
+                </Typography>
+              </div>
+              <div className="text-center">
+                <div className="bg-white rounded-2xl p-8 shadow-lg">
+                  <div className="text-6xl mb-4">🚀</div>
+                  <Typography variant="h3" className="text-2xl font-bold mb-4">Our Vision</Typography>
+                  <Typography className="text-gray-600">
+                    To become the global standard for communication infrastructure, 
+                    enabling seamless connections between businesses and their customers.
+                  </Typography>
+                </div>
+              </div>
             </div>
           </div>
-        </section>
-      </div>
-    </BaseLayout>
+        </div>
+      </section>
+
+      {/* Values Section */}
+      <section className="py-16 bg-white">
+        <div className="container mx-auto px-4">
+          <div className="text-center mb-12">
+            <Typography variant="h2" className="text-3xl font-bold mb-4">
+              Our Values
+            </Typography>
+            <Typography className="text-xl text-gray-600">
+              The principles that guide everything we do
+            </Typography>
+          </div>
+          
+          <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
+            {values.map((value, index) => (
+              <Card key={index} className="p-6 text-center hover:shadow-lg transition-shadow">
+                <div className="text-4xl mb-4">{value.icon}</div>
+                <Typography variant="h3" className="text-xl font-semibold mb-3">
+                  {value.title}
+                </Typography>
+                <Typography className="text-gray-600">
+                  {value.description}
+                </Typography>
+              </Card>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* Team Section */}
+      <section className="py-16 bg-gray-50">
+        <div className="container mx-auto px-4">
+          <div className="text-center mb-12">
+            <Typography variant="h2" className="text-3xl font-bold mb-4">
+              Meet Our Team
+            </Typography>
+            <Typography className="text-xl text-gray-600">
+              Experienced leaders from top tech companies
+            </Typography>
+          </div>
+          
+          <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
+            {teamMembers.map((member, index) => (
+              <Card key={index} className="p-6 text-center hover:shadow-lg transition-shadow">
+                <div className="w-20 h-20 bg-blue-600 rounded-full flex items-center justify-center text-white font-bold text-xl mx-auto mb-4">
+                  {member.avatar}
+                </div>
+                <Typography variant="h4" className="text-lg font-semibold mb-2">
+                  {member.name}
+                </Typography>
+                <Typography className="text-blue-600 font-medium mb-3">
+                  {member.role}
+                </Typography>
+                <Typography className="text-gray-600 text-sm mb-4">
+                  {member.bio}
+                </Typography>
+                <a 
+                  href={member.linkedin} 
+                  className="text-blue-600 hover:text-blue-800 text-sm font-medium"
+                >
+                  Connect on LinkedIn →
+                </a>
+              </Card>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* Contact Section */}
+      <section className="py-16 bg-blue-600 text-white">
+        <div className="container mx-auto px-4 text-center">
+          <Typography variant="h2" className="text-3xl font-bold mb-4 text-white">
+            Get in Touch
+          </Typography>
+          <Typography className="text-xl mb-8 text-blue-100 max-w-2xl mx-auto">
+            Have questions about our platform? Want to learn more about enterprise solutions? 
+            We'd love to hear from you.
+          </Typography>
+          
+          <div className="grid md:grid-cols-3 gap-8 mb-8">
+            <div>
+              <div className="text-3xl mb-3">📧</div>
+              <Typography className="font-semibold mb-2 text-white">Email Us</Typography>
+              <Typography className="text-blue-100">hello@cumapp.com</Typography>
+              <Typography className="text-blue-100">support@cumapp.com</Typography>
+            </div>
+            <div>
+              <div className="text-3xl mb-3">💬</div>
+              <Typography className="font-semibold mb-2 text-white">Live Chat</Typography>
+              <Typography className="text-blue-100">Available 24/7</Typography>
+              <Typography className="text-blue-100">Average response: 2 minutes</Typography>
+            </div>
+            <div>
+              <div className="text-3xl mb-3">📞</div>
+              <Typography className="font-semibold mb-2 text-white">Phone Support</Typography>
+              <Typography className="text-blue-100">Enterprise customers</Typography>
+              <Typography className="text-blue-100">Dedicated account managers</Typography>
+            </div>
+          </div>
+          
+          <div className="flex flex-col sm:flex-row gap-4 justify-center">
+            <Link to="/register">
+              <Button className="bg-white text-blue-600 px-8 py-3 rounded-lg font-semibold hover:bg-gray-100 w-full sm:w-auto">
+                Start Free Trial
+              </Button>
+            </Link>
+            <Link to="/login">
+              <Button variant="outline" className="border-2 border-white text-white px-8 py-3 rounded-lg font-semibold hover:bg-white hover:text-blue-600 w-full sm:w-auto">
+                Contact Sales
+              </Button>
+            </Link>
+          </div>
+        </div>
+      </section>
+
+      {/* Footer */}
+      <footer className="bg-gray-800 text-white py-8">
+        <div className="container mx-auto px-4">
+          <div className="flex flex-col md:flex-row justify-between items-center">
+            <div className="mb-4 md:mb-0">
+              <Link to="/" className="text-2xl font-bold text-white">
+                CumApp
+              </Link>
+              <Typography className="text-gray-400 mt-2">
+                Enterprise communication platform
+              </Typography>
+            </div>
+            <div className="flex space-x-6">
+              <Link to="/" className="text-gray-400 hover:text-white">Home</Link>
+              <Link to="/about" className="text-gray-400 hover:text-white">About</Link>
+              <Link to="/reviews" className="text-gray-400 hover:text-white">Reviews</Link>
+              <a href="/docs" className="text-gray-400 hover:text-white">Docs</a>
+            </div>
+          </div>
+          <div className="border-t border-gray-700 mt-6 pt-6 text-center">
+            <Typography className="text-gray-400">
+              © 2024 CumApp. All rights reserved.
+            </Typography>
+          </div>
+        </div>
+      </footer>
+    </div>
   );
 };
 

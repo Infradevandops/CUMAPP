@@ -1,4 +1,5 @@
 import React from 'react';
+import { Link } from 'react-router-dom';
 import { Button, Typography, Card, Badge } from '../atoms';
 
 const LandingPage = () => {
@@ -79,6 +80,29 @@ const LandingPage = () => {
 
   return (
     <div className="min-h-screen bg-gray-50">
+      {/* Navigation Header */}
+      <nav className="bg-white shadow-sm fixed w-full top-0 z-50">
+        <div className="container mx-auto px-4">
+          <div className="flex justify-between items-center h-16">
+            <div className="flex items-center">
+              <Link to="/" className="text-2xl font-bold text-blue-600">
+                CumApp
+              </Link>
+            </div>
+            <div className="hidden md:flex items-center space-x-8">
+              <Link to="/about" className="text-gray-600 hover:text-blue-600">About</Link>
+              <Link to="/reviews" className="text-gray-600 hover:text-blue-600">Reviews</Link>
+              <Link to="/login" className="text-gray-600 hover:text-blue-600">Login</Link>
+              <Link to="/register">
+                <Button className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700">
+                  Get Started
+                </Button>
+              </Link>
+            </div>
+          </div>
+        </div>
+      </nav>
+
       {/* Hero Section */}
       <section className="bg-gradient-to-r from-blue-600 to-purple-600 text-white pt-20 pb-16">
         <div className="container mx-auto px-4 py-16">
@@ -103,12 +127,16 @@ const LandingPage = () => {
               </div>
 
               <div className="flex flex-col sm:flex-row gap-4 mb-6">
-                <Button className="bg-white text-blue-600 px-8 py-4 rounded-lg font-semibold hover:bg-gray-100">
-                  🚀 Start Free Trial
-                </Button>
-                <Button variant="outline" className="border-2 border-white text-white px-8 py-4 rounded-lg font-semibold hover:bg-white hover:text-blue-600">
-                  📖 View Documentation
-                </Button>
+                <Link to="/register">
+                  <Button className="bg-white text-blue-600 px-8 py-4 rounded-lg font-semibold hover:bg-gray-100 w-full sm:w-auto">
+                    🚀 Start Free Trial
+                  </Button>
+                </Link>
+                <a href="/docs" target="_blank" rel="noopener noreferrer">
+                  <Button variant="outline" className="border-2 border-white text-white px-8 py-4 rounded-lg font-semibold hover:bg-white hover:text-blue-600 w-full sm:w-auto">
+                    📖 View Documentation
+                  </Button>
+                </a>
               </div>
               
               <div className="flex items-center text-blue-100">
@@ -237,12 +265,16 @@ const LandingPage = () => {
           </Typography>
           
           <div className="flex flex-col sm:flex-row gap-4 justify-center mb-8">
-            <Button className="bg-white text-blue-600 px-8 py-4 rounded-lg font-semibold hover:bg-gray-100">
-              🚀 Start Free Trial
-            </Button>
-            <Button variant="outline" className="border-2 border-white text-white px-8 py-4 rounded-lg font-semibold hover:bg-white hover:text-blue-600">
-              📞 Schedule Demo
-            </Button>
+            <Link to="/register">
+              <Button className="bg-white text-blue-600 px-8 py-4 rounded-lg font-semibold hover:bg-gray-100 w-full sm:w-auto">
+                🚀 Start Free Trial
+              </Button>
+            </Link>
+            <Link to="/login">
+              <Button variant="outline" className="border-2 border-white text-white px-8 py-4 rounded-lg font-semibold hover:bg-white hover:text-blue-600 w-full sm:w-auto">
+                📞 Login to Dashboard
+              </Button>
+            </Link>
           </div>
           
           <div className="flex items-center justify-center text-blue-100">
