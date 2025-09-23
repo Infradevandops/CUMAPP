@@ -9,13 +9,15 @@ ENV ENVIRONMENT=production
 # Set work directory
 WORKDIR /app
 
-# Install system dependencies
+# Install system dependencies including Node.js
 RUN apt-get update \
     && apt-get install -y --no-install-recommends \
         build-essential \
         curl \
         postgresql-client \
-        && rm -rf /var/lib/apt/lists/*
+    && curl -fsSL https://deb.nodesource.com/setup_18.x | bash - \
+    && apt-get install -y nodejs \
+    && rm -rf /var/lib/apt/lists/*
 
 # Install Python dependencies
 COPY requirements.txt .
@@ -27,24 +29,19 @@ RUN pip install gunicorn
 # Copy project
 COPY . .
 
+# Build frontend if exists (as root before switching user)
+RUN if [ -d "frontend" ]; then \
+    cd frontend && npm install && npm run build; \
+    fi
+
 # Create non-root user
 RUN adduser --disabled-password --gecos '' appuser \
     && chown -R appuser:appuser /app
 USER appuser
 
-# Create log directory
-RUN mkdir -p /var/log/cumapp
-
 # Health check
 HEALTHCHECK --interval=30s --timeout=10s --start-period=40s --retries=3 \
     CMD curl -f http://localhost:8000/health/ || exit 1
-
-# Build frontend if exists
-RUN if [ -d "frontend" ]; then \
-    curl -fsSL https://deb.nodesource.com/setup_18.x | bash - && \
-    apt-get install -y nodejs && \
-    cd frontend && npm install && npm run build; \
-    fi
 
 # Expose port (Railway uses $PORT)
 EXPOSE $PORT
