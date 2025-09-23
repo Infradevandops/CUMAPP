@@ -66,12 +66,21 @@ const LoginPage = ({ onSuccess }) => {
       const result = await login(formData.email, formData.password);
       
       if (result.success) {
+        console.log('Login result success, navigating to dashboard...');
         addNotification('Login successful!', 'success');
         if (onSuccess) {
+          console.log('Calling onSuccess callback');
           onSuccess();
         } else {
-          // Navigate to dashboard after successful login
-          navigate('/dashboard');
+          // Navigate to dashboard after successful login with a delay
+          // to allow the authentication state to update
+          console.log('Navigating to /dashboard in 500ms...');
+          setTimeout(() => {
+            console.log('Executing navigation to /dashboard now');
+            // Use window.location.href to force a full page reload
+            // This ensures the authentication state is properly checked
+            window.location.href = '/dashboard';
+          }, 500);
         }
       } else {
         addNotification(result.error || 'Login failed', 'error');

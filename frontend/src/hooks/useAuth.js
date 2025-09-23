@@ -56,9 +56,12 @@ export const useAuth = () => {
       const data = await response.json();
       
       if (response.ok) {
+        console.log('Login successful, setting user:', data.user);
         localStorage.setItem('authToken', data.access_token);
         setUser(data.user);
         setLoading(false);
+        // Force a small delay to ensure state updates propagate
+        await new Promise(resolve => setTimeout(resolve, 50));
         return { success: true };
       } else {
         setError(data.detail || 'Login failed');

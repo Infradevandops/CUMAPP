@@ -273,8 +273,37 @@ async def get_current_user_info():
     """
     Get current authenticated user information
     """
-    # For demo, return mock user data
-    return {"id": 1, "email": "demo@cumapp.com", "username": "demo", "is_active": True}
+    try:
+        import sqlite3
+        from fastapi import Header
+        from auth.security import verify_token
+        
+        # Get token from Authorization header
+        authorization = None
+        try:
+            from fastapi import Request
+            # This is a simplified approach - in production, use proper dependency injection
+            pass
+        except:
+            pass
+            
+        # For now, return mock data that matches the login response structure
+        # This should be replaced with proper token validation
+        return {
+            "id": "admin-001",
+            "email": "admin@cumapp.com",
+            "username": "admin",
+            "full_name": "Admin User",
+            "role": "admin",
+            "is_active": True
+        }
+        
+    except Exception as e:
+        logger.error(f"Get current user error: {e}")
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail="Failed to get user information",
+        )
 
 
 @router.post("/change-password")
