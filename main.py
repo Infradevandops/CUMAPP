@@ -4,6 +4,7 @@ Main application file for the CumApp platform.
 """
 import logging
 import os
+import asyncio
 from contextlib import asynccontextmanager
 
 from dotenv import load_dotenv
@@ -61,12 +62,15 @@ async def lifespan(app: FastAPI):
 
     logger.info("Initializing database...")
 
-    if not check_database_connection():
+    # Run blocking IO in a separate thread
+    db_ok = await asyncio.to_thread(check_database_connection)
+    if not db_ok:
         logger.error("Database connection failed!")
         raise RuntimeError("Database connection failed")
 
     try:
-        create_tables()
+        # Run blocking IO in a separate thread
+        await asyncio.to_thread(create_tables)
         logger.info("Database initialization completed successfully")
     except Exception as e:
         logger.error(f"Database initialization failed: {e}")

@@ -2,7 +2,7 @@ services:
   - type: web
     name: cumapp
     env: python
-    buildCommand: "pip install -r requirements.txt && if [ -d 'frontend' ]; then cd frontend && npm install && npm run build; fi"
+    buildCommand: "pip install -r requirements.txt && if [ -d 'frontend' ]; then cd frontend && npm install --legacy-peer-deps && npm run build; fi"
     startCommand: "python3 create_admin_user.py && gunicorn main:app -w 4 -k uvicorn.workers.UvicornWorker --bind 0.0.0.0:$PORT"
     healthCheckPath: "/health"
     envVars:
