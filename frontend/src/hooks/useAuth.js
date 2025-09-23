@@ -1,33 +1,38 @@
 import { useState, useEffect } from 'react';
 
+const API_BASE_URL = process.env.REACT_APP_API_URL || 'http://localhost:8000';
+
 export const useAuth = () => {
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   
   useEffect(() => {
-    // Simulate checking for existing auth token
+    // Check for existing auth token and validate it
     const checkAuth = async () => {
       try {
-        // In a real app, this would check localStorage/sessionStorage for tokens
-        // and validate them with the backend
         const token = localStorage.getItem('authToken');
         if (token) {
-          // Simulate API call to validate token and get user info
-          setTimeout(() => {
-            setUser({
-              id: 1,
-              name: 'John Doe',
-              email: 'john@example.com',
-              role: 'user'
-            });
-            setLoading(false);
-          }, 500);
-        } else {
-          setLoading(false);
+          // Validate token with backend
+          const response = await fetch(`${API_BASE_URL}/api/auth/me`, {
+            headers: {
+              'Authorization': `Bearer ${token}`,
+              'Content-Type': 'application/json'
+            }
+          });
+          
+          if (response.ok) {
+            const userData = await response.json();
+            setUser(userData);
+          } else {
+            // Token is invalid, remove it
+            localStorage.removeItem('authToken');
+          }
         }
       } catch (err) {
-        setError(err.message);
+        console.error('Auth check failed:', err);
+        localStorage.removeItem('authToken');
+      } finally {
         setLoading(false);
       }
     };
@@ -40,29 +45,31 @@ export const useAuth = () => {
     setError(null);
     
     try {
-      // Simulate API login call
-      const response = await new Promise((resolve) => {
-        setTimeout(() => {
-          resolve({
-            token: 'fake-jwt-token',
-            user: {
-              id: 1,
-              name: 'John Doe',
-              email: email,
-              role: 'user'
-            }
-          });
-        }, 1000);
+      const response = await fetch(`${API_BASE_URL}/api/auth/login`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ email, password })
       });
       
-      localStorage.setItem('authToken', response.token);
-      setUser(response.user);
-      setLoading(false);
-      return { success: true };
+      const data = await response.json();
+      
+      if (response.ok) {
+        localStorage.setItem('authToken', data.access_token);
+        setUser(data.user);
+        setLoading(false);
+        return { success: true };
+      } else {
+        setError(data.detail || 'Login failed');
+        setLoading(false);
+        return { success: false, error: data.detail || 'Login failed' };
+      }
     } catch (err) {
-      setError(err.message);
+      const errorMessage = 'Network error. Please check if the server is running.';
+      setError(errorMessage);
       setLoading(false);
-      return { success: false, error: err.message };
+      return { success: false, error: errorMessage };
     }
   };
   
@@ -71,34 +78,38 @@ export const useAuth = () => {
     setUser(null);
   };
   
-  const register = async (name, email, password) => {
+  const register = async (email, password, firstName = '', lastName = '') => {
     setLoading(true);
     setError(null);
     
     try {
-      // Simulate API register call
-      const response = await new Promise((resolve) => {
-        setTimeout(() => {
-          resolve({
-            token: 'fake-jwt-token',
-            user: {
-              id: 1,
-              name: name,
-              email: email,
-              role: 'user'
-            }
-          });
-        }, 1000);
+      const response = await fetch(`${API_BASE_URL}/api/auth/register`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ 
+          email, 
+          password,
+          full_name: `${firstName} ${lastName}`.trim()
+        })
       });
       
-      localStorage.setItem('authToken', response.token);
-      setUser(response.user);
-      setLoading(false);
-      return { success: true };
+      const data = await response.json();
+      
+      if (response.ok) {
+        setLoading(false);
+        return { success: true, message: data.message };
+      } else {
+        setError(data.detail || 'Registration failed');
+        setLoading(false);
+        return { success: false, error: data.detail || 'Registration failed' };
+      }
     } catch (err) {
-      setError(err.message);
+      const errorMessage = 'Network error. Please check if the server is running.';
+      setError(errorMessage);
       setLoading(false);
-      return { success: false, error: err.message };
+      return { success: false, error: errorMessage };
     }
   };
   

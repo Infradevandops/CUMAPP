@@ -1,4 +1,5 @@
 import React from 'react';
+import { Link } from 'react-router-dom';
 
 const Sidebar = ({ currentPath = '/' }) => {
   const navigation = [
@@ -54,22 +55,22 @@ const Sidebar = ({ currentPath = '/' }) => {
         {navigation.map((item) => {
           const isActive = currentPath === item.href;
           return (
-            <a
+            <Link
               key={item.name}
-              href={item.href}
+              to={item.href}
               className={`${
                 isActive
-                  ? 'bg-gray-100 text-gray-900'
+                  ? 'bg-blue-50 text-blue-700 border-r-2 border-blue-500'
                   : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900'
               } group flex items-center px-2 py-2 text-sm font-medium rounded-md transition-colors duration-200`}
             >
               <span className={`${
-                isActive ? 'text-gray-500' : 'text-gray-400 group-hover:text-gray-500'
+                isActive ? 'text-blue-500' : 'text-gray-400 group-hover:text-gray-500'
               } mr-3 flex-shrink-0`}>
                 {icons[item.icon]}
               </span>
               {item.name}
-            </a>
+            </Link>
           );
         })}
       </nav>

@@ -1,7 +1,12 @@
 import React, { useState, useEffect, useRef } from 'react';
 import BaseLayout from '../templates/BaseLayout';
 import SearchBar from '../molecules/SearchBar';
+import RichTextEditor from '../molecules/RichTextEditor';
+import MessageRenderer from '../molecules/MessageRenderer';
+import MessageReactions from '../molecules/MessageReactions';
+import MessageThread from '../molecules/MessageThread';
 import Button from '../atoms/Button';
+import Icon from '../atoms/Icon';
 
 const ChatPage = ({ user }) => {
   const [messages, setMessages] = useState([]);
@@ -10,6 +15,11 @@ const ChatPage = ({ user }) => {
   const [selectedContact, setSelectedContact] = useState(null);
   const [contacts, setContacts] = useState([]);
   const [searchQuery, setSearchQuery] = useState('');
+  const [replyToMessage, setReplyToMessage] = useState(null);
+  const [selectedThread, setSelectedThread] = useState(null);
+  const [threadMessages, setThreadMessages] = useState({});
+  const [reactions, setReactions] = useState({});
+  const [users, setUsers] = useState([]);
   const messagesEndRef = useRef(null);
   
   // Mock data
@@ -20,13 +30,55 @@ const ChatPage = ({ user }) => {
       { id: 3, name: 'Support Team', phone: '+1555000123', lastMessage: 'Your issue has been resolved', timestamp: '3 hours ago', unread: 1 },
     ]);
     
+    setUsers([
+      { id: 1, name: 'John Doe', username: 'johndoe' },
+      { id: 2, name: 'Jane Smith', username: 'janesmith' },
+      { id: 3, name: 'Support Team', username: 'support' },
+      { id: 'me', name: user?.name || 'You', username: 'me' }
+    ]);
+    
     setSelectedContact(1);
     setMessages([
-      { id: 1, senderId: 1, text: 'Hey there!', timestamp: '10:30 AM', type: 'received' },
-      { id: 2, senderId: 'me', text: 'Hi! How can I help you?', timestamp: '10:32 AM', type: 'sent' },
-      { id: 3, senderId: 1, text: 'I need help with my account setup', timestamp: '10:33 AM', type: 'received' },
+      { 
+        id: 1, 
+        senderId: 1, 
+        text: 'Hey there! 👋 Welcome to our enhanced chat system!', 
+        attachments: [], 
+        timestamp: new Date(Date.now() - 600000).toISOString(), 
+        type: 'received',
+        reactions: []
+      },
+      { 
+        id: 2, 
+        senderId: 'me', 
+        text: 'Hi! How can I help you? This looks amazing with all the new features!', 
+        attachments: [], 
+        timestamp: new Date(Date.now() - 480000).toISOString(), 
+        type: 'sent',
+        reactions: []
+      },
+      { 
+        id: 3, 
+        senderId: 1, 
+        text: 'I need help with my **account setup**. Can you help me with *formatting* and `code` examples? Also, can you @me when you have updates?', 
+        attachments: [], 
+        timestamp: new Date(Date.now() - 420000).toISOString(), 
+        type: 'received',
+        reactions: [],
+        mentions: [{ userId: 'me', username: 'me', position: 95, length: 3 }]
+      },
     ]);
-  }, []);
+
+    // Initialize reactions for messages
+    setReactions({
+      1: [
+        { id: 'r1', emoji: '👍', userId: 'me', user: { id: 'me', name: 'You' }, createdAt: new Date().toISOString() }
+      ],
+      2: [
+        { id: 'r2', emoji: '❤️', userId: 1, user: { id: 1, name: 'John Doe' }, createdAt: new Date().toISOString() }
+      ]
+    });
+  }, [user]);
   
   useEffect(() => {
     scrollToBottom();
@@ -36,20 +88,30 @@ const ChatPage = ({ user }) => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
   };
   
-  const handleSendMessage = (e) => {
-    e.preventDefault();
-    if (!newMessage.trim()) return;
+  const handleSendMessage = (messageData) => {
+    // Handle both string (legacy) and object (new) message formats
+    const messageText = typeof messageData === 'string' ? messageData : messageData.text;
+    const attachments = typeof messageData === 'object' ? messageData.attachments || [] : [];
+    const mentions = typeof messageData === 'object' ? messageData.mentions || [] : [];
+    const replyTo = typeof messageData === 'object' ? messageData.replyTo : null;
+    
+    if (!messageText.trim() && attachments.length === 0) return;
     
     const message = {
       id: Date.now(),
       senderId: 'me',
-      text: newMessage,
-      timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
-      type: 'sent'
+      text: messageText,
+      attachments: attachments,
+      mentions: mentions,
+      replyTo: replyTo,
+      timestamp: new Date().toISOString(),
+      type: 'sent',
+      reactions: []
     };
     
     setMessages(prev => [...prev, message]);
     setNewMessage('');
+    setReplyToMessage(null);
     
     // Simulate typing indicator and response
     setIsTyping(true);
@@ -58,12 +120,79 @@ const ChatPage = ({ user }) => {
       const response = {
         id: Date.now() + 1,
         senderId: selectedContact,
-        text: 'Thanks for your message! I\'ll get back to you soon.',
-        timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
-        type: 'received'
+        text: 'Thanks for your message! I love the new rich text features! 🎉',
+        attachments: [],
+        timestamp: new Date().toISOString(),
+        type: 'received',
+        reactions: []
       };
       setMessages(prev => [...prev, response]);
     }, 2000);
+  };
+
+  const handleAddReaction = (messageId, emoji) => {
+    const reactionId = `r_${Date.now()}`;
+    const newReaction = {
+      id: reactionId,
+      emoji: emoji,
+      userId: 'me',
+      user: { id: 'me', name: 'You' },
+      createdAt: new Date().toISOString()
+    };
+
+    setReactions(prev => ({
+      ...prev,
+      [messageId]: [...(prev[messageId] || []), newReaction]
+    }));
+  };
+
+  const handleRemoveReaction = (messageId, emoji) => {
+    setReactions(prev => ({
+      ...prev,
+      [messageId]: (prev[messageId] || []).filter(r => !(r.emoji === emoji && r.userId === 'me'))
+    }));
+  };
+
+  const handleReplyToMessage = (message) => {
+    setReplyToMessage({
+      id: message.id,
+      text: message.text,
+      senderName: message.senderId === 'me' ? 'You' : getMessageSender(message.senderId)
+    });
+  };
+
+  const handleStartThread = (message) => {
+    setSelectedThread(message);
+  };
+
+  const handleSendThreadReply = (replyData) => {
+    const threadId = replyData.threadId;
+    const newReply = {
+      id: Date.now(),
+      senderId: 'me',
+      text: replyData.text,
+      attachments: replyData.attachments || [],
+      parentId: replyData.parentId,
+      threadId: threadId,
+      timestamp: new Date().toISOString(),
+      reactions: []
+    };
+
+    setThreadMessages(prev => ({
+      ...prev,
+      [threadId]: [...(prev[threadId] || []), newReply]
+    }));
+  };
+
+  const handleMention = (user) => {
+    console.log('User mentioned:', user);
+    // In a real app, this could trigger notifications
+  };
+
+  const getMessageSender = (senderId) => {
+    if (senderId === 'me') return 'You';
+    const contact = contacts.find(c => c.id === senderId);
+    return contact?.name || 'Unknown User';
   };
   
   const handleContactSelect = (contactId) => {
@@ -173,34 +302,136 @@ const ChatPage = ({ user }) => {
               {/* Messages */}
               <div className="flex-1 overflow-y-auto p-4 space-y-4">
                 {messages.map((message) => (
-                  <div
-                    key={message.id}
-                    className={`flex ${message.type === 'sent' ? 'justify-end' : 'justify-start'}`}
-                  >
-                    <div
-                      className={`max-w-xs lg:max-w-md px-4 py-2 rounded-lg ${
-                        message.type === 'sent'
-                          ? 'bg-blue-600 text-white'
-                          : 'bg-gray-200 text-gray-900'
-                      }`}
-                    >
-                      <p className="text-sm">{message.text}</p>
-                      <p className={`text-xs mt-1 ${
-                        message.type === 'sent' ? 'text-blue-100' : 'text-gray-500'
-                      }`}>
-                        {message.timestamp}
-                      </p>
+                  <div key={message.id} className="group">
+                    {/* Reply indicator */}
+                    {message.replyTo && (
+                      <div className="mb-2 ml-12">
+                        <div className="flex items-center space-x-2 text-xs text-gray-500">
+                          <Icon name="reply" size="xs" />
+                          <span>Replying to {getMessageSender(messages.find(m => m.id === message.replyTo)?.senderId)}</span>
+                        </div>
+                        <div className="bg-gray-100 border-l-2 border-gray-300 pl-3 py-1 mt-1 rounded">
+                          <p className="text-xs text-gray-600 truncate">
+                            {messages.find(m => m.id === message.replyTo)?.text}
+                          </p>
+                        </div>
+                      </div>
+                    )}
+
+                    <div className={`flex ${message.type === 'sent' ? 'justify-end' : 'justify-start'}`}>
+                      <div className="flex items-start space-x-2 max-w-xs lg:max-w-md">
+                        {message.type === 'received' && (
+                          <div className="w-8 h-8 bg-gray-300 rounded-full flex items-center justify-center flex-shrink-0">
+                            <span className="text-xs font-medium text-gray-700">
+                              {getMessageSender(message.senderId).charAt(0)}
+                            </span>
+                          </div>
+                        )}
+
+                        <div className="flex flex-col space-y-1">
+                          <div
+                            className={`px-4 py-3 rounded-lg relative ${
+                              message.type === 'sent'
+                                ? 'bg-blue-600 text-white'
+                                : 'bg-gray-200 text-gray-900'
+                            }`}
+                          >
+                            {/* Message Actions (visible on hover) */}
+                            <div className={`absolute top-0 ${message.type === 'sent' ? 'left-0' : 'right-0'} transform ${message.type === 'sent' ? '-translate-x-full' : 'translate-x-full'} opacity-0 group-hover:opacity-100 transition-opacity flex space-x-1 bg-white border border-gray-200 rounded-lg shadow-lg p-1`}>
+                              <Button
+                                variant="ghost"
+                                size="xs"
+                                onClick={() => handleAddReaction(message.id, '👍')}
+                                title="Add reaction"
+                              >
+                                <Icon name="emoji" size="xs" />
+                              </Button>
+                              <Button
+                                variant="ghost"
+                                size="xs"
+                                onClick={() => handleReplyToMessage(message)}
+                                title="Reply"
+                              >
+                                <Icon name="reply" size="xs" />
+                              </Button>
+                              <Button
+                                variant="ghost"
+                                size="xs"
+                                onClick={() => handleStartThread(message)}
+                                title="Start thread"
+                              >
+                                <Icon name="messageSquare" size="xs" />
+                              </Button>
+                            </div>
+
+                            <MessageRenderer 
+                              message={message} 
+                              className={`text-sm ${message.type === 'sent' ? 'text-white' : 'text-gray-900'}`}
+                            />
+                            
+                            <p className={`text-xs mt-2 ${
+                              message.type === 'sent' ? 'text-blue-100' : 'text-gray-500'
+                            }`}>
+                              {new Date(message.timestamp).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                            </p>
+                          </div>
+
+                          {/* Message Reactions */}
+                          {reactions[message.id] && reactions[message.id].length > 0 && (
+                            <div className={`${message.type === 'sent' ? 'self-end' : 'self-start'}`}>
+                              <MessageReactions
+                                messageId={message.id}
+                                reactions={reactions[message.id]}
+                                currentUserId="me"
+                                onAddReaction={handleAddReaction}
+                                onRemoveReaction={handleRemoveReaction}
+                                showAddButton={false}
+                              />
+                            </div>
+                          )}
+
+                          {/* Thread indicator */}
+                          {threadMessages[message.id] && threadMessages[message.id].length > 0 && (
+                            <div className={`${message.type === 'sent' ? 'self-end' : 'self-start'}`}>
+                              <Button
+                                variant="ghost"
+                                size="sm"
+                                onClick={() => setSelectedThread(message)}
+                                className="text-blue-600 hover:text-blue-800"
+                              >
+                                <Icon name="messageSquare" size="sm" className="mr-1" />
+                                {threadMessages[message.id].length} {threadMessages[message.id].length === 1 ? 'reply' : 'replies'}
+                              </Button>
+                            </div>
+                          )}
+                        </div>
+
+                        {message.type === 'sent' && (
+                          <div className="w-8 h-8 bg-blue-600 rounded-full flex items-center justify-center flex-shrink-0">
+                            <span className="text-xs font-medium text-white">
+                              {getMessageSender(message.senderId).charAt(0)}
+                            </span>
+                          </div>
+                        )}
+                      </div>
                     </div>
                   </div>
                 ))}
                 
                 {isTyping && (
                   <div className="flex justify-start">
-                    <div className="bg-gray-200 text-gray-900 px-4 py-2 rounded-lg">
-                      <div className="flex space-x-1">
-                        <div className="w-2 h-2 bg-gray-500 rounded-full animate-bounce"></div>
-                        <div className="w-2 h-2 bg-gray-500 rounded-full animate-bounce" style={{ animationDelay: '0.1s' }}></div>
-                        <div className="w-2 h-2 bg-gray-500 rounded-full animate-bounce" style={{ animationDelay: '0.2s' }}></div>
+                    <div className="flex items-center space-x-2">
+                      <div className="w-8 h-8 bg-gray-300 rounded-full flex items-center justify-center">
+                        <span className="text-xs font-medium text-gray-700">
+                          {getMessageSender(selectedContact).charAt(0)}
+                        </span>
+                      </div>
+                      <div className="bg-gray-200 text-gray-900 px-4 py-2 rounded-lg">
+                        <div className="flex space-x-1">
+                          <div className="w-2 h-2 bg-gray-500 rounded-full animate-bounce"></div>
+                          <div className="w-2 h-2 bg-gray-500 rounded-full animate-bounce" style={{ animationDelay: '0.1s' }}></div>
+                          <div className="w-2 h-2 bg-gray-500 rounded-full animate-bounce" style={{ animationDelay: '0.2s' }}></div>
+                        </div>
                       </div>
                     </div>
                   </div>
@@ -209,22 +440,24 @@ const ChatPage = ({ user }) => {
                 <div ref={messagesEndRef} />
               </div>
               
-              {/* Message Input */}
+              {/* Rich Text Message Input */}
               <div className="p-4 border-t border-gray-200 bg-white">
-                <form onSubmit={handleSendMessage} className="flex space-x-2">
-                  <input
-                    type="text"
-                    value={newMessage}
-                    onChange={(e) => setNewMessage(e.target.value)}
-                    placeholder="Type a message..."
-                    className="flex-1 px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                  />
-                  <Button type="submit" disabled={!newMessage.trim()}>
-                    <svg className="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8" />
-                    </svg>
-                  </Button>
-                </form>
+                <RichTextEditor
+                  value={newMessage}
+                  onChange={setNewMessage}
+                  placeholder="Type a message... Use **bold**, *italic*, `code`, @mentions or add emojis 😊"
+                  maxLength={2000}
+                  showToolbar={true}
+                  showEmojiPicker={true}
+                  showAttachments={true}
+                  showMentions={true}
+                  users={users}
+                  replyToMessage={replyToMessage}
+                  onSend={handleSendMessage}
+                  onMention={handleMention}
+                  onCancelReply={() => setReplyToMessage(null)}
+                  className="border-gray-300 focus-within:ring-blue-500 focus-within:border-blue-500"
+                />
               </div>
             </>
           ) : (
@@ -239,6 +472,22 @@ const ChatPage = ({ user }) => {
             </div>
           )}
         </div>
+
+        {/* Thread Sidebar */}
+        {selectedThread && (
+          <div className="w-1/3 border-l border-gray-200">
+            <MessageThread
+              parentMessage={selectedThread}
+              threadMessages={threadMessages[selectedThread.id] || []}
+              currentUserId="me"
+              users={users}
+              onSendReply={handleSendThreadReply}
+              onAddReaction={handleAddReaction}
+              onRemoveReaction={handleRemoveReaction}
+              onClose={() => setSelectedThread(null)}
+            />
+          </div>
+        )}
       </div>
     </BaseLayout>
   );

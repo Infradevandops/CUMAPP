@@ -1,6 +1,9 @@
 import React, { useState } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
 import { Button, Icon, Typography, Card } from '../atoms';
 import { FormField, PasswordStrengthMeter } from '../molecules';
+import { useAuth } from '../../hooks/useAuth';
+import { useNotification } from '../../contexts/NotificationContext';
 
 const RegisterPage = () => {
   const [formData, setFormData] = useState({
@@ -16,6 +19,10 @@ const RegisterPage = () => {
   const [loading, setLoading] = useState(false);
   const [errors, setErrors] = useState({});
   const [step, setStep] = useState(1);
+  
+  const { register } = useAuth();
+  const { addNotification } = useNotification();
+  const navigate = useNavigate();
 
   const validateStep1 = () => {
     const newErrors = {};
@@ -76,10 +83,19 @@ const RegisterPage = () => {
     setLoading(true);
     
     try {
-      // Simulate API call
-      await new Promise(resolve => setTimeout(resolve, 2000));
-      console.log('Registration attempt:', formData);
-      // Handle successful registration
+      const result = await register(
+        formData.email, 
+        formData.password, 
+        formData.firstName, 
+        formData.lastName
+      );
+      
+      if (result.success) {
+        addNotification('Registration successful! Please login with your credentials.', 'success');
+        navigate('/login');
+      } else {
+        setErrors({ submit: result.error || 'Registration failed. Please try again.' });
+      }
     } catch (err) {
       setErrors({ submit: 'Registration failed. Please try again.' });
     } finally {
@@ -120,11 +136,21 @@ const RegisterPage = () => {
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">
+      {/* Back to Home Link */}
+      <div className="absolute top-4 left-4">
+        <Link to="/" className="flex items-center text-blue-600 hover:text-blue-800">
+          ← Back to Home
+        </Link>
+      </div>
+      
       <div className="max-w-md w-full">
         <Card padding="lg" shadow="lg">
           {/* Header */}
           <div className="text-center mb-8">
-            <div className="mx-auto h-12 w-12 bg-red-600 rounded-full flex items-center justify-center mb-4">
+            <Link to="/" className="flex justify-center mb-4">
+              <h1 className="text-3xl font-bold text-blue-600">CumApp</h1>
+            </Link>
+            <div className="mx-auto h-12 w-12 bg-blue-600 rounded-full flex items-center justify-center mb-4">
               <Icon name="phone" className="text-white" size="lg" />
             </div>
             <Typography variant="h2" className="text-gray-900">
@@ -139,13 +165,13 @@ const RegisterPage = () => {
           <div className="mb-8">
             <div className="flex items-center">
               <div className={`flex items-center justify-center w-8 h-8 rounded-full ${
-                step >= 1 ? 'bg-red-600 text-white' : 'bg-gray-200 text-gray-600'
+                step >= 1 ? 'bg-blue-600 text-white' : 'bg-gray-200 text-gray-600'
               }`}>
                 {step > 1 ? <Icon name="check" size="sm" /> : '1'}
               </div>
-              <div className={`flex-1 h-1 mx-2 ${step >= 2 ? 'bg-red-600' : 'bg-gray-200'}`} />
+              <div className={`flex-1 h-1 mx-2 ${step >= 2 ? 'bg-blue-600' : 'bg-gray-200'}`} />
               <div className={`flex items-center justify-center w-8 h-8 rounded-full ${
-                step >= 2 ? 'bg-red-600 text-white' : 'bg-gray-200 text-gray-600'
+                step >= 2 ? 'bg-blue-600 text-white' : 'bg-gray-200 text-gray-600'
               }`}>
                 2
               </div>
@@ -363,9 +389,9 @@ const RegisterPage = () => {
           <div className="mt-6 text-center">
             <Typography variant="body2" className="text-gray-600">
               Already have an account?{' '}
-              <button className="text-red-600 hover:text-red-500 font-medium">
+              <Link to="/login" className="text-blue-600 hover:text-blue-500 font-medium">
                 Sign in
-              </button>
+              </Link>
             </Typography>
           </div>
         </Card>
@@ -373,7 +399,10 @@ const RegisterPage = () => {
         {/* Footer */}
         <div className="mt-8 text-center">
           <Typography variant="caption" className="text-gray-500">
-            By creating an account, you agree to our Terms of Service and Privacy Policy
+            By creating an account, you agree to our{' '}
+            <Link to="/about" className="text-blue-600 hover:text-blue-800">Terms of Service</Link>
+            {' '}and{' '}
+            <Link to="/about" className="text-blue-600 hover:text-blue-800">Privacy Policy</Link>
           </Typography>
         </div>
       </div>

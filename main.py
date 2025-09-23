@@ -39,6 +39,7 @@ from api.phone_number_api import router as phone_router
 from api.smart_routing_api import router as smart_routing_router
 from api.subscription_api import router as subscription_router
 from api.verification_api import router as verification_router
+from api.health_api import router as health_router
 from clients.unified_client import get_unified_client
 # Import core components
 from core.database import check_database_connection, create_tables
@@ -111,6 +112,7 @@ app.include_router(inbox_router, tags=["inbox"])
 app.include_router(communication_dashboard_router, tags=["communication_dashboard"])
 app.include_router(international_routing_router, tags=["international_routing"])
 app.include_router(performance_router, prefix="/api/performance", tags=["performance"])
+app.include_router(health_router, tags=["health"])
 
 
 # --- Health Check Endpoint (Define before catch-all) ---

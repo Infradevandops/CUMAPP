@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { Link } from 'react-router-dom';
 import SearchBar from '../molecules/SearchBar';
 
 const Header = ({ user, onLogout, onSearch }) => {
@@ -20,26 +21,26 @@ const Header = ({ user, onLogout, onSearch }) => {
           {/* Logo */}
           <div className="flex items-center">
             <div className="flex-shrink-0">
-              <h1 className="text-xl font-bold text-gray-900">
-                Communication Platform
-              </h1>
+              <Link to="/dashboard" className="text-xl font-bold text-blue-600 hover:text-blue-800">
+                CumApp
+              </Link>
             </div>
           </div>
           
           {/* Navigation */}
           <nav className="hidden md:flex space-x-8">
-            <a href="/dashboard" className="text-gray-500 hover:text-gray-700 px-3 py-2 rounded-md text-sm font-medium">
+            <Link to="/dashboard" className="text-gray-500 hover:text-gray-700 px-3 py-2 rounded-md text-sm font-medium">
               Dashboard
-            </a>
-            <a href="/chat" className="text-gray-500 hover:text-gray-700 px-3 py-2 rounded-md text-sm font-medium">
+            </Link>
+            <Link to="/chat" className="text-gray-500 hover:text-gray-700 px-3 py-2 rounded-md text-sm font-medium">
               Chat
-            </a>
-            <a href="/numbers" className="text-gray-500 hover:text-gray-700 px-3 py-2 rounded-md text-sm font-medium">
+            </Link>
+            <Link to="/numbers" className="text-gray-500 hover:text-gray-700 px-3 py-2 rounded-md text-sm font-medium">
               Numbers
-            </a>
-            <a href="/billing" className="text-gray-500 hover:text-gray-700 px-3 py-2 rounded-md text-sm font-medium">
+            </Link>
+            <Link to="/billing" className="text-gray-500 hover:text-gray-700 px-3 py-2 rounded-md text-sm font-medium">
               Billing
-            </a>
+            </Link>
           </nav>
           
           {/* Search Bar - Hidden on mobile */}
@@ -68,12 +69,12 @@ const Header = ({ user, onLogout, onSearch }) => {
             {isProfileMenuOpen && (
               <div className="origin-top-right absolute right-0 mt-2 w-48 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5 z-50">
                 <div className="py-1">
-                  <a href="/profile" className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
+                  <Link to="/dashboard" className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
                     Your Profile
-                  </a>
-                  <a href="/settings" className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
+                  </Link>
+                  <Link to="/dashboard" className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
                     Settings
-                  </a>
+                  </Link>
                   <button
                     onClick={onLogout}
                     className="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
@@ -113,18 +114,18 @@ const Header = ({ user, onLogout, onSearch }) => {
               </div>
               
               {/* Mobile Navigation */}
-              <a href="/dashboard" className="text-gray-700 hover:bg-gray-100 block px-3 py-2 rounded-md text-base font-medium">
+              <Link to="/dashboard" className="text-gray-700 hover:bg-gray-100 block px-3 py-2 rounded-md text-base font-medium">
                 Dashboard
-              </a>
-              <a href="/chat" className="text-gray-700 hover:bg-gray-100 block px-3 py-2 rounded-md text-base font-medium">
+              </Link>
+              <Link to="/chat" className="text-gray-700 hover:bg-gray-100 block px-3 py-2 rounded-md text-base font-medium">
                 Chat
-              </a>
-              <a href="/numbers" className="text-gray-700 hover:bg-gray-100 block px-3 py-2 rounded-md text-base font-medium">
+              </Link>
+              <Link to="/numbers" className="text-gray-700 hover:bg-gray-100 block px-3 py-2 rounded-md text-base font-medium">
                 Numbers
-              </a>
-              <a href="/billing" className="text-gray-700 hover:bg-gray-100 block px-3 py-2 rounded-md text-base font-medium">
+              </Link>
+              <Link to="/billing" className="text-gray-700 hover:bg-gray-100 block px-3 py-2 rounded-md text-base font-medium">
                 Billing
-              </a>
+              </Link>
               
               {/* Mobile Profile Menu */}
               <div className="border-t border-gray-200 pt-4">
@@ -140,12 +141,12 @@ const Header = ({ user, onLogout, onSearch }) => {
                   </div>
                 </div>
                 <div className="mt-3 space-y-1">
-                  <a href="/profile" className="block px-3 py-2 text-base font-medium text-gray-700 hover:bg-gray-100">
+                  <Link to="/dashboard" className="block px-3 py-2 text-base font-medium text-gray-700 hover:bg-gray-100">
                     Your Profile
-                  </a>
-                  <a href="/settings" className="block px-3 py-2 text-base font-medium text-gray-700 hover:bg-gray-100">
+                  </Link>
+                  <Link to="/dashboard" className="block px-3 py-2 text-base font-medium text-gray-700 hover:bg-gray-100">
                     Settings
-                  </a>
+                  </Link>
                   <button
                     onClick={onLogout}
                     className="block w-full text-left px-3 py-2 text-base font-medium text-gray-700 hover:bg-gray-100"

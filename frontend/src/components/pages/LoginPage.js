@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import Button from '../atoms/Button';
 import FormField from '../molecules/FormField';
 import LoadingSpinner from '../atoms/LoadingSpinner';
@@ -16,6 +16,7 @@ const LoginPage = ({ onSuccess }) => {
   
   const { login } = useAuth();
   const { addNotification } = useNotification();
+  const navigate = useNavigate();
   
   const validateForm = () => {
     const newErrors = {};
@@ -66,7 +67,12 @@ const LoginPage = ({ onSuccess }) => {
       
       if (result.success) {
         addNotification('Login successful!', 'success');
-        if (onSuccess) onSuccess();
+        if (onSuccess) {
+          onSuccess();
+        } else {
+          // Navigate to dashboard after successful login
+          navigate('/dashboard');
+        }
       } else {
         addNotification(result.error || 'Login failed', 'error');
       }

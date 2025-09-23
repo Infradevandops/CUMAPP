@@ -15,6 +15,7 @@ import {
   NumbersPage,
   RegisterPage,
   ReviewsPage,
+  SearchPage,
   VerificationsPage 
 } from './components/LazyComponents';
 import './App.css';
@@ -67,6 +68,10 @@ function App() {
             <Route 
               path="/numbers"
               element={isAuthenticated ? <NumbersPage user={user} /> : <Navigate to="/login" />}
+            />
+            <Route 
+              path="/search"
+              element={isAuthenticated ? <SearchPage user={user} /> : <Navigate to="/login" />}
             />
             <Route 
               path="/verifications"

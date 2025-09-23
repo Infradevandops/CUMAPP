@@ -11,6 +11,7 @@ export const LoginPage = lazy(() => import('./pages/LoginPage'));
 export const NumbersPage = lazy(() => import('./pages/NumbersPage'));
 export const RegisterPage = lazy(() => import('./pages/RegisterPage'));
 export const ReviewsPage = lazy(() => import('./pages/ReviewsPage'));
+export const SearchPage = lazy(() => import('./pages/SearchPage'));
 export const VerificationsPage = lazy(() => import('./pages/VerificationsPage'));
 
 // Lazy load heavy molecules

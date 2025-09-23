@@ -17,7 +17,7 @@ from services.auth_service import (AuthenticationService,
 
 logger = logging.getLogger(__name__)
 
-router = APIRouter(prefix="/api/auth", tags=["authentication"])
+router = APIRouter(tags=["authentication"])
 security = HTTPBearer()
 
 
@@ -87,41 +87,49 @@ class SimpleRegisterRequest(BaseModel):
 
 # Authentication endpoints
 @router.post("/register", status_code=status.HTTP_201_CREATED)
-async def register_user(
-    user_data: SimpleRegisterRequest, db: Session = Depends(get_db)
-):
+async def register_user(user_data: SimpleRegisterRequest):
     """
     Register a new user account
     """
     try:
-        from auth.security import hash_password
-        from models.user_models import User
+        import sqlite3
+        import hashlib
+        import uuid
+
+        # Simple password hashing
+        def hash_simple_password(password):
+            return hashlib.sha256(password.encode()).hexdigest()
+
+        # Connect to database
+        conn = sqlite3.connect('cumapp.db')
+        cursor = conn.cursor()
 
         # Check if user exists
-        existing_user = db.query(User).filter(User.email == user_data.email).first()
-        if existing_user:
+        cursor.execute('SELECT id FROM users WHERE email = ?', (user_data.email,))
+        if cursor.fetchone():
+            conn.close()
             raise HTTPException(
                 status_code=status.HTTP_400_BAD_REQUEST,
                 detail="Email already registered",
             )
 
         # Create new user
-        new_user = User(
-            email=user_data.email,
-            username=user_data.email.split("@")[0],
-            hashed_password=hash_password(user_data.password),
-            is_active=True,
-            is_verified=True,  # Skip email verification for demo
-        )
+        user_id = str(uuid.uuid4())
+        username = user_data.email.split("@")[0]
+        hashed_password = hash_simple_password(user_data.password)
 
-        db.add(new_user)
-        db.commit()
-        db.refresh(new_user)
+        cursor.execute('''
+        INSERT INTO users (id, email, username, hashed_password, full_name, is_active, is_verified, role)
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+        ''', (user_id, user_data.email, username, hashed_password, "", 1, 1, "user"))
+
+        conn.commit()
+        conn.close()
 
         return {
             "message": "User registered successfully",
-            "user_id": new_user.id,
-            "email": new_user.email,
+            "user_id": user_id,
+            "email": user_data.email,
         }
 
     except HTTPException:
@@ -135,29 +143,48 @@ async def register_user(
 
 
 @router.post("/login")
-async def login_user(login_data: LoginRequest, db: Session = Depends(get_db)):
+async def login_user(login_data: LoginRequest):
     """
     Authenticate user and return access tokens
     """
     try:
-        from auth.security import create_access_token, verify_password
-        from models.user_models import User
+        import sqlite3
+        import hashlib
+        from auth.security import create_access_token
 
+        # Simple password verification
+        def verify_simple_password(plain_password, hashed_password):
+            return hashlib.sha256(plain_password.encode()).hexdigest() == hashed_password
+
+        # Connect to database
+        conn = sqlite3.connect('cumapp.db')
+        cursor = conn.cursor()
+        
         # Find user
-        user = db.query(User).filter(User.email == login_data.email).first()
-        if not user or not verify_password(login_data.password, user.hashed_password):
+        cursor.execute('SELECT id, email, username, hashed_password, full_name, role FROM users WHERE email = ?', 
+                      (login_data.email,))
+        user_row = cursor.fetchone()
+        conn.close()
+        
+        if not user_row or not verify_simple_password(login_data.password, user_row[3]):
             raise HTTPException(
                 status_code=status.HTTP_401_UNAUTHORIZED,
                 detail="Invalid email or password",
             )
 
         # Create access token
-        access_token = create_access_token(data={"sub": user.email})
+        access_token = create_access_token(data={"sub": user_row[1]})  # email
 
         return {
             "access_token": access_token,
             "token_type": "bearer",
-            "user": {"id": user.id, "email": user.email, "username": user.username},
+            "user": {
+                "id": user_row[0], 
+                "email": user_row[1], 
+                "username": user_row[2],
+                "full_name": user_row[4],
+                "role": user_row[5]
+            },
         }
 
     except HTTPException:
@@ -242,7 +269,7 @@ async def verify_email(
 
 # Protected endpoints (require authentication)
 @router.get("/me")
-async def get_current_user_info(db: Session = Depends(get_db)):
+async def get_current_user_info():
     """
     Get current authenticated user information
     """
