@@ -21,7 +21,7 @@ services:
       
       echo "🔍 Verifying build..."
       python3 scripts/verify_build.py
-    startCommand: "python3 create_admin_user.py && gunicorn main:app -w 4 -k uvicorn.workers.UvicornWorker --bind 0.0.0.0:$PORT --access-logfile - --error-logfile -"
+    startCommand: "echo '🔧 Creating admin users...' && python3 create_admin_user.py && echo '🚀 Starting server...' && gunicorn main:app -w 4 -k uvicorn.workers.UvicornWorker --bind 0.0.0.0:$PORT --access-logfile - --error-logfile -"
     healthCheckPath: "/health"
     envVars:
       - key: ENVIRONMENT

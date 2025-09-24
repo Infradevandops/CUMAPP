@@ -46,9 +46,7 @@ def init_sentry():
             integrations=[
                 # FastAPI integration
                 FastApiIntegration(
-                    transaction_style="endpoint",
-                    failed_request_status_codes={400, 401, 403, 404, 422, 500},
-                    http_methods_to_capture=["GET", "POST", "PUT", "DELETE", "PATCH"]
+                    transaction_style="endpoint"
                 ),
                 
                 # Database integration
