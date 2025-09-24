@@ -16,10 +16,15 @@ logger = logging.getLogger(__name__)
 def init_sentry():
     """Initialize Sentry SDK with comprehensive integrations."""
     sentry_dsn = os.getenv("SENTRY_DSN")
-    environment = os.getenv("SENTRY_ENVIRONMENT", os.getenv("ENVIRONMENT", "development"))
+    environment = os.getenv("SENTRY_ENVIRONMENT", os.getenv("ENVIRONMENT", "production"))
+    
+    # Debug environment variables
+    logger.info(f"🔍 Environment check - SENTRY_DSN present: {bool(sentry_dsn)}")
+    logger.info(f"🔍 Environment: {environment}")
     
     if not sentry_dsn:
         logger.warning("SENTRY_DSN not found. Sentry error tracking disabled.")
+        logger.info("Available env vars: " + ", ".join([k for k in os.environ.keys() if 'SENTRY' in k]))
         return False
 
     try:
