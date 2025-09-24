@@ -33,7 +33,7 @@ COPY . .
 RUN if [ -d "frontend" ] && [ ! -f "frontend/build/index.html" ]; then \
         echo "Building frontend..." && \
         cd frontend && \
-        npm install --legacy-peer-deps && \
+        npm install --legacy-peer-deps --ignore-scripts && \
         npm run build && \
         echo "Frontend build completed"; \
     elif [ -f "frontend/build/index.html" ]; then \

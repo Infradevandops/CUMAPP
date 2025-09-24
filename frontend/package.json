@@ -81,7 +81,7 @@
     "analyze": "npx webpack-bundle-analyzer build/static/js/*.js",
     "serve": "npx serve -s build",
     "precommit": "lint-staged",
-    "prepare": "husky install"
+    "prepare": "husky install || true"
   },
   "eslintConfig": {
     "extends": [

@@ -10,7 +10,7 @@ services:
       if [ -d 'frontend' ]; then
         cd frontend
         echo "📦 Installing frontend dependencies..."
-        npm install --legacy-peer-deps
+        npm install --legacy-peer-deps --ignore-scripts
         echo "🏗️ Building React app..."
         npm run build
         echo "✅ Frontend build completed"
