@@ -125,11 +125,20 @@ async def health_check():
     """Health check endpoint for monitoring."""
     try:
         unified_client = get_unified_client()
+        
+        # Check frontend build status
+        frontend_status = "available" if react_build_exists else "missing"
+        
         return {
             "status": "healthy",
             "app_name": "CumApp",
             "version": "1.1.0",
             "database": check_database_connection(),
+            "frontend": {
+                "build_status": frontend_status,
+                "build_exists": react_build_exists,
+                "static_files": os.path.exists("frontend/build/static") if react_build_exists else False
+            },
             "services": {
                 "twilio": unified_client.twilio_client is not None,
                 "textverified": unified_client.textverified_client is not None,
@@ -149,6 +158,21 @@ async def health_check():
 # --- Static File Serving for React App ---
 # Check if React build exists
 react_build_exists = os.path.exists("frontend/build/index.html")
+
+# Log build status for debugging
+if react_build_exists:
+    logger.info("✅ React build found - serving React application")
+    # Verify static files exist
+    static_dir = "frontend/build/static"
+    if os.path.exists(static_dir):
+        js_files = len([f for f in os.listdir(f"{static_dir}/js") if f.endswith('.js')])
+        css_files = len([f for f in os.listdir(f"{static_dir}/css") if f.endswith('.css')])
+        logger.info(f"📁 Static files: {js_files} JS files, {css_files} CSS files")
+    else:
+        logger.warning("⚠️ Static directory missing")
+else:
+    logger.warning("❌ React build not found - using development fallback")
+    logger.info("💡 To fix: cd frontend && npm run build")
 
 if react_build_exists:
     # Serve static assets (CSS, JS, images)

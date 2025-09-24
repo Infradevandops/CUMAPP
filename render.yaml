@@ -2,8 +2,26 @@ services:
   - type: web
     name: cumapp
     env: python
-    buildCommand: "pip install -r requirements.txt && if [ -d 'frontend' ]; then cd frontend && npm install --legacy-peer-deps && npm run build; fi"
-    startCommand: "python3 create_admin_user.py && gunicorn main:app -w 4 -k uvicorn.workers.UvicornWorker --bind 0.0.0.0:$PORT"
+    buildCommand: |
+      echo "🔧 Installing Python dependencies..."
+      pip install -r requirements.txt
+      
+      echo "🔧 Building frontend..."
+      if [ -d 'frontend' ]; then
+        cd frontend
+        echo "📦 Installing frontend dependencies..."
+        npm install --legacy-peer-deps
+        echo "🏗️ Building React app..."
+        npm run build
+        echo "✅ Frontend build completed"
+        ls -la build/
+      else
+        echo "❌ No frontend directory found"
+      fi
+      
+      echo "🔍 Verifying build..."
+      python3 scripts/verify_build.py
+    startCommand: "python3 create_admin_user.py && gunicorn main:app -w 4 -k uvicorn.workers.UvicornWorker --bind 0.0.0.0:$PORT --access-logfile - --error-logfile -"
     healthCheckPath: "/health"
     envVars:
       - key: ENVIRONMENT
