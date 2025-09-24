@@ -120,6 +120,21 @@ app.include_router(health_router, tags=["health"])
 
 
 # --- Health Check Endpoint (Define before catch-all) ---
+@app.get("/test-sentry")
+async def test_sentry_error():
+    """Test endpoint to trigger Sentry error tracking"""
+    import sentry_sdk
+    
+    # Capture a test message
+    sentry_sdk.capture_message("Test message from CumApp", level="info")
+    
+    # Trigger a test error
+    try:
+        1 / 0  # This will cause a ZeroDivisionError
+    except Exception as e:
+        sentry_sdk.capture_exception(e)
+        raise HTTPException(status_code=500, detail="Test error for Sentry")
+
 @app.get("/health")
 async def health_check():
     """Health check endpoint for monitoring."""
